@@ -26,6 +26,7 @@ const config: NuxtConfig = {
   css: ['~/assets/css/global.css'],
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/UserUseCases.plugins.ts'
   ],
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
@@ -42,6 +43,23 @@ const config: NuxtConfig = {
           default: {
             httpEndpoint: 'https://appquarium.hasura.app/v1/graphql'
           }
+        }
+      }
+    ],
+    [
+      '@nuxtjs/firebase',
+      {
+        config: {
+          apiKey: process.env.FIREBASE_API_KEY ?? '',
+          authDomain: process.env.FIREBASE_AUTH_DOMAIN ?? '',
+          projectId: process.env.FIREBASE_PROJECT_ID ?? '',
+          storageBucket: process.env.FIREBASE_STORAGE_BUCKET ?? '',
+          messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID ?? '',
+          appId: process.env.FIREBASE_APP_ID ?? '',
+          measurementId: process.env.FIREBASE_MEASUREMENT_ID ?? ''
+        },
+        services: {
+          auth: true // Just as example. Can be any other service.
         }
       }
     ]
