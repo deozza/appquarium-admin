@@ -29,6 +29,7 @@ import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import Result from "~/app/utils/useCasesResult/Result";
 import Credentials from "~/app/user/entities/Credentials";
 import {UseCase} from "~/app/user/useCases/UseCase";
+import User from "~/app/user/entities/User";
 
 export default Vue.extend({
   components: {
@@ -37,7 +38,6 @@ export default Vue.extend({
     BaseButton
   },
   data(){
-
     const header: BaseHeaderModel = new BaseHeaderModel('Connexion')
 
     const loginInput: BaseInputModele = new BaseInputModele('email', 'login', 'login', 'Email', true, )
@@ -61,7 +61,10 @@ export default Vue.extend({
       const userUseCase: UseCase = new UseCase(this.$fire.auth)
 
       const result: Result = await userUseCase.login(credentials)
-      console.log(result)
+
+      this.$cookies.set('appquarium-jwt', result.content.jwt)
+
+      await this.$router.push('/')
     }
   }
 

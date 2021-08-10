@@ -25,9 +25,7 @@ const config: NuxtConfig = {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ['~/assets/css/global.css'],
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-    '~/plugins/UserUseCases.plugins.ts'
-  ],
+  plugins: []  ,
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/typescript
@@ -59,10 +57,11 @@ const config: NuxtConfig = {
           measurementId: process.env.FIREBASE_MEASUREMENT_ID ?? ''
         },
         services: {
-          auth: true // Just as example. Can be any other service.
+          auth: true
         }
       }
-    ]
+    ],
+    'cookie-universal-nuxt',
   ],
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
