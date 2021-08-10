@@ -4,7 +4,7 @@ import Credentials from "~/app/user/entities/Credentials";
 import Services from "~/app/user/services/Services";
 import User from "~/app/user/entities/User";
 
-export class UseCase implements UseCaseInterface {
+export default class UserUseCase implements UseCaseInterface {
 
   private readonly module: any
 

@@ -19,8 +19,9 @@ import BaseStatsModel from "~/components/molecules/pages/index/stats/BaseStatsMo
 import BaseStats from "~/components/molecules/pages/index/stats/BaseStats.vue";
 import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
-import {UseCase} from "~/app/user/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
+import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
+import UserUseCase from "~/app/user/useCases/UseCase";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -46,14 +47,21 @@ export default Vue.extend({
     }
   },
   async fetch(){
-    const userUseCase: UseCase = new UseCase(null)
+    const userUseCase: UserUseCase = new UserUseCase(null)
+    const jwt: string = this.$cookies.get('appquarium-jwt')
 
-    let totalUserStats = 0
-    const totalUsers: Result = await userUseCase.getTotalUsers(this.$cookies.get('appquarium-jwt'))
+    const totalUsers: Result = await userUseCase.getTotalUsers(jwt)
     if(totalUsers.isSuccessful()){
-      totalUserStats = totalUsers.content
+      this.stats.userStats.stat = totalUsers.content
     }
-    this.stats.userStats.stat = totalUserStats
+
+    const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const totalSpecies: Result = await speciesUseCase.getTotalSpecies(jwt)
+    if(totalSpecies.isSuccessful()){
+      this.stats.speciesStats.stat = totalSpecies.content
+    }
+
   }
 })
 </script>

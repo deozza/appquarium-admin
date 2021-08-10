@@ -31,7 +31,7 @@ import BaseInput from "~/components/atoms/input/BaseInput.vue";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import Result from "~/app/utils/useCasesResult/Result";
 import Credentials from "~/app/user/entities/Credentials";
-import {UseCase} from "~/app/user/useCases/UseCase";
+import UserUseCase from "~/app/user/useCases/UseCase";
 import BaseParagraph from "~/components/atoms/typography/paragraph/BaseParagraph.vue";
 import BaseParagraphModel from "~/components/atoms/typography/paragraph/BaseParagraphModel";
 
@@ -70,7 +70,7 @@ export default Vue.extend({
     async login(){
       this.submitFormButton.isLoading = true
       const credentials: Credentials = new Credentials(this.formInputs.email, this.formInputs.password)
-      const userUseCase: UseCase = new UseCase(this.$fire.auth)
+      const userUseCase: UserUseCase = new UserUseCase(this.$fire.auth)
 
       this.loginResult = await userUseCase.login(credentials)
 
