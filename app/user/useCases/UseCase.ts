@@ -25,6 +25,22 @@ export class UseCase implements UseCaseInterface {
 
     result.content = user
     result.addSuccess('Credentials are ok', 201)
-    return result;
+    return result
+  }
+
+  async getTotalUsers(jwt: string): Promise<Result> {
+    const userServices: Services = new Services(null)
+    let result: Result = new Result()
+
+    const totalUsers: number | null = await userServices.queryTotalUsers(jwt)
+
+    if(totalUsers === null){
+      result.addError('Query failed', 400)
+      return result
+    }
+
+    result.content = totalUsers
+    result.addSuccess("Query is ok", 200)
+    return result
   }
 }
