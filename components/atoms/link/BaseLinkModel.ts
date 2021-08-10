@@ -30,4 +30,8 @@ export default class BaseLinkModel {
 
         this.hasUnderline = hasUnderline
     }
+
+  toJSON () {
+    return { ...this } // here I make a POJO's copy of the class instance
+  }
 }

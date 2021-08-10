@@ -26,4 +26,8 @@ export default class BaseHeaderModel {
         }
         this.size = size
     }
+
+  toJSON () {
+    return { ...this } // here I make a POJO's copy of the class instance
+  }
 }

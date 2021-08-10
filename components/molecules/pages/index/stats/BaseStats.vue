@@ -6,6 +6,7 @@
     <div>
       <BaseHeader :base-header-model="header" />
       <BaseParagraph :base-paragraph-model="paragraph"/>
+      <BaseLink :base-link-model="link"/>
     </div>
   </div>
 </template>
@@ -17,12 +18,15 @@ import BaseParagraphModel from "~/components/atoms/typography/paragraph/BasePara
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
 import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
 import Vue from "vue";
+import BaseLinkModel from "~/components/atoms/link/BaseLinkModel";
+import BaseLink from "~/components/atoms/link/BaseLink.vue";
 
 export default Vue.extend({
   name: "BaseStatsVue",
   components: {
+    BaseHeader,
     BaseParagraph,
-    BaseHeader
+    BaseLink
   },
   props: {
     baseStatsModele: {
@@ -36,6 +40,9 @@ export default Vue.extend({
     },
     paragraph(): BaseParagraphModel {
       return new BaseParagraphModel(this.baseStatsModele.stat)
+    },
+    link(): BaseLinkModel {
+      return new BaseLinkModel('En savoir plus', 'info', this.baseStatsModele.linkPath)
     }
   }
 })
