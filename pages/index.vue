@@ -31,9 +31,9 @@ export default Vue.extend({
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Stats', 2)
-    const userStats: BaseStatsModel = new BaseStatsModel('Utilisateurs',['fa fa-users fa-3x'],  0)
-    const speciesStats: BaseStatsModel = new BaseStatsModel('Espèces',['fa fa-fish fa-3x'],  0)
-    const aquariumStats: BaseStatsModel = new BaseStatsModel('Aquariums',['fas fa-fish fa-stack-1x', 'far fa-square fa-stack-2x'],  0)
+    const userStats: BaseStatsModel = new BaseStatsModel('Utilisateurs',['fa fa-users fa-3x'],  0, '/users')
+    const speciesStats: BaseStatsModel = new BaseStatsModel('Espèces',['fa fa-fish fa-3x'],  0, '/species')
+    const aquariumStats: BaseStatsModel = new BaseStatsModel('Aquariums',['fas fa-fish fa-stack-1x', 'far fa-square fa-stack-2x'],  0, '/aquariums')
 
     const stats = {
       userStats: userStats,
