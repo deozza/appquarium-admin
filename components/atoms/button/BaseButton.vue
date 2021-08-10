@@ -11,6 +11,8 @@
     :disabled="baseButtonModel.isDisabled || baseButtonModel.isLoading"
     @click="emitEvent()"
   >
+    <i v-if="baseButtonModel.isLoading" class="fa fa-spinner fa-spin"></i>
+    <i v-if="!baseButtonModel.isLoading && baseButtonModel.icon !== ''" :class="baseButtonModel.icon"></i>
     {{baseButtonModel.content}}
   </button>
 

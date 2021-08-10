@@ -4,6 +4,7 @@
       <BaseHeader :base-header-model="header"/>
       <form >
         <div class="flex-column">
+          <BaseParagraph v-if="loginResult.isFailed()" :base-paragraph-model="errorParagraph"/>
           <ul>
             <BaseInput v-for="(input, index) in formInputs" :base-input-model="input" v-bind:key="index"/>
           </ul>
@@ -12,6 +13,8 @@
             :base-button-model="submitFormButton"
           />
         </div>
+
+
       </form>
     </div>
   </main>
@@ -29,13 +32,15 @@ import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import Result from "~/app/utils/useCasesResult/Result";
 import Credentials from "~/app/user/entities/Credentials";
 import {UseCase} from "~/app/user/useCases/UseCase";
-import User from "~/app/user/entities/User";
+import BaseParagraph from "~/components/atoms/typography/paragraph/BaseParagraph.vue";
+import BaseParagraphModel from "~/components/atoms/typography/paragraph/BaseParagraphModel";
 
 export default Vue.extend({
   components: {
     BaseHeader,
     BaseInput,
-    BaseButton
+    BaseButton,
+    BaseParagraph
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Connexion')
@@ -49,21 +54,37 @@ export default Vue.extend({
 
     const submitFormButton: BaseButtonModel = new BaseButtonModel('Se connecter', 'success', 'button')
 
+    const errorParagraph: BaseParagraphModel = new BaseParagraphModel('Votre email ou votre mot de passe est incorrect', 'danger')
+
+    const loginResult: Result = new Result()
+
     return {
       header: header,
       formInputs: formInputs,
-      submitFormButton: submitFormButton
+      submitFormButton: submitFormButton,
+      errorParagraph: errorParagraph,
+      loginResult: loginResult
     }
   },
   methods: {
     async login(){
+      this.submitFormButton.isLoading = true
       const credentials: Credentials = new Credentials(this.formInputs.email, this.formInputs.password)
       const userUseCase: UseCase = new UseCase(this.$fire.auth)
 
-      const result: Result = await userUseCase.login(credentials)
+      this.loginResult = await userUseCase.login(credentials)
 
-      this.$cookies.set('appquarium-jwt', result.content.jwt)
+      if(this.loginResult.isFailed()){
+        this.submitFormButton.isLoading = false
+        return
+      }
 
+      await this.$fire.firestore.collection('user').doc(this.loginResult.content.uid).update({
+        lastSignInTime: this.loginResult.content.lastSignInTime
+      })
+
+      this.$cookies.set('appquarium-jwt', this.loginResult.content.jwt)
+      this.submitFormButton.isLoading = false
       await this.$router.push('/')
     }
   }

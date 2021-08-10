@@ -4,7 +4,7 @@ import Error from "./types/Error";
 export default class Result {
   success: Success | null = null
   errors: Array<Error> = []
-  content: object = {}
+  content: any = {}
 
   public addSuccess(type: string,  code: number){
     this.success = new Success(type, code)
