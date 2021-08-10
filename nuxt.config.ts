@@ -57,11 +57,12 @@ const config: NuxtConfig = {
           measurementId: process.env.FIREBASE_MEASUREMENT_ID ?? ''
         },
         services: {
-          auth: true
+          auth: true,
+          firestore: true
         }
       }
     ],
-    'cookie-universal-nuxt',
+    ['cookie-universal-nuxt', {}],
   ],
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
