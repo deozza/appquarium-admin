@@ -1,28 +1,25 @@
 <template>
 <main>
-species
+  <a href="/species/add">
+    <BaseButton :base-button-model="addButton"/>
+  </a>
 </main>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import BaseStatsModel from "~/components/molecules/pages/index/stats/BaseStatsModel";
-import BaseStats from "~/components/molecules/pages/index/stats/BaseStats.vue";
-import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
-import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
-import Result from "~/app/utils/useCasesResult/Result";
-import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
-import UserUseCase from "~/app/user/useCases/UseCase";
+import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
+import BaseButton from "~/components/atoms/button/BaseButton";
 
 export default Vue.extend({
   middleware: 'authenticated',
   components: {
-    BaseHeader,
-    BaseStats
+    BaseButton
   },
   data(){
-
+    const addButton: BaseButtonModel = new BaseButtonModel('Ajouter', 'success', 'button')
     return {
+      addButton: addButton
     }
   },
 })
