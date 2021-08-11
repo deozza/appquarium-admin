@@ -2,14 +2,13 @@
   <main>
     <div class="flex-column">
       <BaseHeader :base-header-model="header"/>
-      <form >
+      <form v-on:submit.prevent="login()">
         <div class="flex-column">
           <BaseParagraph v-if="loginResult.isFailed()" :base-paragraph-model="errorParagraph"/>
           <ul>
             <BaseInput v-for="(input, index) in formInputs" :base-input-model="input" v-bind:key="index"/>
           </ul>
           <BaseButton
-            v-on:buttonClicked="login()"
             :base-button-model="submitFormButton"
           />
         </div>
@@ -52,7 +51,7 @@ export default Vue.extend({
       password: passwordInput
     }
 
-    const submitFormButton: BaseButtonModel = new BaseButtonModel('Se connecter', 'success', 'button')
+    const submitFormButton: BaseButtonModel = new BaseButtonModel('Se connecter', 'success', 'submit')
 
     const errorParagraph: BaseParagraphModel = new BaseParagraphModel('Votre email ou votre mot de passe est incorrect', 'danger')
 
