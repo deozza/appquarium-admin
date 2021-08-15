@@ -1,0 +1,9 @@
+{
+  "species": {
+    "categories": {
+      "fish": "poisson",
+      "plant": "plante",
+      "invertebrate": "invertébré"
+    }
+  }
+}

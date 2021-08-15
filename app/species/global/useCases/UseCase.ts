@@ -36,4 +36,53 @@ export default class SpeciesUseCase implements UseCaseInterface{
     return result
   }
 
+  async getSpeciesGenres(jwt: string): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+
+    const speciesgenres: Array<string> | Error = await speciesService.querySpeciesGenres(jwt)
+
+    if(speciesgenres instanceof Error){
+      result.errors.push(speciesgenres)
+      return result
+    }
+
+    result.content = speciesgenres
+    result.addSuccess("Query is ok", 200)
+    return result
+  }
+
+  async getSpeciesFamilies(jwt: string): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+
+    const speciesFamilies: Array<string> | Error = await speciesService.querySpeciesFamilies(jwt)
+
+    if(speciesFamilies instanceof Error){
+      result.errors.push(speciesFamilies)
+      return result
+    }
+
+    result.content = speciesFamilies
+    result.addSuccess("Query is ok", 200)
+    return result
+  }
+
+  async getSpeciesOrigins(jwt: string): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+
+    const speciesOrigins: Array<string> | Error = await speciesService.querySpeciesOrigins(jwt)
+
+    if(speciesOrigins instanceof Error){
+      result.errors.push(speciesOrigins)
+      return result
+    }
+
+    result.content = speciesOrigins
+    result.addSuccess("Query is ok", 200)
+    return result
+  }
+
+
 }

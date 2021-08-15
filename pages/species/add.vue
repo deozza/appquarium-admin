@@ -6,7 +6,7 @@
     <section v-else id="add">
       <BaseHeader :base-header-model="header"/>
       <div class="flex-row flex-around">
-        <a v-for="(category, index) in speciesCategories" :href="'/species/'+category.name+'/add'">{{category.name}}</a>
+        <a v-for="(category, index) in speciesCategories" :href="category.link" v-bind:key="index">{{category.label}}</a>
       </div>
     </section>
   </div>
@@ -15,14 +15,13 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
-import BaseButton from "~/components/atoms/button/BaseButton";
+
+import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
 import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
-import BaseInput from "~/components/atoms/input/BaseInput";
+import BaseInput from "~/components/atoms/input/BaseInput.vue";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
-import Error from "~/app/utils/useCasesResult/types/Error";
 
 
 export default Vue.extend({
@@ -48,17 +47,21 @@ export default Vue.extend({
     const speciesCategories: Result = await speciesUseCase.getSpeciesCategories(jwt)
 
     if(speciesCategories.isSuccessful()){
-      this.speciesCategories = speciesCategories.content
+      for(const category of speciesCategories.content){
+        this.speciesCategories.push({
+          link: "/species/"+category.name+"/add",
+          label: this.$t("species.categories."+category.name)
+        })
+      }
       return
     }
 
-    for(const error: Error of speciesCategories.errors){
+    for(const error of speciesCategories.errors){
       if(error.code === 401){
         this.$cookies.remove('appquarium-jwt')
         await this.$router.push('/login')
       }
     }
-
   }
 })
 </script>

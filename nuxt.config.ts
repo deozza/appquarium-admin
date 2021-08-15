@@ -63,6 +63,19 @@ const config: NuxtConfig = {
       }
     ],
     ['cookie-universal-nuxt', {}],
+    [
+      '@nuxtjs/i18n',
+      {
+        locales: [
+          {code: 'fr', file: 'fr.json'},
+        ],
+        langDir: '~/i18n/',
+        defaultLocale: 'fr',
+        vueI18n: {
+          fallbackLocale: 'fr',
+        }
+      }
+    ]
   ],
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

@@ -4,7 +4,6 @@ import {ClientError} from "graphql-request";
 import Error from "~/app/utils/useCasesResult/types/Error";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
-
   constructor(jwt: string) {
     super(jwt);
   }
@@ -48,4 +47,75 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       return new Error(e.message, 400)
     }
   }
+
+  async queryListOfSpeciesFamilies(): Promise<Array<string> | Error> {
+    const query: string = `query {
+        species_family {
+          name
+          uuid
+        }
+      }
+    `
+    try {
+      const data = await this.client.request(query)
+      const listOfSpeciesFamilies: Array<string> = data.species_family
+      return listOfSpeciesFamilies
+    }
+    catch (e) {
+      console.log(e)
+      if(e.message.includes("JWTExpired")){
+        return new Error("JWT expired", 401)
+
+      }
+      return new Error(e.message, 400)
+    }
+  }
+
+  async queryListOfSpeciesGenres(): Promise<Array<string> | Error> {
+    const query: string = `query {
+      species_genre {
+          name
+          uuid
+        }
+      }
+    `
+    try {
+      const data = await this.client.request(query)
+      const listOfSpeciesGenres: Array<string> = data.species_genre
+      return listOfSpeciesGenres
+    }
+    catch (e) {
+      console.log(e)
+
+      if(e.message.includes("JWTExpired")){
+        return new Error("JWT expired", 401)
+
+      }
+      return new Error(e.message, 400)
+    }
+  }
+
+  async queryListOfSpeciesOrigins(): Promise<Array<string> | Error> {
+    const query: string = `query {
+      species_origin {
+          name
+        }
+      }
+    `
+    try {
+      const data = await this.client.request(query)
+      const listOfSpeciesOrigins: Array<string> = data.species_origin
+      return listOfSpeciesOrigins
+    }
+    catch (e) {
+      console.log(e)
+
+      if(e.message.includes("JWTExpired")){
+        return new Error("JWT expired", 401)
+
+      }
+      return new Error(e.message, 400)
+    }
+  }
+
 }

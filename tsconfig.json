@@ -27,7 +27,8 @@
       "@nuxt/types",
       "@types/node",
       "@nuxtjs/firebase",
-      "cookie-universal-nuxt"
+      "cookie-universal-nuxt",
+      "@nuxtjs/i18n"
     ]
   },
   "exclude": [
