@@ -10,17 +10,15 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   }
 
   async mutationCreateNewFish(newFish: FishInit): Promise<string | Error> {
-    const mutation: string = `mutation CreateNewFish($category: species_categories_enum, $origin: species_origin_enum, $user: String!, $family: uuid!, $genre: uuid!, $name: String!) {
+    const mutation: string = `mutation CreateNewFish($category: species_categories_enum, $origin: species_origin_enum, $family: uuid!, $genre: uuid!, $name: String!) {
         insert_species_one(object: {
           category: $category,
           origin: $origin,
-          user: $user,
           species_naming: {
             data: {
               name: $name,
               family: $family,
               genre: $genre,
-              user: $user
             }
           }
         }) {
@@ -33,7 +31,6 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       const data = await this.client.request(mutation,{
         category: newFish.species_category,
         origin: newFish.origin,
-        user: newFish.owner.extractUserIdFromJwt(),
         name: newFish.name,
         family: newFish.family,
         genre: newFish.genre

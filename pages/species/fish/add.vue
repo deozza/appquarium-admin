@@ -114,7 +114,8 @@ export default Vue.extend({
       speciesFamilies: speciesFamilies,
       speciesOrigins: speciesOrigins,
       nextButton: nextButton,
-      newFish: newFish
+      newFish: newFish,
+      STEPS: STEPS
     }
   },
   async fetch(){
@@ -163,7 +164,13 @@ export default Vue.extend({
 
       const fishUseCase: FishUseCase = new FishUseCase()
 
-      const fishCreation: Result = fishUseCase.createNewFish(this.newFish)
+      const fishCreation: Result = await fishUseCase.createNewFish(this.newFish)
+      if(fishCreation.isFailed()){
+        this.nextButton.isLoading = false
+        return
+      }
+
+      this.currentStep = this.STEPS.WATER_CONSTRAINTS
       this.nextButton.isLoading = false
     }
   }
