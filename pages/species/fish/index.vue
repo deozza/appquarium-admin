@@ -13,13 +13,10 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import BaseStatsModel from "~/components/molecules/pages/index/stats/BaseStatsModel";
 import BaseStats from "~/components/molecules/pages/index/stats/BaseStats.vue";
 import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
 import Result from "~/app/utils/useCasesResult/Result";
-import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
-import UserUseCase from "~/app/user/useCases/UseCase";
 import FishUseCase from "~/app/species/fish/useCases/UseCase";
 
 export default Vue.extend({
@@ -41,16 +38,9 @@ export default Vue.extend({
     const jwt: string = this.$cookies.get('appquarium-jwt')
     const fishUseCase: FishUseCase = new FishUseCase()
 
-    const listOfFishes: Result = await fishUseCase.getListOfFishes()
+    const listOfFishes: Result = await fishUseCase.getListOfFishes(jwt)
     if(listOfFishes.isSuccessful()){
       this.listOfFishes = listOfFishes.content
-    }
-
-    const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
-
-    const totalSpecies: Result = await speciesUseCase.getTotalSpecies(jwt)
-    if(totalSpecies.isSuccessful()){
-      this.stats.speciesStats.stat = totalSpecies.content
     }
 
   }

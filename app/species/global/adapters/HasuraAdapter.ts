@@ -1,6 +1,5 @@
 import AdapterInterface from "~/app/species/global/adapters/AdapterInterface";
 import HasuraClient from "~/app/utils/hasura/HasuraClient";
-import {ClientError} from "graphql-request";
 import Error from "~/app/utils/useCasesResult/types/Error";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
@@ -62,7 +61,6 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       return listOfSpeciesFamilies
     }
     catch (e) {
-      console.log(e)
       if(e.message.includes("JWTExpired")){
         return new Error("JWT expired", 401)
 
@@ -85,8 +83,6 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       return listOfSpeciesGenres
     }
     catch (e) {
-      console.log(e)
-
       if(e.message.includes("JWTExpired")){
         return new Error("JWT expired", 401)
 
@@ -108,11 +104,39 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       return listOfSpeciesOrigins
     }
     catch (e) {
-      console.log(e)
-
       if(e.message.includes("JWTExpired")){
         return new Error("JWT expired", 401)
 
+      }
+      return new Error(e.message, 400)
+    }
+  }
+
+  async queryListOfSpeciesByCategory(category: string): Promise<Array<string> | Error> {
+    const query: string = `query($category: species_categories_enum) {
+      species(where: {category: {_eq: $category}}, order_by: {updated_at: desc}) {
+        updated_at
+        publication_state
+        uuid
+        species_naming {
+          name
+          species_family {
+            name
+          }
+        }
+      }
+    }
+    `
+    try {
+      const data = await this.client.request(query,{
+        category: category
+      })
+
+      return data.species
+    }
+    catch (e) {
+      if(e.message.includes("JWTExpired")){
+        return new Error("JWT expired", 401)
       }
       return new Error(e.message, 400)
     }

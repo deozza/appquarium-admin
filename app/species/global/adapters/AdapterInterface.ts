@@ -6,4 +6,5 @@ export default interface AdapterInterface {
   queryListOfSpeciesFamilies(): Promise<Array<string> | Error>
   queryListOfSpeciesGenres(): Promise<Array<string> | Error>
   queryListOfSpeciesOrigins(): Promise<Array<string> | Error>
+  queryListOfSpeciesByCategory(category: string): Promise<Array<string> | Error>
 }
