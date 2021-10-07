@@ -73,7 +73,7 @@ main > div.flex-column {
 
 main > div.flex-column > section#stats,
 main > div.flex-column > section#stats > div.flex-row{
-  width: 90vw;
+  width: 90%;
 }
 
 main > div.flex-column > section#stats > h2{

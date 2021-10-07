@@ -41,6 +41,7 @@ export default Vue.extend({
     BaseButton,
     BaseParagraph
   },
+  layout: 'login',
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Connexion')
 
