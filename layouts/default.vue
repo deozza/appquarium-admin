@@ -65,6 +65,6 @@ export default Vue.extend({
  }
 
  div.container > div.content {
-   margin-left: 300px;
+   margin-left: 336px;
  }
 </style>
