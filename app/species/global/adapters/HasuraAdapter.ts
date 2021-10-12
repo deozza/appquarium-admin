@@ -3,9 +3,6 @@ import HasuraClient from "~/app/utils/hasura/HasuraClient";
 import Error from "~/app/utils/useCasesResult/types/Error";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
-  constructor(jwt: string) {
-    super(jwt);
-  }
 
   async queryTotalSpecies(): Promise<number | null> {
     const query: string = `query{
@@ -25,6 +22,37 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       return null
     }
   }
+
+  async queryListOfSpecies(): Promise<Array<string> | Error> {
+    const query: string = `query{
+      species {
+        category
+        publication_state
+        updated_at
+        species_naming {
+          species_family {
+            name
+          }
+          name
+        }
+        uuid
+      }
+    }
+    `
+    try {
+      const data = await this.client.request(query)
+      const listOfSpecies: Array<string> = data.species
+      return listOfSpecies
+    }
+    catch (e) {
+      if(e.message.includes("JWTExpired")){
+        return new Error("JWT expired", 401)
+
+      }
+      return new Error(e.message, 400)
+    }
+  }
+
 
   async queryListOfSpeciesCategories(): Promise<Array<string> | Error> {
     const query: string = `query {

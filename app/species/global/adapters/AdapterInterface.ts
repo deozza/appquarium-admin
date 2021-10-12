@@ -2,6 +2,7 @@ import Error from "~/app/utils/useCasesResult/types/Error";
 
 export default interface AdapterInterface {
   queryTotalSpecies(): Promise<number | null>
+  queryListOfSpecies(): Promise<Array<string> | Error>
   queryListOfSpeciesCategories(): Promise<Array<string> | Error>
   queryListOfSpeciesFamilies(): Promise<Array<string> | Error>
   queryListOfSpeciesGenres(): Promise<Array<string> | Error>

@@ -20,6 +20,22 @@ export default class SpeciesUseCase implements UseCaseInterface{
     return result
   }
 
+  async getListOfSpecies(jwt: string): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+
+    const listOfSpecies: Array<string> | Error = await speciesService.queryListOfSpecies(jwt)
+
+    if(listOfSpecies instanceof Error){
+      result.errors.push(listOfSpecies)
+      return result
+    }
+
+    result.content = listOfSpecies
+    result.addSuccess("Query is ok", 200)
+    return result
+  }
+
   async getSpeciesCategories(jwt: string): Promise<Result> {
     let result: Result = new Result()
     const speciesService: Services = new Services()
