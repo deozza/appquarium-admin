@@ -1,13 +1,24 @@
 <template>
 <main>
-  <div class="flex-column">
-    <p v-if="$fetchState.pending">Récupération des infos️</p>
-    <p v-else-if="$fetchState.error">Une erreur est survenue :(</p>
-    <section v-else id="stats">
-      <BaseHeader :base-header-model="header"/>
-      <div class="flex-row flex-around">
-        <BaseStats v-for="(stat, index) in stats" :base-stats-modele="stat" v-bind:key="index"/>
-      </div>
+  <BaseHeader :base-header-model="header"/>
+
+  <div id="loading" v-if="$fetchState.pending">
+    <p >Récupération des infos️</p>
+  </div>
+  <div id="error" v-else-if="$fetchState.error">
+    <p >Une erreur est survenue :(</p>
+  </div>
+  <div id="content" v-else>
+    <section id="users">
+      <BaseHeader :base-header-model="userStatsHeader" />
+    </section>
+
+    <section id="species">
+      <BaseHeader :base-header-model="speciesStatsHeader" />
+    </section>
+
+    <section id="aquariums">
+      <BaseHeader :base-header-model="aquariumsStatsHeader" />
     </section>
   </div>
 </main>
@@ -30,53 +41,18 @@ export default Vue.extend({
     BaseStats
   },
   data(){
-    const header: BaseHeaderModel = new BaseHeaderModel('Stats', 2)
-    const userStats: BaseStatsModel = new BaseStatsModel('Utilisateurs',['fa fa-users fa-3x'],  0, '/users')
-    const speciesStats: BaseStatsModel = new BaseStatsModel('Espèces',['fa fa-fish fa-3x'],  0, '/species')
-    const aquariumStats: BaseStatsModel = new BaseStatsModel('Aquariums',['fas fa-fish fa-stack-1x', 'far fa-square fa-stack-2x'],  0, '/aquariums')
-
-    const stats = {
-      userStats: userStats,
-      speciesStats: speciesStats,
-      aquariumStats: aquariumStats
-    }
+    const header: BaseHeaderModel = new BaseHeaderModel('Accueil')
+    const userStatsHeader: BaseHeaderModel = new BaseHeaderModel('Stats utilisateurs', 2)
+    const speciesStatsHeader: BaseHeaderModel = new BaseHeaderModel('Stats espèces', 2)
+    const aquariumsStatsHeader: BaseHeaderModel = new BaseHeaderModel('Stats aquariums', 2)
 
     return {
       header: header,
-      stats: stats
+      userStatsHeader: userStatsHeader,
+      speciesStatsHeader: speciesStatsHeader,
+      aquariumsStatsHeader: aquariumsStatsHeader
+
     }
-  },
-  async fetch(){
-    const userUseCase: UserUseCase = new UserUseCase(null)
-    const jwt: string = this.$cookies.get('appquarium-jwt')
-
-    const totalUsers: Result = await userUseCase.getTotalUsers(jwt)
-    if(totalUsers.isSuccessful()){
-      this.stats.userStats.stat = totalUsers.content
-    }
-
-    const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
-
-    const totalSpecies: Result = await speciesUseCase.getTotalSpecies(jwt)
-    if(totalSpecies.isSuccessful()){
-      this.stats.speciesStats.stat = totalSpecies.content
-    }
-
   }
 })
 </script>
-
-<style scoped>
-main > div.flex-column {
-  min-height: 100vh;
-}
-
-main > div.flex-column > section#stats,
-main > div.flex-column > section#stats > div.flex-row{
-  width: 90%;
-}
-
-main > div.flex-column > section#stats > h2{
-  margin-left: 12px;
-}
-</style>
