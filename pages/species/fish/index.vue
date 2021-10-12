@@ -1,12 +1,41 @@
 <template>
 <main>
-  <div class="flex-column">
-    <p v-if="$fetchState.pending">Récupération des infos️</p>
-    <p v-else-if="$fetchState.error">Une erreur est survenue :(</p>
-    <section v-else id="stats">
-      <BaseHeader :base-header-model="header"/>
+  <BaseHeader :base-header-model="header" />
 
-    </section>
+  <div id="loading" v-if="$fetchState.pending">
+    <p >Récupération des infos️</p>
+  </div>
+  <div id="error" v-else-if="$fetchState.error">
+    <p >Une erreur est survenue :(</p>
+  </div>
+  <div class="flex-column" id="content" v-else>
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nom scientifique</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Créé le</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="(fish, index) in listOfFishes" v-bind:key="index">
+        <th scope="row">{{index + 1}}</th>
+        <td>
+          <a :href="computeLinkToFish(fish)">{{computeScientificName(fish.species_naming)}}</a>
+        </td>
+        <td>{{fish.publication_state}}</td>
+        <td>{{fish.created_at | date }}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="flex-row flex-around">
+      <a href="/species/fish/add">
+        <BaseButton :base-button-model="addFishButton" />
+      </a>
+    </div>
+
   </div>
 </main>
 </template>
@@ -18,20 +47,24 @@ import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderMode
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
 import Result from "~/app/utils/useCasesResult/Result";
 import FishUseCase from "~/app/species/fish/useCases/UseCase";
+import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
+import BaseButton from "~/components/atoms/button/BaseButton.vue";
 
 export default Vue.extend({
   middleware: 'authenticated',
   components: {
     BaseHeader,
-    BaseStats
+    BaseButton
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Dashboard poissons', 1)
     const listOfFishes: Array<string> = []
+    const addFishButton: BaseButtonModel = new BaseButtonModel('Ajouter un poisson', 'info', 'button')
 
     return {
       header: header,
-      listOfFishes
+      addFishButton: addFishButton,
+      listOfFishes: listOfFishes
     }
   },
   async fetch(){
@@ -43,21 +76,29 @@ export default Vue.extend({
       this.listOfFishes = listOfFishes.content
     }
 
+  },
+  methods: {
+    computeScientificName(speciesNaming: Array<string>): string {
+      return speciesNaming.species_family.name + ' ' + speciesNaming.name
+    },
+    computeLinkToFish(fish: Array<string>): string {
+      return '/species/fish/'+fish.uuid
+    }
   }
 })
 </script>
 
 <style scoped>
-main > div.flex-column {
-  min-height: 100vh;
+div#content {
+  width: 100%;
 }
 
-main > div.flex-column > section#stats,
-main > div.flex-column > section#stats > div.flex-row{
-  width: 90vw;
+div#content > table {
+  width: 90%;
+  margin-bottom: 64px;
 }
 
-main > div.flex-column > section#stats > h2{
-  margin-left: 12px;
+div#content > div.flex-row {
+  width: 70%;
 }
 </style>
