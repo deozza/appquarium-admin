@@ -9,26 +9,30 @@
     <p >Une erreur est survenue :(</p>
   </div>
   <div class="flex-column" id="content" v-else>
-    <table class="table">
-      <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Nom scientifique</th>
-        <th scope="col">Etat</th>
-        <th scope="col">Créé le</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(invertebrate, index) in listOfInvertebrates" v-bind:key="index">
-        <th scope="row">{{index + 1}}</th>
-        <td>
-          <a :href="computeLinkToSpecies(invertebrate)">{{computeName(invertebrate)}}</a>
-        </td>
-        <td>{{invertebrate.publication_state}}</td>
-        <td>{{invertebrate.created_at }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <BaseCard>
+      <template slot="body">
+        <table>
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nom scientifique</th>
+            <th scope="col">Etat</th>
+            <th scope="col">Créé le</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="(invertebrate, index) in listOfInvertebrates" v-bind:key="index">
+            <td>{{index + 1}}</td>
+            <td>
+              <a :href="computeLinkToSpecies(invertebrate)">{{computeName(invertebrate)}}</a>
+            </td>
+            <td>{{invertebrate.publication_state}}</td>
+            <td>{{invertebrate.created_at }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </template>
+    </BaseCard>
 
     <div class="flex-row flex-around">
       <a href="/species/invertebrate/add">
@@ -49,12 +53,14 @@ import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import InvertebrateUseCase from "~/app/species/invertebrate/useCases/UseCase";
 import Species from "~/app/species/global/entities/Species";
+import BaseCard from "~/components/molecules/card/BaseCard.vue";
 
 export default Vue.extend({
   middleware: 'authenticated',
   components: {
     BaseHeader,
-    BaseButton
+    BaseButton,
+    BaseCard
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Dashboard invertébrés', 1)

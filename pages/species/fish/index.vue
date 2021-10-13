@@ -9,7 +9,7 @@
     <p >Une erreur est survenue :(</p>
   </div>
   <div class="flex-column" id="content" v-else>
-    <table class="table">
+    <table>
       <thead>
       <tr>
         <th scope="col">#</th>
@@ -20,7 +20,7 @@
       </thead>
       <tbody>
       <tr v-for="(fish, index) in listOfFishes" v-bind:key="index">
-        <th scope="row">{{index + 1}}</th>
+        <td>{{index + 1}}</td>
         <td>
           <a :href="computeLinkToSpecies(fish)">{{computeName(fish)}}</a>
         </td>

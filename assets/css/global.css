@@ -425,4 +425,23 @@ a.decoration-none {
 		justify-content: flex-end;
 		align-items: end;
 	}
+
+
+  table {
+    border-collapse: collapse;
+    width: 98%;
+
+  }
+
+  table td {
+    border-top: 1px solid #ddd;
+    padding: 16px 8px;
+    font-size: 14px;
+  }
+
+  table th {
+    padding: 20px 8px;
+    text-align: left;
+    font-size: 1.063rem;
+  }
 }
