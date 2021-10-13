@@ -2,6 +2,7 @@ import ServicesInterface from "~/app/species/global/services/ServicesInterface";
 import AdapterInterface from "~/app/species/global/adapters/AdapterInterface";
 import HasuraAdapter from "~/app/species/global/adapters/HasuraAdapter";
 import Error from "~/app/utils/useCasesResult/types/Error";
+import Species from "~/app/species/global/entities/Species";
 
 export default class Services implements ServicesInterface {
   async queryTotalSpecies(jwt: string): Promise<number|null> {
@@ -10,7 +11,7 @@ export default class Services implements ServicesInterface {
     return await adapter.queryTotalSpecies()
   }
 
-  async queryListOfSpecies(jwt: string): Promise<Array<string>|Error> {
+  async queryListOfSpecies(jwt: string): Promise<Array<Species>|Error> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.queryListOfSpecies()

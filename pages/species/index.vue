@@ -23,11 +23,11 @@
       <tr v-for="(species, index) in listOfSpecies" v-bind:key="index">
         <th scope="row">{{index + 1}}</th>
         <td>
-          <a :href="computeLinkToSpecies(species)">{{computeScientificName(species.species_naming)}}</a>
+          <a :href="species.computeLinkToSpecies()">{{species.computeName()}}</a>
         </td>
         <td>{{species.category}}</td>
         <td>{{species.publication_state}}</td>
-        <td>{{species.created_at | date }}</td>
+        <td>{{species.created_at }}</td>
       </tr>
       </tbody>
     </table>
@@ -56,6 +56,7 @@ import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderMode
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
+import Species from "~/app/species/global/entities/Species";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -69,7 +70,7 @@ export default Vue.extend({
     const addPlantButton: BaseButtonModel = new BaseButtonModel('Ajouter une plante', 'success', 'button')
     const addInvertebrateButton: BaseButtonModel = new BaseButtonModel('Ajouter un invertébré', 'warning', 'button')
 
-    const listOfSpecies = {}
+    const listOfSpecies: Array<Species> = []
     return {
       header: header,
       addFishButton: addFishButton,
@@ -83,18 +84,14 @@ export default Vue.extend({
     const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
     const listOfSpecies: Result = await speciesUseCase.getListOfSpecies(jwt)
+
     if(listOfSpecies.isSuccessful()){
-      this.listOfSpecies = listOfSpecies.content
+      listOfSpecies.content.forEach((item: Species) => this.listOfSpecies.push(item))
     }
 
   },
   methods: {
-    computeScientificName(speciesNaming: Array<string>): string {
-      return speciesNaming.species_family.name + ' ' + speciesNaming.name
-    },
-    computeLinkToSpecies(species: Array<string>): string {
-      return '/species/'+species.category+'/'+species.uuid
-    }
+
   }
 })
 </script>

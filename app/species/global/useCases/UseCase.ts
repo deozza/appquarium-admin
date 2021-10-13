@@ -2,6 +2,7 @@ import UseCaseInterface from "~/app/species/global/useCases/UseCaseInterface";
 import Result from "~/app/utils/useCasesResult/Result";
 import Services from "~/app/species/global/services/Services";
 import Error from "~/app/utils/useCasesResult/types/Error";
+import Species from "~/app/species/global/entities/Species";
 
 export default class SpeciesUseCase implements UseCaseInterface{
   async getTotalSpecies(jwt: string): Promise<Result> {
@@ -24,7 +25,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const listOfSpecies: Array<string> | Error = await speciesService.queryListOfSpecies(jwt)
+    const listOfSpecies: Array<Species> | Error = await speciesService.queryListOfSpecies(jwt)
 
     if(listOfSpecies instanceof Error){
       result.errors.push(listOfSpecies)

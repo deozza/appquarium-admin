@@ -2,13 +2,14 @@ import UseCaseInterface from "~/app/species/invertebrate/useCases/UseCaseInterfa
 import Result from "~/app/utils/useCasesResult/Result";
 import Services from "~/app/species/invertebrate/services/Services";
 import Error from "~/app/utils/useCasesResult/types/Error";
+import Species from "~/app/species/global/entities/Species";
 
 export default class InvertebrateUseCase implements UseCaseInterface{
   async getListOfInvertebrates(jwt: string): Promise<Result> {
     let result: Result = new Result()
     const invertebrateService: Services = new Services()
 
-    const listOfInvertebrates: Array<string> | Error = await invertebrateService.queryGetListOfInvertebrates(jwt)
+    const listOfInvertebrates: Array<Species> | Error = await invertebrateService.queryGetListOfInvertebrates(jwt)
 
     if(listOfInvertebrates instanceof Error){
       result.errors.push(listOfInvertebrates)

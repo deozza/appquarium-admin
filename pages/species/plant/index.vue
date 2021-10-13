@@ -22,7 +22,7 @@
       <tr v-for="(plant, index) in listOfPlants" v-bind:key="index">
         <th scope="row">{{index + 1}}</th>
         <td>
-          <a :href="computeLinkToPlant(plant)">{{computeScientificName(plant.species_naming)}}</a>
+          <a :href="'pouet'">pouet</a>
         </td>
         <td>{{plant.publication_state}}</td>
         <td>{{plant.created_at | date }}</td>
@@ -48,6 +48,7 @@ import Result from "~/app/utils/useCasesResult/Result";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import PlantUseCase from "~/app/species/plant/useCases/UseCase";
+import Species from "~/app/species/global/entities/Species";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -57,7 +58,7 @@ export default Vue.extend({
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Dashboard plantes', 1)
-    const listOfPlants: Array<string> = []
+    const listOfPlants: Array<Species> = []
     const addPlantButton: BaseButtonModel = new BaseButtonModel('Ajouter une plante', 'success', 'button')
 
     return {
@@ -75,14 +76,6 @@ export default Vue.extend({
       this.listOfPlants = listOfPlants.content
     }
 
-  },
-  methods: {
-    computeScientificName(speciesNaming: Array<string>): string {
-      return speciesNaming.species_family.name + ' ' + speciesNaming.name
-    },
-    computeLinkToPlant(plant: Array<string>): string {
-      return '/species/plant/'+plant.uuid
-    }
   }
 })
 </script>

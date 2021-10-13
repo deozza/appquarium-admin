@@ -22,7 +22,7 @@
       <tr v-for="(fish, index) in listOfFishes" v-bind:key="index">
         <th scope="row">{{index + 1}}</th>
         <td>
-          <a :href="computeLinkToFish(fish)">{{computeScientificName(fish.species_naming)}}</a>
+          <a :href="'pouet'">pouet</a>
         </td>
         <td>{{fish.publication_state}}</td>
         <td>{{fish.created_at | date }}</td>
@@ -49,6 +49,7 @@ import Result from "~/app/utils/useCasesResult/Result";
 import FishUseCase from "~/app/species/fish/useCases/UseCase";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
+import Species from "~/app/species/global/entities/Species";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -58,7 +59,7 @@ export default Vue.extend({
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Dashboard poissons', 1)
-    const listOfFishes: Array<string> = []
+    const listOfFishes: Array<Species> = []
     const addFishButton: BaseButtonModel = new BaseButtonModel('Ajouter un poisson', 'info', 'button')
 
     return {
@@ -76,14 +77,6 @@ export default Vue.extend({
       this.listOfFishes = listOfFishes.content
     }
 
-  },
-  methods: {
-    computeScientificName(speciesNaming: Array<string>): string {
-      return speciesNaming.species_family.name + ' ' + speciesNaming.name
-    },
-    computeLinkToFish(fish: Array<string>): string {
-      return '/species/fish/'+fish.uuid
-    }
   }
 })
 </script>

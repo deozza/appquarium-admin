@@ -22,7 +22,7 @@
       <tr v-for="(invertebrate, index) in listOfInvertebrates" v-bind:key="index">
         <th scope="row">{{index + 1}}</th>
         <td>
-          <a :href="computeLinkToInvertebrate(invertebrate)">{{computeScientificName(invertebrate.species_naming)}}</a>
+          <a :href="'pouet'">pouet</a>
         </td>
         <td>{{invertebrate.publication_state}}</td>
         <td>{{invertebrate.created_at | date }}</td>
@@ -48,6 +48,7 @@ import Result from "~/app/utils/useCasesResult/Result";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import InvertebrateUseCase from "~/app/species/invertebrate/useCases/UseCase";
+import Species from "~/app/species/global/entities/Species";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -57,7 +58,7 @@ export default Vue.extend({
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Dashboard invertébrés', 1)
-    const listOfInvertebrates: Array<string> = []
+    const listOfInvertebrates: Array<Species> = []
     const addInvertebrateButton: BaseButtonModel = new BaseButtonModel('Ajouter un invertébré', 'success', 'button')
 
     return {
@@ -75,14 +76,6 @@ export default Vue.extend({
       this.listOfInvertebrates = listOfInvertebrates.content
     }
 
-  },
-  methods: {
-    computeScientificName(speciesNaming: Array<string>): string {
-      return speciesNaming.species_family.name + ' ' + speciesNaming.name
-    },
-    computeLinkToFish(invertebrate: Array<string>): string {
-      return '/species/invertebrate/'+invertebrate.uuid
-    }
   }
 })
 </script>

@@ -1,6 +1,7 @@
 import AdapterInterface from "~/app/species/global/adapters/AdapterInterface";
 import HasuraClient from "~/app/utils/hasura/HasuraClient";
 import Error from "~/app/utils/useCasesResult/types/Error";
+import Species from "~/app/species/global/entities/Species";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
 
@@ -23,14 +24,14 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     }
   }
 
-  async queryListOfSpecies(): Promise<Array<string> | Error> {
+  async queryListOfSpecies(): Promise<Array<Species> | Error> {
     const query: string = `query{
       species {
         category
         publication_state
         updated_at
         species_naming {
-          species_family {
+          species_genre {
             name
           }
           name
@@ -41,7 +42,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     `
     try {
       const data = await this.client.request(query)
-      const listOfSpecies: Array<string> = data.species
+      const listOfSpecies: Array<Species> = data.species.map((item: Array<string>) => new Species(item))
       return listOfSpecies
     }
     catch (e) {
@@ -140,7 +141,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     }
   }
 
-  async queryListOfSpeciesByCategory(category: string): Promise<Array<string> | Error> {
+  async queryListOfSpeciesByCategory(category: string): Promise<Array<Species> | Error> {
     const query: string = `query($category: species_categories_enum) {
       species(where: {category: {_eq: $category}}, order_by: {updated_at: desc}) {
         updated_at
@@ -148,7 +149,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
         uuid
         species_naming {
           name
-          species_family {
+          species_genre {
             name
           }
         }
@@ -160,7 +161,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
         category: category
       })
 
-      return data.species
+      const listOfSpecies: Array<Species> = data.species.map((item: Array<string>) => new Species(item))
+      return listOfSpecies
     }
     catch (e) {
       if(e.message.includes("JWTExpired")){
