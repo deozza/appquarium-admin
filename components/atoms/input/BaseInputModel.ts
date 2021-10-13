@@ -45,4 +45,8 @@ export default class BaseInputModele{
 
         this.error = ''
     }
+
+  toJSON () {
+    return { ...this } // here I make a POJO's copy of the class instance
+  }
 }

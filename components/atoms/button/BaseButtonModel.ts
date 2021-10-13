@@ -71,4 +71,8 @@ export default class BaseButtonModel {
         this.isRound = isRound
         this.event = 'buttonIsClicked'
     }
+
+  toJSON () {
+    return { ...this } // here I make a POJO's copy of the class instance
+  }
 }
