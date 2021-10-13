@@ -23,22 +23,18 @@ export default class Species {
     this.category = species.hasOwnProperty('category') ? species['category'] : ''
   }
 
-  public toJSON() {
-    return Object.getOwnPropertyNames(this).reduce((a, b) => {
-      a[b] = this[b];
-      return a;
-    }, {});
+  toJSON () {
+    return { ...this } // here I make a POJO's copy of the class instance
   }
 
-  public computeLinkToSpecies() {
+  public computeLinkToSpecies(): string {
     return '/species/'+this.category+'/'+this.uuid
   }
 
-  public computeName(){
-    if(this.species_naming !== null){
+  public computeName(): string {
+    if(this.species_naming !== null && this.species_naming.species_genre !== null){
       return this.species_naming.species_genre?.name + " " + this.species_naming.name
-    }else{
-      return "NA"
     }
+    return 'NA'
   }
 }

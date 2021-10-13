@@ -22,10 +22,10 @@
       <tr v-for="(fish, index) in listOfFishes" v-bind:key="index">
         <th scope="row">{{index + 1}}</th>
         <td>
-          <a :href="'pouet'">pouet</a>
+          <a :href="computeLinkToSpecies(fish)">{{computeName(fish)}}</a>
         </td>
         <td>{{fish.publication_state}}</td>
-        <td>{{fish.created_at | date }}</td>
+        <td>{{fish.created_at  }}</td>
       </tr>
       </tbody>
     </table>
@@ -42,7 +42,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import BaseStats from "~/components/molecules/pages/index/stats/BaseStats.vue";
 import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
 import Result from "~/app/utils/useCasesResult/Result";
@@ -60,7 +59,7 @@ export default Vue.extend({
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Dashboard poissons', 1)
     const listOfFishes: Array<Species> = []
-    const addFishButton: BaseButtonModel = new BaseButtonModel('Ajouter un poisson', 'info', 'button')
+    const addFishButton: BaseButtonModel = new BaseButtonModel('Ajouter un poisson', 'success', 'button')
 
     return {
       header: header,
@@ -74,9 +73,20 @@ export default Vue.extend({
 
     const listOfFishes: Result = await fishUseCase.getListOfFishes(jwt)
     if(listOfFishes.isSuccessful()){
-      this.listOfFishes = listOfFishes.content
+      listOfFishes.content.forEach((item: Species) => this.listOfFishes.push(item))
     }
 
+  },
+  methods : {
+    computeLinkToSpecies(species: Species): string {
+      return '/species/'+species.category+'/'+species.uuid
+    },
+    computeName(species: Species): string{
+      if(species.species_naming !== null && species.species_naming.species_genre !== null){
+        return species.species_naming.species_genre?.name + " " + species.species_naming.name
+      }
+      return 'NA'
+    }
   }
 })
 </script>

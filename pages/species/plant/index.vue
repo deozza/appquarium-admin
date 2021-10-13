@@ -22,10 +22,10 @@
       <tr v-for="(plant, index) in listOfPlants" v-bind:key="index">
         <th scope="row">{{index + 1}}</th>
         <td>
-          <a :href="'pouet'">pouet</a>
+          <a :href="computeLinkToSpecies(plant)">{{computeName(plant)}}</a>
         </td>
         <td>{{plant.publication_state}}</td>
-        <td>{{plant.created_at | date }}</td>
+        <td>{{plant.created_at }}</td>
       </tr>
       </tbody>
     </table>
@@ -73,9 +73,20 @@ export default Vue.extend({
 
     const listOfPlants: Result = await plantUseCase.getListOfPlants(jwt)
     if(listOfPlants.isSuccessful()){
-      this.listOfPlants = listOfPlants.content
+      listOfPlants.content.forEach((item: Species) => this.listOfPlants.push(item))
     }
 
+  },
+  methods : {
+    computeLinkToSpecies(species: Species): string {
+      return '/species/'+species.category+'/'+species.uuid
+    },
+    computeName(species: Species): string{
+      if(species.species_naming !== null && species.species_naming.species_genre !== null){
+        return species.species_naming.species_genre?.name + " " + species.species_naming.name
+      }
+      return 'NA'
+    }
   }
 })
 </script>
