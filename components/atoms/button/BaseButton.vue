@@ -70,6 +70,8 @@ export default Vue.extend( {
         transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
         border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
         -webkit-box-shadow 0.15s ease-in-out;
+        box-shadow: 5px 5px 5px grey;
+
     }
 
     button.btn[disabled] {

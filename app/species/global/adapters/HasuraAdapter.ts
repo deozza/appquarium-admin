@@ -2,6 +2,8 @@ import AdapterInterface from "~/app/species/global/adapters/AdapterInterface";
 import HasuraClient from "~/app/utils/hasura/HasuraClient";
 import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
+import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
+import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
 
@@ -76,17 +78,19 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     }
   }
 
-  async queryListOfSpeciesFamilies(): Promise<Array<string> | Error> {
-    const query: string = `query {
-        species_family {
+  async queryListOfSpeciesFamiliesByCategory(category: string): Promise<Array<SpeciesFamily> | Error> {
+    const query: string = `query($category: species_categories_enum) {
+        species_family(where: {category: {_eq: $category}}) {
           name
           uuid
         }
       }
     `
     try {
-      const data = await this.client.request(query)
-      const listOfSpeciesFamilies: Array<string> = data.species_family
+      const data = await this.client.request(query,{
+        category: category
+      })
+      const listOfSpeciesFamilies: Array<SpeciesGenre> = data.species_family.map((item: Array<string>) => new SpeciesFamily(item))
       return listOfSpeciesFamilies
     }
     catch (e) {
@@ -98,17 +102,19 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     }
   }
 
-  async queryListOfSpeciesGenres(): Promise<Array<string> | Error> {
-    const query: string = `query {
-      species_genre {
+  async queryListOfSpeciesGenresByCategory(category: string): Promise<Array<SpeciesGenre> | Error> {
+    const query: string = `query($category: species_categories_enum) {
+      species_genre(where: {category: {_eq: $category}}) {
           name
           uuid
         }
       }
     `
     try {
-      const data = await this.client.request(query)
-      const listOfSpeciesGenres: Array<string> = data.species_genre
+      const data = await this.client.request(query,{
+        category: category
+      })
+      const listOfSpeciesGenres: Array<SpeciesGenre> = data.species_genre.map((item: Array<string>) => new SpeciesGenre(item))
       return listOfSpeciesGenres
     }
     catch (e) {

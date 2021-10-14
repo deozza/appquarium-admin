@@ -111,16 +111,5 @@ export default Vue.extend({
 
 <style scoped>
 
-div#content {
-  width: 100%;
-}
 
-div#content > table {
-  width: 90%;
-  margin-bottom: 64px;
-}
-
-div#content > div.flex-row {
-  width: 70%;
-}
 </style>

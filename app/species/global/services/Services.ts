@@ -23,18 +23,9 @@ export default class Services implements ServicesInterface {
     return await adapter.queryListOfSpeciesCategories()
   }
 
-  async querySpeciesFamilies(jwt: string): Promise<Array<string> | Error> {
-    const adapter: AdapterInterface = new HasuraAdapter(jwt)
-
-    return await adapter.queryListOfSpeciesFamilies()  }
-
-  async querySpeciesGenres(jwt: string): Promise<Array<string> | Error> {
-    const adapter: AdapterInterface = new HasuraAdapter(jwt)
-
-    return await adapter.queryListOfSpeciesGenres()  }
-
   async querySpeciesOrigins(jwt: string): Promise<Array<string> | Error> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
-    return await adapter.queryListOfSpeciesOrigins()  }
+    return await adapter.queryListOfSpeciesOrigins()
+  }
 }

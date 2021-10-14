@@ -1,6 +1,6 @@
 import User from "~/app/user/entities/User";
 
-export default class FishInit {
+export default class PlantInit {
   uuid: string
   owner: User
   origin: string
@@ -12,7 +12,7 @@ export default class FishInit {
 
   public constructor(owner: User) {
     this.publication_state = 'DRAFT'
-    this.species_category = 'fish'
+    this.species_category = 'plant'
     this.owner = owner
     this.origin = ''
     this.name = ''

@@ -9,26 +9,30 @@
     <p >Une erreur est survenue :(</p>
   </div>
   <div class="flex-column" id="content" v-else>
-    <table>
-      <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Nom scientifique</th>
-        <th scope="col">Etat</th>
-        <th scope="col">Créé le</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(fish, index) in listOfFishes" v-bind:key="index">
-        <td>{{index + 1}}</td>
-        <td>
-          <a :href="computeLinkToSpecies(fish)">{{computeName(fish)}}</a>
-        </td>
-        <td>{{fish.publication_state}}</td>
-        <td>{{fish.created_at  }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <BaseCard>
+      <template slot="body">
+      <table>
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nom scientifique</th>
+          <th scope="col">Etat</th>
+          <th scope="col">Créé le</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(fish, index) in listOfFishes" v-bind:key="index">
+          <td>{{index + 1}}</td>
+          <td>
+            <a :href="computeLinkToSpecies(fish)">{{computeName(fish)}}</a>
+          </td>
+          <td>{{fish.publication_state}}</td>
+          <td>{{fish.created_at  }}</td>
+        </tr>
+        </tbody>
+      </table>
+      </template>
+    </BaseCard>
 
     <div class="flex-row flex-around">
       <a href="/species/fish/add">
@@ -49,12 +53,14 @@ import FishUseCase from "~/app/species/fish/useCases/UseCase";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import Species from "~/app/species/global/entities/Species";
+import BaseCard from "~/components/molecules/card/BaseCard.vue";
 
 export default Vue.extend({
   middleware: 'authenticated',
   components: {
     BaseHeader,
-    BaseButton
+    BaseButton,
+    BaseCard
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Dashboard poissons', 1)
@@ -92,16 +98,5 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-div#content {
-  width: 100%;
-}
 
-div#content > table {
-  width: 90%;
-  margin-bottom: 64px;
-}
-
-div#content > div.flex-row {
-  width: 70%;
-}
 </style>

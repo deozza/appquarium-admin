@@ -5,6 +5,8 @@ import HasuraAdapter from "~/app/species/fish/adapters/HasuraAdapter";
 import SpeciesHasuraAdapter  from "~/app/species/global/adapters/HasuraAdapter";
 import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
+import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
+import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 
 export default class Services implements ServicesInterface {
 
@@ -12,6 +14,18 @@ export default class Services implements ServicesInterface {
     const adapter: SpeciesHasuraAdapter = new SpeciesHasuraAdapter(jwt)
 
     return await adapter.queryListOfSpeciesByCategory("fish")
+  }
+
+  async queryFishFamilies(jwt: string): Promise<Array<SpeciesFamily> | Error> {
+    const adapter: SpeciesHasuraAdapter = new SpeciesHasuraAdapter(jwt)
+
+    return await adapter.queryListOfSpeciesFamiliesByCategory('fish')
+  }
+
+  async queryFishGenres(jwt: string): Promise<Array<SpeciesGenre> | Error> {
+    const adapter: SpeciesHasuraAdapter = new SpeciesHasuraAdapter(jwt)
+
+    return await adapter.queryListOfSpeciesGenresByCategory('fish')
   }
 
   async queryCreateNewFish(newFish: FishInit): Promise<string | Error> {

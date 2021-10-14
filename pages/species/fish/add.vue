@@ -1,12 +1,19 @@
 <template>
 <main>
-  <div class="flex-column">
-    <p v-if="$fetchState.pending">Récupération des infos️</p>
-    <p v-else-if="$fetchState.error">Une erreur est survenue :(</p>
-    <section v-else id="add">
-      <div class="flex-column">
-        <BaseHeader :base-header-model="header" />
+  <BaseHeader :base-header-model="header" />
+
+  <div id="loading" v-if="$fetchState.pending">
+    <p >Récupération des infos️</p>
+  </div>
+  <div id="error" v-else-if="$fetchState.error">
+    <p >Une erreur est survenue :(</p>
+  </div>
+  <div class="flex-column" id="add" v-else>
+    <BaseCard>
+      <template slot="header">
         <BaseHeader :base-header-model="stepHeaders[currentStep]" />
+      </template>
+      <template slot="body">
         <form v-on:submit.prevent="createNewFish()">
           <div class="flex-column">
 
@@ -16,7 +23,7 @@
                   <label for="speciesFamily">Famille <span class="required-field">*</span></label>
                   <select name="speciesFamily" id="speciesFamily" v-model="newFish.family">
                     <option value=""></option>
-                    <option v-for="(family, index) in speciesFamilies" :value="family.uuid" v-bind:key="index">{{family.name}}</option>
+                    <option v-for="(family, index) in fishFamilies" :value="family.uuid" v-bind:key="index">{{family.name}}</option>
                   </select>
                   <span>OU nouvelle famille</span>
                   <input type="text">
@@ -27,7 +34,7 @@
                   <label for="speciesGenre">Genre <span class="required-field">*</span></label>
                   <select name="speciesGenre" id="speciesGenre" v-model="newFish.genre">
                     <option value=""></option>
-                    <option v-for="(genre, index) in speciesGenres" :value="genre.uuid" v-bind:key="index">{{genre.name}}</option>
+                    <option v-for="(genre, index) in fishGenres" :value="genre.uuid" v-bind:key="index">{{genre.name}}</option>
                   </select>
                   <span>OU nouveau genre</span>
                   <input type="text">
@@ -53,8 +60,9 @@
           </div>
 
         </form>
-      </div>
-    </section>
+      </template>
+    </BaseCard>
+
   </div>
 </main>
 </template>
@@ -72,12 +80,14 @@ import FishUseCase from "~/app/species/fish/useCases/UseCase";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import User from "~/app/user/entities/User";
 import FishInit from "~/app/species/fish/entities/FishInit";
+import BaseCard from "~/components/molecules/card/BaseCard.vue";
 
 export default Vue.extend({
   middleware: 'authenticated',
   components: {
     BaseHeader,
-    BaseButton
+    BaseButton,
+    BaseCard
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel("Ajouter une espèce de poisson", 1)
@@ -87,7 +97,7 @@ export default Vue.extend({
       WATER_CONSTRAINTS
     }
 
-    const firstStepHeader: BaseHeaderModel = new BaseHeaderModel("Etape 1 - description", 2)
+    const firstStepHeader: BaseHeaderModel = new BaseHeaderModel("Etape 1 - description", 2, 'dark')
     const secondStepHeader: BaseHeaderModel = new BaseHeaderModel("Etape 2 - contraintes d'eau", 2)
     const stepHeaders = [
       firstStepHeader,
@@ -96,8 +106,8 @@ export default Vue.extend({
 
     const currentStep = STEPS.DESCRIPTION
 
-    const speciesGenres: Array<any> = []
-    const speciesFamilies: Array<any> = []
+    const fishGenres: Array<any> = []
+    const fishFamilies: Array<any> = []
     const speciesOrigins: Array<any> = []
 
     const nextButton: BaseButtonModel = new BaseButtonModel('Suivant', 'success', 'submit')
@@ -110,8 +120,8 @@ export default Vue.extend({
       header: header,
       currentStep: currentStep,
       stepHeaders: stepHeaders,
-      speciesGenres: speciesGenres,
-      speciesFamilies: speciesFamilies,
+      fishGenres: fishGenres,
+      fishFamilies: fishFamilies,
       speciesOrigins: speciesOrigins,
       nextButton: nextButton,
       newFish: newFish,
@@ -119,12 +129,12 @@ export default Vue.extend({
     }
   },
   async fetch(){
-    const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+    const fishUseCase: FishUseCase = new FishUseCase()
     const jwt: string = this.$cookies.get('appquarium-jwt')
 
-    const speciesGenres: Result = await speciesUseCase.getSpeciesGenres(jwt)
-    if(speciesGenres.isFailed()){
-      for(const error of speciesGenres.errors) {
+    const fishGenres: Result = await fishUseCase.getFishGenres(jwt)
+    if(fishGenres.isFailed()){
+      for(const error of fishGenres.errors) {
         if (error.code === 401) {
           this.$cookies.remove('appquarium-jwt')
           await this.$router.push('/login')
@@ -132,11 +142,11 @@ export default Vue.extend({
       }
       return
     }
-    this.speciesGenres = speciesGenres.content
+    this.fishGenres = fishGenres.content
 
-    const speciesFamilies: Result = await speciesUseCase.getSpeciesFamilies(jwt)
-    if(speciesFamilies.isFailed() ){
-      for(const error of speciesFamilies.errors) {
+    const fishFamilies: Result = await fishUseCase.getFishFamilies(jwt)
+    if(fishFamilies.isFailed() ){
+      for(const error of fishFamilies.errors) {
         if (error.code === 401) {
           this.$cookies.remove('appquarium-jwt')
           await this.$router.push('/login')
@@ -144,7 +154,9 @@ export default Vue.extend({
       }
       return
     }
-    this.speciesFamilies = speciesFamilies.content
+    this.fishFamilies = fishFamilies.content
+
+    const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
     const speciesOrigins: Result = await speciesUseCase.getSpeciesOrigins(jwt)
     if(speciesOrigins.isFailed()){
@@ -178,12 +190,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-form{
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 10px;
-  padding: 24px;
-}
 
 form > div.flex-column > ul {
   width: 90%;
@@ -206,7 +212,7 @@ li > div.input-row > label {
 
 @media only screen and (min-width: 1024px) {
   form {
-    width: 50vw;
+    width: 98%;
     min-height: 33vh;
   }
 }

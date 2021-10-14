@@ -1,22 +1,29 @@
 <template>
 <main>
-  <div class="flex-column">
-    <p v-if="$fetchState.pending">Récupération des infos️</p>
-    <p v-else-if="$fetchState.error">Une erreur est survenue :(</p>
-    <section v-else id="add">
-      <div class="flex-column">
-        <BaseHeader :base-header-model="header" />
+  <BaseHeader :base-header-model="header" />
+
+  <div id="loading" v-if="$fetchState.pending">
+    <p >Récupération des infos️</p>
+  </div>
+  <div id="error" v-else-if="$fetchState.error">
+    <p >Une erreur est survenue :(</p>
+  </div>
+  <div class="flex-column" id="add" v-else>
+    <BaseCard>
+      <template slot="header">
         <BaseHeader :base-header-model="stepHeaders[currentStep]" />
-        <form v-on:submit.prevent="createNewFish()">
+      </template>
+      <template slot="body">
+        <form v-on:submit.prevent="createNewPlant()">
           <div class="flex-column">
 
             <ul>
               <li class="flex-column">
                 <div class="flex-row input-row">
                   <label for="speciesFamily">Famille <span class="required-field">*</span></label>
-                  <select name="speciesFamily" id="speciesFamily" v-model="newFish.family">
+                  <select name="speciesFamily" id="speciesFamily" v-model="newPlant.family">
                     <option value=""></option>
-                    <option v-for="(family, index) in speciesFamilies" :value="family.uuid" v-bind:key="index">{{family.name}}</option>
+                    <option v-for="(family, index) in plantFamilies" :value="family.uuid" v-bind:key="index">{{family.name}}</option>
                   </select>
                   <span>OU nouvelle famille</span>
                   <input type="text">
@@ -25,9 +32,9 @@
               <li class="flex-column">
                 <div class="flex-row input-row">
                   <label for="speciesGenre">Genre <span class="required-field">*</span></label>
-                  <select name="speciesGenre" id="speciesGenre" v-model="newFish.genre">
+                  <select name="speciesGenre" id="speciesGenre" v-model="newPlant.genre">
                     <option value=""></option>
-                    <option v-for="(genre, index) in speciesGenres" :value="genre.uuid" v-bind:key="index">{{genre.name}}</option>
+                    <option v-for="(genre, index) in plantGenres" :value="genre.uuid" v-bind:key="index">{{genre.name}}</option>
                   </select>
                   <span>OU nouveau genre</span>
                   <input type="text">
@@ -36,13 +43,13 @@
               <li class="flex-column">
                 <div class="flex-row input-row">
                   <label for="speciesName">Nom de l'espèce <span class="required-field">*</span></label>
-                  <input type="text" id="speciesName" v-model="newFish.name">
+                  <input type="text" id="speciesName" v-model="newPlant.name">
                 </div>
               </li>
               <li class="flex-column">
                 <div class="flex-row input-row">
                   <label for="speciesOrigin">Origine <span class="required-field">*</span></label>
-                  <select name="speciesOrigin" id="speciesOrigin" v-model="newFish.origin">
+                  <select name="speciesOrigin" id="speciesOrigin" v-model="newPlant.origin">
                     <option value=""></option>
                     <option v-for="(origin, index) in speciesOrigins" :value="origin.name" v-bind:key="index">{{origin.name}}</option>
                   </select>
@@ -53,8 +60,8 @@
           </div>
 
         </form>
-      </div>
-    </section>
+      </template>
+    </BaseCard>
   </div>
 </main>
 </template>
@@ -72,15 +79,19 @@ import FishUseCase from "~/app/species/fish/useCases/UseCase";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import User from "~/app/user/entities/User";
 import FishInit from "~/app/species/fish/entities/FishInit";
+import PlantInit from "~/app/species/plant/entities/PlantInit";
+import PlantUseCase from "~/app/species/plant/useCases/UseCase";
+import BaseCard from "~/components/molecules/card/BaseCard.vue";
 
 export default Vue.extend({
   middleware: 'authenticated',
   components: {
     BaseHeader,
-    BaseButton
+    BaseButton,
+    BaseCard
   },
   data(){
-    const header: BaseHeaderModel = new BaseHeaderModel("Ajouter une espèce de poisson", 1)
+    const header: BaseHeaderModel = new BaseHeaderModel("Ajouter une espèce de plante", 1)
 
     enum STEPS {
       DESCRIPTION,
@@ -96,35 +107,36 @@ export default Vue.extend({
 
     const currentStep = STEPS.DESCRIPTION
 
-    const speciesGenres: Array<any> = []
-    const speciesFamilies: Array<any> = []
+    const plantGenres: Array<any> = []
+    const plantFamilies: Array<any> = []
     const speciesOrigins: Array<any> = []
 
     const nextButton: BaseButtonModel = new BaseButtonModel('Suivant', 'success', 'submit')
 
     const jwt: string = this.$cookies.get('appquarium-jwt')
     const user: User = new User('', '', jwt, '')
-    const newFish = new FishInit(user)
+    const newPlant = new PlantInit(user)
 
     return {
       header: header,
       currentStep: currentStep,
       stepHeaders: stepHeaders,
-      speciesGenres: speciesGenres,
-      speciesFamilies: speciesFamilies,
+      plantGenres: plantGenres,
+      plantFamilies: plantFamilies,
       speciesOrigins: speciesOrigins,
       nextButton: nextButton,
-      newFish: newFish,
+      newPlant: newPlant,
       STEPS: STEPS
     }
   },
   async fetch(){
     const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+    const plantUseCase: PlantUseCase = new PlantUseCase()
     const jwt: string = this.$cookies.get('appquarium-jwt')
 
-    const speciesGenres: Result = await speciesUseCase.getSpeciesGenres(jwt)
-    if(speciesGenres.isFailed()){
-      for(const error of speciesGenres.errors) {
+    const plantGenres: Result = await plantUseCase.getPlantGenres(jwt)
+    if(plantGenres.isFailed()){
+      for(const error of plantGenres.errors) {
         if (error.code === 401) {
           this.$cookies.remove('appquarium-jwt')
           await this.$router.push('/login')
@@ -132,11 +144,11 @@ export default Vue.extend({
       }
       return
     }
-    this.speciesGenres = speciesGenres.content
+    this.plantGenres = plantGenres.content
 
-    const speciesFamilies: Result = await speciesUseCase.getSpeciesFamilies(jwt)
-    if(speciesFamilies.isFailed() ){
-      for(const error of speciesFamilies.errors) {
+    const plantFamilies: Result = await plantUseCase.getPlantFamilies(jwt)
+    if(plantFamilies.isFailed() ){
+      for(const error of plantFamilies.errors) {
         if (error.code === 401) {
           this.$cookies.remove('appquarium-jwt')
           await this.$router.push('/login')
@@ -144,7 +156,7 @@ export default Vue.extend({
       }
       return
     }
-    this.speciesFamilies = speciesFamilies.content
+    this.plantFamilies = plantFamilies.content
 
     const speciesOrigins: Result = await speciesUseCase.getSpeciesOrigins(jwt)
     if(speciesOrigins.isFailed()){
@@ -159,13 +171,13 @@ export default Vue.extend({
     this.speciesOrigins = speciesOrigins.content
   },
   methods: {
-    async createNewFish(){
+    async createNewPlant(){
       this.nextButton.isLoading = true
 
-      const fishUseCase: FishUseCase = new FishUseCase()
+      const plantUseCase: PlantUseCase = new PlantUseCase()
 
-      const fishCreation: Result = await fishUseCase.createNewFish(this.newFish)
-      if(fishCreation.isFailed()){
+      const plantCreation: Result = await plantUseCase.createNewPlant(this.newPlant)
+      if(plantCreation.isFailed()){
         this.nextButton.isLoading = false
         return
       }
@@ -178,13 +190,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-form{
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 10px;
-  padding: 24px;
-}
-
 form > div.flex-column > ul {
   width: 90%;
 }
@@ -206,7 +211,7 @@ li > div.input-row > label {
 
 @media only screen and (min-width: 1024px) {
   form {
-    width: 50vw;
+    width: 98%;
     min-height: 33vh;
   }
 }

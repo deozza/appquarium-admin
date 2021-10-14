@@ -4,4 +4,7 @@ import Result from "~/app/utils/useCasesResult/Result";
 export default interface UseCaseInterface {
   createNewFish(newFish: FishInit): Promise<Result>
   getListOfFishes(jwt: string): Promise<Result>
+  getFishGenres(jwt: string): Promise<Result>
+  getFishFamilies(jwt: string): Promise<Result>
+
 }
