@@ -56,6 +56,62 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     }
   }
 
+  async queryGetSpecies(uuid: string): Promise<Species | Error> {
+    const query: string = `query($uuid: uuid!) {
+        species_by_pk(uuid: $uuid) {
+          uuid
+          created_at
+          updated_at
+          category
+          origin
+          publication_state
+          species_naming {
+            common_names
+            created_at
+            name
+            old_names
+            updated_at
+            uuid
+            species_family {
+              name
+              uuid
+            }
+            species_genre {
+              name
+              uuid
+            }
+          }
+          water_constraint {
+            created_at
+            gh_max
+            gh_min
+            ph_max
+            ph_min
+            temp_max
+            temp_min
+            updated_at
+            uuid
+          }
+        }
+      }
+    `
+    try {
+      const data = await this.client.request(query,{
+        uuid: uuid
+      })
+
+      const species: Species = new Species(data.species_by_pk)
+      return species
+    }
+    catch (e) {
+      if(e.message.includes("JWTExpired")){
+        return new Error("JWT expired", 401)
+
+      }
+      return new Error(e.message, 400)
+    }
+  }
+
 
   async queryListOfSpeciesCategories(): Promise<Array<string> | Error> {
     const query: string = `query {
@@ -150,9 +206,10 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   async queryListOfSpeciesByCategory(category: string): Promise<Array<Species> | Error> {
     const query: string = `query($category: species_categories_enum) {
       species(where: {category: {_eq: $category}}, order_by: {updated_at: desc}) {
-        updated_at
-        publication_state
         uuid
+        updated_at
+        category
+        publication_state
         species_naming {
           name
           species_genre {

@@ -73,7 +73,6 @@ import Vue from 'vue'
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
 import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
-import BaseInput from "~/components/atoms/input/BaseInput.vue";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
 import FishUseCase from "~/app/species/fish/useCases/UseCase";

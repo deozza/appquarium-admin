@@ -6,6 +6,7 @@ import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 export default interface AdapterInterface {
   queryTotalSpecies(): Promise<number | null>
   queryListOfSpecies(): Promise<Array<Species> | Error>
+  queryGetSpecies(uuid: string): Promise<Species | Error>
   queryListOfSpeciesCategories(): Promise<Array<string> | Error>
   queryListOfSpeciesFamiliesByCategory(category: string): Promise<Array<SpeciesFamily> | Error>
   queryListOfSpeciesGenresByCategory(category: string): Promise<Array<SpeciesGenre> | Error>

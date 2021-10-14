@@ -12,6 +12,9 @@ export default class Species {
   category: string
 
   constructor(species: Array<string>) {
+
+    console.log(species)
+
     this.uuid = species.hasOwnProperty('uuid') ? species['uuid'] : ''
     this.created_at = species.hasOwnProperty('created_at') ? species['created_at'] : ''
     this.updated_at = species.hasOwnProperty('updated_at') ? species['updated_at'] : ''
