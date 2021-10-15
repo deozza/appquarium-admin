@@ -28,6 +28,30 @@ export default class UserUseCase implements UseCaseInterface {
     return result
   }
 
+  async checkTokenIsValidOrRefresh(token: string): Promise<Result> {
+    const userServices: Services = new Services(this.module)
+    let result: Result = new Result()
+
+    const tokenDecodablePart = token.split('.')[1]
+    const decoded = JSON.parse(Buffer.from(tokenDecodablePart, 'base64').toString())
+
+    if(Date.now() < decoded.exp * 1000){
+      result.addSuccess('Token is valid', 200)
+      return result
+    }
+
+    const refreshedToken : string | null = await userServices.getRefreshedToken()
+
+    if(refreshedToken === null){
+      result.addError('Invalid credentials', 401)
+      return result
+    }
+
+    result.content = refreshedToken
+    result.addSuccess('Token is refreshed', 201)
+    return result
+  }
+
   async getTotalUsers(jwt: string): Promise<Result> {
     const userServices: Services = new Services(null)
     let result: Result = new Result()

@@ -3,6 +3,9 @@ import HasuraClient from "~/app/utils/hasura/HasuraClient";
 import User from "~/app/user/entities/User";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
+  getRefreshedToken(): Promise<string | null> {
+    return Promise.resolve(null);
+  }
 
   constructor(jwt: string) {
     super(jwt);

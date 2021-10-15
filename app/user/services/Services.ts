@@ -20,6 +20,12 @@ export default class Services implements ServicesInterface {
     return await adapter.authenticateWithEmailAndPassword(credentials.email.value, credentials.password.value)
   }
 
+  async getRefreshedToken(): Promise<string | null> {
+    const adapter: AdapterInterface | null = new FirebaseAdapter(this.module)
+
+    return await adapter.getRefreshedToken()
+  }
+
   async queryTotalUsers(jwt: string): Promise<number|null> {
     const adapter: AdapterInterface | null = new HasuraAdapter(jwt)
 

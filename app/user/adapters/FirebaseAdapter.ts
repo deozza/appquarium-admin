@@ -28,4 +28,13 @@ export default class FirebaseAdapter implements AdapterInterface {
     return Promise.resolve(null);
   }
 
+  async getRefreshedToken(): Promise<string | null>{
+    try {
+      return await this.auth.currentUser.getIdToken()
+    }
+    catch (e) {
+      return null
+    }
+  }
+
 }
