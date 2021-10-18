@@ -17,7 +17,7 @@
             <BaseHeader :base-header-model="generalCardHeader"/>
           </template>
           <template slot="body">
-            <GeneralInfoForm :species="fish" />
+            <GeneralInfoForm :species="invertebrate" />
           </template>
         </BaseCard>
         <BaseCard>
@@ -25,7 +25,7 @@
             <BaseHeader :base-header-model="namingCardHeader"/>
           </template>
           <template slot="body">
-            <NamingForm :species="fish" />
+            <NamingForm :species="invertebrate" />
           </template>
         </BaseCard>
         <BaseCard>
@@ -33,7 +33,7 @@
             <BaseHeader :base-header-model="waterConstraintsCardHeader"/>
           </template>
           <template slot="body">
-            <WaterConstraintsForm :species="fish" />
+            <WaterConstraintsForm :species="invertebrate" />
           </template>
         </BaseCard>
       </section>
@@ -73,7 +73,7 @@ export default Vue.extend({
     const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms", 2)
     const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau", 2)
     const statusParagraph: BaseParagraphModel = new BaseParagraphModel("")
-    const fish: Species = new Species([])
+    const invertebrate: Species = new Species([])
 
     return {
       header: header,
@@ -81,7 +81,7 @@ export default Vue.extend({
       namingCardHeader: namingCardHeader,
       waterConstraintsCardHeader: waterConstraintsCardHeader,
       statusParagraph: statusParagraph,
-      fish: fish
+      invertebrate: invertebrate
     }
   },
   async fetch(){
@@ -89,25 +89,25 @@ export default Vue.extend({
     const jwt: string = this.$cookies.get('appquarium-jwt')
     const params = this.$route.params
 
-    const fish: Result = await speciesUseCase.getSpecies(jwt, params.uuid)
-    if(fish.isFailed()){
-      for(const error of fish.errors) {
+    const invertebrate: Result = await speciesUseCase.getSpecies(jwt, params.uuid)
+    if(invertebrate.isFailed()){
+      for(const error of invertebrate.errors) {
         if (error.code === 401) {
           this.$cookies.remove('appquarium-jwt')
           await this.$router.push('/login')
         }
 
         if(error.code === 404){
-          await this.$router.push('/species/fish')
+          await this.$router.push('/species/invertebrate')
         }
       }
       return
     }
 
-    this.fish = fish.content
-    this.header.content = this.fish.computeName()
-    this.statusParagraph.content = this.fish.publication_state
-    switch (this.fish.publication_state) {
+    this.invertebrate = invertebrate.content
+    this.header.content = this.invertebrate.computeName()
+    this.statusParagraph.content = this.invertebrate.publication_state
+    switch (this.invertebrate.publication_state) {
       case 'DRAFT': this.statusParagraph.style = 'info';break;
       case 'PRE_PUBLISHED': this.statusParagraph.style = 'info';break;
       case 'PUBLISHED': this.statusParagraph.style = 'success';break;
