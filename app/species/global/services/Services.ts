@@ -69,8 +69,6 @@ export default class Services implements ServicesInterface {
       return areConstraintsValid.errors
     }
 
-    console.log('after check')
-
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.mutationEditWaterConstraints(waterConstraints)

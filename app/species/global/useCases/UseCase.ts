@@ -99,9 +99,6 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let updatedSpecies: WaterConstraints | Error
 
     if(species.water_constraint.uuid !== ''){
-
-      console.log('in update if')
-
       updatedSpecies = await speciesService.updateWaterConstraints(jwt, species.water_constraint)
     }else{
       const createdWaterConstraintsUuid : string | Array<Error> = await speciesService.createWaterConstraints(jwt, species.uuid, species.water_constraint)

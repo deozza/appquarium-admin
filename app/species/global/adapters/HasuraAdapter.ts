@@ -324,15 +324,9 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
         temp_max: waterConstraints.temp_max,
       })
 
-      console.log('success')
-
       return waterConstraints
     }
     catch (e) {
-      console.log('failed')
-
-      console.log(e.message)
-
       if(e.message.includes("JWTExpired")){
         return new Error("JWT expired", 401)
       }
