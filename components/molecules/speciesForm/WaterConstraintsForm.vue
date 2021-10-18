@@ -1,47 +1,48 @@
 <template>
-  <form action="">
+  <form v-on:submit.prevent="submitWaterConstraints()">
     <div class="flex-column">
       <ul>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="phMin">pH minimum <span class="required-field">*</span></label>
-            <input id="phMin" type="number" step="0.1" min="0" max="14" v-model="species.water_constraints.ph_min">
+            <input id="phMin" type="number" step="0.1" min="0" max="14" v-model="species.water_constraint.ph_min">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="phMax">pH maximum <span class="required-field">*</span></label>
-            <input id="phMax" type="number" step="0.1" min="0" max="14" v-model="species.water_constraints.ph_max">
+            <input id="phMax" type="number" step="0.1" min="0" max="14" v-model="species.water_constraint.ph_max">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="ghMin">GH minimum <span class="required-field">*</span></label>
-            <input id="ghMin" type="number" min="0" max="50" v-model="species.water_constraints.gh_min">
+            <input id="ghMin" type="number" min="0" max="50" v-model="species.water_constraint.gh_min">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="ghMax">GH maximum <span class="required-field">*</span></label>
-            <input id="ghMax" type="number" min="0" max="50" v-model="species.water_constraints.gh_max">
+            <input id="ghMax" type="number" min="0" max="50" v-model="species.water_constraint.gh_max">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="tempMin">Température minimum <span class="required-field">*</span></label>
-            <input id="tempMin" type="number" min="0" max="40" v-model="species.water_constraints.temp_min">
+            <input id="tempMin" type="number" min="0" max="40" v-model="species.water_constraint.temp_min">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="tempMax">Température maximum <span class="required-field">*</span></label>
-            <input id="tempMax" type="number" min="0" max="40" v-model="species.water_constraints.temp_max">
+            <input id="tempMax" type="number" min="0" max="40" v-model="species.water_constraint.temp_max">
           </div>
         </li>
       </ul>
       <BaseButton :base-button-model="submitButton" />
     </div>
   </form>
+
 </template>
 
 <script lang="ts">
@@ -49,6 +50,8 @@
 import Species from "~/app/species/global/entities/Species";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
+import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
+import Result from "~/app/utils/useCasesResult/Result";
 
 export default {
   name: "WaterConstraintsFormVue",
@@ -59,17 +62,40 @@ export default {
     species: {
       type: Species,
       required: true
+    },
+    jwt: {
+      type: String,
+      required: true
     }
   },
   data() {
     const submitButton : BaseButtonModel = new BaseButtonModel('Ajouter', 'success', 'submit')
-    if(this.species.water_constraints.uuid !== ''){
+    if(this.species.water_constraint.uuid !== ''){
       submitButton.content = 'Modifier'
       submitButton.style = 'warning'
     }
 
     return {
       submitButton: submitButton
+    }
+  },
+  methods: {
+    async submitWaterConstraints() {
+      this.submitButton.isLoading = true
+
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+      const result: Result = await speciesUseCase.addOrEditWaterConstraints(this.jwt, this.species)
+
+      if(result.isFailed()){
+        console.log(result.content)
+      }
+
+      if(this.submitButton.style === 'success'){
+        this.submitButton.style = 'warning'
+        this.submitButton.content = 'Modifier'
+      }
+
+      this.submitButton.isLoading = false
     }
   }
 }

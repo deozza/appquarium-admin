@@ -3,6 +3,7 @@ import Result from "~/app/utils/useCasesResult/Result";
 import Services from "~/app/species/global/services/Services";
 import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
+import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 
 export default class SpeciesUseCase implements UseCaseInterface{
   async getTotalSpecies(jwt: string): Promise<Result> {
@@ -92,5 +93,37 @@ export default class SpeciesUseCase implements UseCaseInterface{
     return result
   }
 
+  async addOrEditWaterConstraints(jwt: string, species: Species): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+    let updatedSpecies: WaterConstraints | Error
+
+    if(species.water_constraint.uuid !== ''){
+
+      console.log('in update if')
+
+      updatedSpecies = await speciesService.updateWaterConstraints(jwt, species.water_constraint)
+    }else{
+      const createdWaterConstraintsUuid : string | Array<Error> = await speciesService.createWaterConstraints(jwt, species.uuid, species.water_constraint)
+
+      if(typeof createdWaterConstraintsUuid !== 'string'){
+        result.errors = createdWaterConstraintsUuid
+        return result
+      }
+
+      species.water_constraint.uuid = createdWaterConstraintsUuid
+
+      updatedSpecies = await speciesService.addWaterConstraintsToSpecies(jwt, species.uuid, species.water_constraint)
+    }
+
+    if(updatedSpecies instanceof Error) {
+      result.errors.push(updatedSpecies)
+      return result
+    }
+
+    result.addSuccess('Query is OK', 201)
+    return result
+
+  }
 
 }

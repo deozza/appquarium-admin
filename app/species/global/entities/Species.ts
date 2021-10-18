@@ -7,7 +7,7 @@ export default class Species {
   updated_at: Date
   user: string
   species_naming: SpeciesNaming
-  water_constraints: WaterConstraints
+  water_constraint: WaterConstraints
   origin: string
   publication_state: string
   category: string
@@ -18,7 +18,7 @@ export default class Species {
     this.updated_at = species.hasOwnProperty('updated_at') ? species['updated_at'] : ''
     this.user = species.hasOwnProperty('user') ? species['user'] : ''
     this.species_naming = species.hasOwnProperty('species_naming') && species['species_naming'] !== null ? new SpeciesNaming(species['species_naming']) : new SpeciesNaming([])
-    this.water_constraints = species.hasOwnProperty('water_constraints') && species['water_constraints'] !== null ? new WaterConstraints(species['water_constraints']) : new  WaterConstraints([])
+    this.water_constraint = species.hasOwnProperty('water_constraint') && species['water_constraint'] !== null ? new WaterConstraints(species['water_constraint']) : new  WaterConstraints([])
     this.origin = species.hasOwnProperty('origin') ? species['origin'] : ''
     this.publication_state = species.hasOwnProperty('publication_state') ? species['publication_state'] : ''
     this.category = species.hasOwnProperty('category') ? species['category'] : ''

@@ -10,6 +10,9 @@
   </div>
   <div class="flex-column" id="content" v-else>
     <BaseCard>
+      <template slot="header">
+        <BaseHeader :base-header-model="allFishesCardHeader" />
+      </template>
       <template slot="body">
       <table>
         <thead>
@@ -64,11 +67,13 @@ export default Vue.extend({
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel('Dashboard poissons', 1)
+    const allFishesCardHeader = new BaseHeaderModel('Tous les poissons', 2)
     const listOfFishes: Array<Species> = []
     const addFishButton: BaseButtonModel = new BaseButtonModel('Ajouter un poisson', 'success', 'button')
 
     return {
       header: header,
+      allFishesCardHeader: allFishesCardHeader,
       addFishButton: addFishButton,
       listOfFishes: listOfFishes
     }

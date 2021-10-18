@@ -33,7 +33,7 @@
             <BaseHeader :base-header-model="waterConstraintsCardHeader"/>
           </template>
           <template slot="body">
-            <WaterConstraintsForm :species="fish" />
+            <WaterConstraintsForm :species="fish" :jwt="jwt"/>
           </template>
         </BaseCard>
       </section>
@@ -74,6 +74,7 @@ export default Vue.extend({
     const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau", 2)
     const statusParagraph: BaseParagraphModel = new BaseParagraphModel("")
     const fish: Species = new Species([])
+    const jwt: string = this.$cookies.get('appquarium-jwt')
 
     return {
       header: header,
@@ -81,15 +82,15 @@ export default Vue.extend({
       namingCardHeader: namingCardHeader,
       waterConstraintsCardHeader: waterConstraintsCardHeader,
       statusParagraph: statusParagraph,
-      fish: fish
+      fish: fish,
+      jwt: jwt
     }
   },
   async fetch(){
     const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
-    const jwt: string = this.$cookies.get('appquarium-jwt')
     const params = this.$route.params
 
-    const fish: Result = await speciesUseCase.getSpecies(jwt, params.uuid)
+    const fish: Result = await speciesUseCase.getSpecies(this.jwt, params.uuid)
     if(fish.isFailed()){
       for(const error of fish.errors) {
         if (error.code === 401) {
