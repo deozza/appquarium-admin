@@ -100,7 +100,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   }
 
   async queryListOfSpeciesFamiliesByCategory(category: string): Promise<Array<SpeciesFamily> | Error> {
-    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('species_category_enum')
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('species_family')
     queryBuilder.addReturn('uuid', 'name', 'category', 'user')
     queryBuilder.addParam('$category', 'species_categories_enum', category)
     queryBuilder.addWhere('category', '_eq', '$category')
@@ -116,14 +116,13 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     catch (e) {
       if(e.message.includes("JWTExpired")){
         return new Error("JWT expired", 401)
-
       }
       return new Error(e.message, 400)
     }
   }
 
   async queryListOfSpeciesGenresByCategory(category: string): Promise<Array<SpeciesGenre> | Error> {
-    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('species_category_enum')
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('species_genre')
     queryBuilder.addReturn('uuid', 'name', 'category', 'user')
     queryBuilder.addParam('$category', 'species_categories_enum', category)
     queryBuilder.addWhere('category', '_eq', '$category')
@@ -193,10 +192,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     let queryBuilder: HasuraMutationInsertBuilder = new HasuraMutationInsertBuilder('insert_species_family_one')
     queryBuilder.addParam('$category', 'species_categories_enum', speciesFamily.category)
     queryBuilder.addParam('$name', 'String', speciesFamily.name)
-    queryBuilder.addParam('$user', 'String', speciesFamily.user)
     queryBuilder.addInsert('category', '$category')
     queryBuilder.addInsert('name', '$name')
-    queryBuilder.addInsert('user', '$user')
     queryBuilder.addReturn('uuid')
 
     const mutation: string = queryBuilder.getRequest()
@@ -205,7 +202,6 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       const data = await this.client.request(mutation, {
         category: speciesFamily.category,
         name: speciesFamily.name,
-        user: speciesFamily.user
       })
       return data.insert_species_family_one.uuid
     }
@@ -221,10 +217,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     let queryBuilder: HasuraMutationInsertBuilder = new HasuraMutationInsertBuilder('insert_species_genre_one')
     queryBuilder.addParam('$category', 'species_categories_enum', speciesGenre.category)
     queryBuilder.addParam('$name', 'String', speciesGenre.name)
-    queryBuilder.addParam('$user', 'String', speciesGenre.user)
     queryBuilder.addInsert('category', '$category')
     queryBuilder.addInsert('name', '$name')
-    queryBuilder.addInsert('user', '$user')
     queryBuilder.addReturn('uuid')
 
     const mutation: string = queryBuilder.getRequest()
@@ -233,7 +227,6 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       const data = await this.client.request(mutation, {
         category: speciesGenre.category,
         name: speciesGenre.name,
-        user: speciesGenre.user
       })
       return data.insert_species_genre_one.uuid
     }
@@ -246,21 +239,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   }
 
   async mutationCreateSpecies(species: Species): Promise<string | Error> {
-    let queryBuilder: HasuraMutationInsertBuilder = new HasuraMutationInsertBuilder('insert_species_one')
 
-    queryBuilder.addParam('$category', 'species_categories_enum', species.category)
-    queryBuilder.addParam('$family', 'uuid!', species.species_naming.species_family.uuid)
-    queryBuilder.addParam('$genre', 'uuid!', species.species_naming.species_genre.uuid)
-    queryBuilder.addParam('$name', 'String!', species.species_naming.name)
-
-    queryBuilder.addInsert('category', '$category')
-    queryBuilder.addInsert('family', '$family')
-    queryBuilder.addInsert('genre', '$genre')
-    queryBuilder.addInsert('name', '$name')
-
-    queryBuilder.addReturn('uuid')
-
-    const mutation: string = queryBuilder.getRequest()
+    const mutation: string = 'mutation ($category: species_categories_enum, $family: uuid!, $genre: uuid!, $name: String!) {insert_species_one(object: {category: $category, species_naming: {data: {family: $family, genre: $genre, name: $name}}}) {uuid}}'
 
     try {
       const data = await this.client.request(mutation,{

@@ -131,7 +131,7 @@ export default Vue.extend({
       }
 
       if (result.isFailed()) {
-        console.log(result.content)
+        console.log(result.errors)
       }
 
       if(result.success?.code === 201){

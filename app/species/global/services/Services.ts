@@ -7,6 +7,8 @@ import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import Result from "~/app/utils/useCasesResult/Result";
 import User from "~/app/user/entities/User";
 import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
+import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
+import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 
 export default class Services implements ServicesInterface {
   async queryTotalSpecies(jwt: string): Promise<number|null> {
@@ -58,26 +60,20 @@ export default class Services implements ServicesInterface {
     return await adapter.mutationCreateSpecies(species)
   }
 
-  async updateSpeciesNaming(jwt: string, speciesNaming: SpeciesNaming): Promise<SpeciesNaming | Error> {
+  async createSpeciesFamily(jwt: string, speciesFamily: SpeciesFamily): Promise<string | Error> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
-    if(speciesNaming.species_family.uuid === ''){
-      const newSpeciesFamily: string | Error = await adapter.mutationCreateSpeciesFamily(speciesNaming.species_family)
-      if(newSpeciesFamily instanceof Error){
-        return newSpeciesFamily
-      }
+    return await adapter.mutationCreateSpeciesFamily(speciesFamily)
+  }
 
-      speciesNaming.species_family.uuid = newSpeciesFamily
-    }
+  async createSpeciesGenre(jwt: string, speciesGenre: SpeciesGenre): Promise<string | Error> {
+    const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
-    if(speciesNaming.species_genre.uuid === ''){
-      const newSpeciesGenre: string | Error = await adapter.mutationCreateSpeciesGenre(speciesNaming.species_genre)
-      if(newSpeciesGenre instanceof Error){
-        return newSpeciesGenre
-      }
+    return await adapter.mutationCreateSpeciesGenre(speciesGenre)
+  }
 
-      speciesNaming.species_genre.uuid = newSpeciesGenre
-    }
+  async updateSpeciesNaming(jwt: string, speciesNaming: SpeciesNaming): Promise<SpeciesNaming | Error> {
+    const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.mutationUpdateSpeciesNaming(speciesNaming)
   }

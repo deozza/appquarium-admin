@@ -98,7 +98,14 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const speciesResult: string | Error = await speciesService.createSpecies(jwt, species)
+    const updatedSpecies: Species | Error = await SpeciesUseCase.handleNewSpeciesNaming(jwt, species)
+
+    if(updatedSpecies instanceof Error){
+      result.errors.push(updatedSpecies)
+      return result
+    }
+
+    const speciesResult: string | Error = await speciesService.createSpecies(jwt, updatedSpecies)
 
     if(speciesResult instanceof Error){
       result.errors.push(speciesResult)
@@ -106,6 +113,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
     }
 
     result.addSuccess('Query is OK', 201)
+    result.content = speciesResult
     return result
   }
 
@@ -113,7 +121,14 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const editedSpecies: SpeciesNaming | Error = await speciesService.updateSpeciesNaming(jwt, species.species_naming)
+    const updatedSpecies: Species | Error = await SpeciesUseCase.handleNewSpeciesNaming(jwt, species)
+
+    if(updatedSpecies instanceof Error){
+      result.errors.push(updatedSpecies)
+      return result
+    }
+
+    const editedSpecies: SpeciesNaming | Error = await speciesService.updateSpeciesNaming(jwt, updatedSpecies.species_naming)
     if(editedSpecies instanceof Error){
       result.errors.push(editedSpecies)
       return result
@@ -121,6 +136,30 @@ export default class SpeciesUseCase implements UseCaseInterface{
 
     result.addSuccess('Query is OK', 200)
     return result
+  }
+
+  private static async handleNewSpeciesNaming(jwt: string, species: Species): Promise<Species | Error> {
+    const speciesService: Services = new Services()
+
+    if(species.species_naming.species_family.uuid === ''){
+      const newSpeciesFamily: string | Error = await speciesService.createSpeciesFamily(jwt, species.species_naming.species_family)
+      if(newSpeciesFamily instanceof Error){
+        return newSpeciesFamily
+      }
+
+      species.species_naming.species_family.uuid = newSpeciesFamily
+    }
+
+    if(species.species_naming.species_genre.uuid === ''){
+      const newSpeciesGenre: string | Error = await speciesService.createSpeciesGenre(jwt, species.species_naming.species_genre)
+      if(newSpeciesGenre instanceof Error){
+        return newSpeciesGenre
+      }
+
+      species.species_naming.species_genre.uuid = newSpeciesGenre
+    }
+
+    return species
   }
 
   async updateWaterConstraints(jwt: string, species: Species): Promise<Result> {
