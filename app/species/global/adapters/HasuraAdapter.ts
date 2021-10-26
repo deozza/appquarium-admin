@@ -62,8 +62,6 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
 
     const query: string = queryBuilder.getRequest()
 
-    console.log(query)
-
     try {
       const data = await this.client.request(query,{
         uuid: uuid
@@ -283,7 +281,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
 
   async mutationUpdateSpeciesNaming(speciesNaming: SpeciesNaming): Promise<SpeciesNaming | Error>{
     let queryBuilder: HasuraMutationUpdateBuilder = new HasuraMutationUpdateBuilder('update_species_naming_by_pk')
-    queryBuilder.addParam('$uuid!', 'uuid', speciesNaming.uuid)
+    queryBuilder.addParam('$uuid', 'uuid!', speciesNaming.uuid)
     queryBuilder.addParam('$genre', 'uuid', speciesNaming.species_genre.uuid)
     queryBuilder.addParam('$family', 'uuid', speciesNaming.species_family.uuid)
     queryBuilder.addParam('$name', 'String', speciesNaming.name)
@@ -291,7 +289,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     queryBuilder.addInsert('genre', '$genre')
     queryBuilder.addInsert('family', '$family')
     queryBuilder.addInsert('name', '$name')
-    queryBuilder.addReturn('uuid', 'user','updated_at', 'name', 'common_names', 'old_names', 'species_family {name}', 'species_genre{name}')
+    queryBuilder.addReturn('uuid','updated_at', 'name', 'common_names', 'old_names', 'species_family {name}', 'species_genre {name}')
 
     const mutation: string = queryBuilder.getRequest()
 
