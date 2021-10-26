@@ -56,22 +56,4 @@ export default class FishUseCase implements UseCaseInterface{
     result.addSuccess("Query is ok", 200)
     return result
   }
-
-  async createNewFish(newFish: FishInit): Promise<Result> {
-    let result: Result = new Result()
-    const fishService: Services = new Services()
-
-    const createdFishUuid: string | Error = await fishService.queryCreateNewFish(newFish)
-
-    if(createdFishUuid instanceof Error){
-      result.errors.push(createdFishUuid)
-      return result
-    }
-
-    result.content = createdFishUuid
-    result.addSuccess("Query is ok", 200)
-    return result
-  }
-
-
 }

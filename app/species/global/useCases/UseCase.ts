@@ -93,6 +93,27 @@ export default class SpeciesUseCase implements UseCaseInterface{
     return result
   }
 
+  async createSpeciesOrEditSpeciesNaming(jwt: string, species: Species): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+    let speciesResult
+
+    if(species.uuid === ''){
+      speciesResult = await speciesService.createSpecies(jwt, species)
+    }else{
+
+    }
+
+    if(speciesResult instanceof Error){
+      result.errors.push(speciesResult)
+      return result
+    }
+
+    result.content = speciesResult
+    result.addSuccess("Query is ok", species.uuid === '' ? 201 : 200)
+    return result
+  }
+
   async addOrEditWaterConstraints(jwt: string, species: Species): Promise<Result> {
     let result: Result = new Result()
     const speciesService: Services = new Services()

@@ -217,6 +217,41 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     }
   }
 
+  async mutationCreateSpecies(species: Species): Promise<string | Error> {
+
+    const mutation: string = `mutation CreateSpecies($category: species_categories_enum, $family: uuid!, $genre: uuid!, $name: String!) {
+        insert_species_one(object: {
+          category: $category,
+          species_naming: {
+            data: {
+              name: $name,
+              family: $family,
+              genre: $genre,
+            }
+          }
+        }) {
+          uuid
+        }
+    }
+    `
+
+    try {
+      const data = await this.client.request(mutation,{
+        category: species.category,
+        name: species.species_naming.name,
+        family: species.species_naming.species_family.uuid,
+        genre: species.species_naming.species_genre.uuid
+      })
+      return data.insert_species_one.uuid
+    }
+    catch (e) {
+      if(e.message.includes("JWTExpired")){
+        return new Error("JWT expired", 401)
+      }
+      return new Error(e.message, 400)
+    }
+  }
+
   async mutationCreateWaterConstraints(uuid: string, waterConstraints: WaterConstraints): Promise<string | Array<Error>> {
       const mutation: string = `mutation AddWaterConstraints($ph_min: numeric, $ph_max: numeric, $gh_min: Int, $gh_max: Int, $temp_min: Int, $temp_max: Int) {
         insert_water_constraints_one(object: {

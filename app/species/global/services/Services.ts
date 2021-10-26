@@ -37,6 +37,12 @@ export default class Services implements ServicesInterface {
     return await adapter.queryListOfSpeciesOrigins()
   }
 
+  async createSpecies(jwt: string, species: Species): Promise<string | Error> {
+    const adapter: AdapterInterface = new HasuraAdapter(jwt)
+
+    return await adapter.mutationCreateSpecies(species)
+  }
+
   async createWaterConstraints(jwt: string, uuid: string, waterConstraints: WaterConstraints): Promise<string | Array<Error>> {
     const areConstraintsValid: Result = Services.checkWaterConstraintsAreValid(waterConstraints)
 

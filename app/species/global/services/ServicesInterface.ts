@@ -8,6 +8,7 @@ export default interface ServicesInterface {
   queryListOfSpecies(jwt: string): Promise<Array<Species>|Error>
   querySpeciesCategories(jwt: string): Promise<Array<string>|Error>
   querySpeciesOrigins(jwt: string): Promise<Array<string>|Error>
+  createSpecies(jwt: string, species: Species): Promise<string | Error>
   updateWaterConstraints(jwt: string, waterConstraints: WaterConstraints): Promise<WaterConstraints|Error>
   createWaterConstraints(jwt: string, uuid: string, waterConstraints: WaterConstraints): Promise<string|Array<Error>>
   addWaterConstraintsToSpecies(jwt: string, speciesUuid: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Error>

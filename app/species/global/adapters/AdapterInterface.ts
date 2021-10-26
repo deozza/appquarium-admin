@@ -13,6 +13,7 @@ export default interface AdapterInterface {
   queryListOfSpeciesGenresByCategory(category: string): Promise<Array<SpeciesGenre> | Error>
   queryListOfSpeciesOrigins(): Promise<Array<string> | Error>
   queryListOfSpeciesByCategory(category: string): Promise<Array<Species> | Error>
+  mutationCreateSpecies(species: Species): Promise<string | Error>
   mutationCreateWaterConstraints(uuid: string, waterConstraints: WaterConstraints): Promise<string | Array<Error>>
   mutationEditWaterConstraints(waterConstraints: WaterConstraints): Promise<WaterConstraints | Error>
   mutationAddWaterConstraintsToSpecies(waterConstraint: WaterConstraints, speciesUuid: string): Promise<WaterConstraints | Error>
