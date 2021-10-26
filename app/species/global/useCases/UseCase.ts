@@ -152,13 +152,12 @@ export default class SpeciesUseCase implements UseCaseInterface{
 
     const updatedSpecies: WaterConstraints | Error = await speciesService.addWaterConstraintsToSpecies(jwt, species.uuid, species.water_constraint)
 
-
     if(updatedSpecies instanceof Error) {
       result.errors.push(updatedSpecies)
       return result
     }
 
-    result.addSuccess('Query is OK', 200)
+    result.addSuccess('Query is OK', 201)
     return result
   }
 }

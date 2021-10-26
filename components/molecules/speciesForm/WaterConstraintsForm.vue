@@ -5,37 +5,37 @@
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="phMin">pH minimum <span class="required-field">*</span></label>
-            <input id="phMin" type="number" step="0.1" min="0" max="14" v-model="species.water_constraint.ph_min">
+            <input id="phMin" type="number" step="0.1" min="0" max="14" v-model.number="species.water_constraint.ph_min">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="phMax">pH maximum <span class="required-field">*</span></label>
-            <input id="phMax" type="number" step="0.1" min="0" max="14" v-model="species.water_constraint.ph_max">
+            <input id="phMax" type="number" step="0.1" min="0" max="14" v-model.number="species.water_constraint.ph_max">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="ghMin">GH minimum <span class="required-field">*</span></label>
-            <input id="ghMin" type="number" min="0" max="50" v-model="species.water_constraint.gh_min">
+            <input id="ghMin" type="number" min="0" max="50" v-model.number="species.water_constraint.gh_min">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="ghMax">GH maximum <span class="required-field">*</span></label>
-            <input id="ghMax" type="number" min="0" max="50" v-model="species.water_constraint.gh_max">
+            <input id="ghMax" type="number" min="0" max="50" v-model.number="species.water_constraint.gh_max">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="tempMin">Température minimum <span class="required-field">*</span></label>
-            <input id="tempMin" type="number" min="0" max="40" v-model="species.water_constraint.temp_min">
+            <input id="tempMin" type="number" min="0" max="40" v-model.number="species.water_constraint.temp_min">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="tempMax">Température maximum <span class="required-field">*</span></label>
-            <input id="tempMax" type="number" min="0" max="40" v-model="species.water_constraint.temp_max">
+            <input id="tempMax" type="number" min="0" max="40" v-model.number="species.water_constraint.temp_max">
           </div>
         </li>
       </ul>
@@ -53,6 +53,7 @@ import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
+import User from "~/app/user/entities/User";
 
 export default Vue.extend({
   name: "WaterConstraintsFormVue",
@@ -89,6 +90,10 @@ export default Vue.extend({
       let result: Result
 
       if(this.species.water_constraint.uuid === ''){
+        const user: User = new User(this.jwt)
+
+        this.species.water_constraint.user = user.uid
+
         result = await speciesUseCase.addWaterConstraints(this.jwt, this.species)
       }else{
         result = await speciesUseCase.updateSpeciesNaming(this.jwt, this.species)

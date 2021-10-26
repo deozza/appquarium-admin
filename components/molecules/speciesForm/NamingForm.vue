@@ -53,6 +53,7 @@ import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 import FishUseCase from "~/app/species/fish/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
+import User from "~/app/user/entities/User";
 
 export default Vue.extend({
   name: "NamingFormVue",
@@ -123,6 +124,9 @@ export default Vue.extend({
       if(this.species.uuid !== ''){
         result = await speciesUseCase.updateSpeciesNaming(this.jwt, this.species)
       }else{
+        const user: User = new User(this.jwt)
+        this.species.user = user.uid
+
         result = await speciesUseCase.createSpecies(this.jwt, this.species)
       }
 

@@ -341,7 +341,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       return data.insert_water_constraints_one.uuid
     }
     catch (e) {
-        let errors: Array<Error> = []
+      let errors: Array<Error> = []
       if(e.message.includes("JWTExpired")){
         errors.push(new Error("JWT expired", 401))
         return errors
