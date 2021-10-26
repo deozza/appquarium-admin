@@ -96,11 +96,11 @@ export default Vue.extend({
 
         result = await speciesUseCase.addWaterConstraints(this.jwt, this.species)
       }else{
-        result = await speciesUseCase.updateSpeciesNaming(this.jwt, this.species)
+        result = await speciesUseCase.updateWaterConstraints(this.jwt, this.species)
       }
 
       if(result.isFailed()){
-        console.log(result.content)
+        console.log(result.errors)
       }
 
       if(result.isSuccessful() && result.success?.code === 201){
