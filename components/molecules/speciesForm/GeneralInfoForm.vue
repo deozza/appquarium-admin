@@ -1,11 +1,14 @@
 <template>
-  <form action="">
+  <form v-on:submit.prevent="submitGeneralInfoForm()">
     <div class="flex-column">
       <ul>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="speciesOrigin">Origine <span class="required-field">*</span></label>
-            <input type="text" id="speciesOrigin" v-model="species.origin">
+            <input type="text" id="speciesOrigin" name="speciesOrigin" list="speciesOrigin-list" v-model="species.origin">
+            <datalist id="speciesOrigin-list">
+              <option v-for="(origin, index) in speciesOrigins" :value="origin.name" v-bind:key="index">{{origin.name}}</option>
+            </datalist>
           </div>
         </li>
       </ul>
@@ -19,6 +22,8 @@
 import Species from "~/app/species/global/entities/Species";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
+import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
+import Result from "~/app/utils/useCasesResult/Result";
 
 export default {
   name: "GeneralInfoFormVue",
@@ -38,8 +43,35 @@ export default {
       submitButton.style = 'warning'
     }
 
+    const speciesOrigins: Array<string> = []
+
     return {
-      submitButton: submitButton
+      submitButton: submitButton,
+      speciesOrigins: speciesOrigins
+    }
+  },
+  async fetch() {
+    const jwt: string = this.$cookies.get('appquarium-jwt')
+    const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const speciesOrigins: Result = await speciesUseCase.getSpeciesOrigins(jwt)
+    if(speciesOrigins.isFailed()){
+      for(const error of speciesOrigins.errors) {
+        if (error.code === 401) {
+          this.$cookies.remove('appquarium-jwt')
+          await this.$router.push('/login')
+        }
+      }
+      return
+    }
+    this.speciesOrigins = speciesOrigins.content
+  },
+  methods: {
+    async submitGeneralInfoForm() {
+      this.submitButton.isLoading = true
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      //const updatedSpecies = await speciesUseCase.addOrUpdateOrigin(this.species.uuid, this.species.origin)
     }
   }
 }

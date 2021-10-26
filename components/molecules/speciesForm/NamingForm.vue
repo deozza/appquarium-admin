@@ -1,29 +1,45 @@
 <template>
-  <form action="">
-    <div class="flex-column">
-      <ul>
-        <li class="flex-column">
-          <div class="flex-row input-row">
-            <label for="speciesFamily">Famille <span class="required-field">*</span></label>
-            <input id="speciesFamily" type="text" v-model="species.species_naming.species_family.name">
-          </div>
-        </li>
-        <li class="flex-column">
-          <div class="flex-row input-row">
-            <label for="speciesGenre">Genre <span class="required-field">*</span></label>
-            <input id="speciesGenre" type="text" v-model="species.species_naming.species_genre.name">
-          </div>
-        </li>
-        <li class="flex-column">
-          <div class="flex-row input-row">
-            <label for="speciesName">Nom de l'espèce <span class="required-field">*</span></label>
-            <input type="text" id="speciesName" v-model="species.species_naming.name">
-          </div>
-        </li>
-      </ul>
-      <BaseButton :base-button-model="submitButton" />
+  <main>
+    <div id="loading" v-if="$fetchState.pending">
+      <p >Récupération des infos️</p>
     </div>
-  </form>
+    <div id="error" v-else-if="$fetchState.error">
+      <p >Une erreur est survenue :(</p>
+    </div>
+
+    <form v-on:submit.prevent="submitNamingForm()" v-else>
+      <div class="flex-column">
+        <ul>
+          <li class="flex-column">
+            <div class="flex-row input-row">
+              <label for="speciesFamily">Famille <span class="required-field">*</span></label>
+              <input type="text" id="speciesFamily" name="speciesFamily" list="speciesFamily-list" v-model="species.species_naming.species_family.name" v-on:change="linkUuidWithSpeciesFamily(species.species_naming.species_family.name)">
+              <datalist id="speciesFamily-list">
+                <option v-for="(family, index) in speciesFamilies" :value="family.name" v-bind:key="index">{{family.name}}</option>
+              </datalist>
+            </div>
+          </li>
+          <li class="flex-column">
+            <div class="flex-row input-row">
+              <label for="speciesGenre">Genre <span class="required-field">*</span></label>
+              <input type="text" id="speciesGenre" name="speciesGenre" list="speciesGenre-list" v-model="species.species_naming.species_genre.name" v-on:change="linkUuidWithSpeciesGenre(species.species_naming.species_genre.name)">
+              <datalist id="speciesGenre-list">
+                <option v-for="(genre, index) in speciesGenres" :value="genre.name" v-bind:key="index">{{genre.name}}</option>
+              </datalist>
+            </div>
+          </li>
+          <li class="flex-column">
+            <div class="flex-row input-row">
+              <label for="speciesName">Nom de l'espèce <span class="required-field">*</span></label>
+              <input type="text" id="speciesName" v-model="species.species_naming.name">
+            </div>
+          </li>
+        </ul>
+        <BaseButton :base-button-model="submitButton" />
+      </div>
+    </form>
+  </main>
+
 </template>
 
 <script lang="ts">
@@ -31,6 +47,11 @@
 import Species from "~/app/species/global/entities/Species";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
+import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
+import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
+import FishUseCase from "~/app/species/fish/useCases/UseCase";
+import Result from "~/app/utils/useCasesResult/Result";
+import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 
 export default {
   name: "NamingFormVue",
@@ -41,6 +62,10 @@ export default {
     species: {
       type: Species,
       required: true
+    },
+    jwt: {
+      type: String as string,
+      required: true
     }
   },
   data() {
@@ -50,8 +75,80 @@ export default {
       submitButton.style = 'warning'
     }
 
+    const speciesGenres: Array<SpeciesGenre> = []
+    const speciesFamilies: Array<SpeciesFamily> = []
+
     return {
-      submitButton: submitButton
+      submitButton: submitButton,
+      speciesFamilies: speciesFamilies,
+      speciesGenres: speciesGenres
+    }
+  },
+  async fetch() {
+
+    const fishUseCase: FishUseCase = new FishUseCase()
+
+    const speciesGenres: Result = await fishUseCase.getFishGenres(this.jwt)
+    if (speciesGenres.isFailed()) {
+      for (const error of speciesGenres.errors) {
+        if (error.code === 401) {
+          this.$cookies.remove('appquarium-jwt')
+          await this.$router.push('/login')
+        }
+      }
+      return
+    }
+    this.speciesGenres = speciesGenres.content
+
+    const speciesFamilies: Result = await fishUseCase.getFishFamilies(this.jwt)
+    if (speciesFamilies.isFailed()) {
+      for (const error of speciesFamilies.errors) {
+        if (error.code === 401) {
+          this.$cookies.remove('appquarium-jwt')
+          await this.$router.push('/login')
+        }
+      }
+      return
+    }
+    this.speciesFamilies = speciesFamilies.content
+  },
+  methods: {
+    async submitNamingForm () {
+      this.submitButton.isLoading = true
+
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const result: Result = await speciesUseCase.createSpeciesOrEditSpeciesNaming(this.jwt, this.species)
+
+      if (result.isFailed()) {
+        console.log(result.content)
+      }
+
+      if(result.success?.code === 201){
+        this.species.uuid = result.content
+        await this.$router.push(this.species.computeLinkToSpecies())
+      }
+
+      if(result.success?.code === 200){
+        this.submitButton.style = 'warning'
+        this.submitButton.content = 'Modifier'
+      }
+
+      this.submitButton.isLoading = false
+    },
+    linkUuidWithSpeciesFamily(speciesFamilyName){
+      const speciesFamily = this.speciesFamilies.find((family: SpeciesFamily) => family.name === speciesFamilyName)
+      if(speciesFamily !== undefined){
+        this.species.species_naming.species_family = speciesFamily
+        return
+      }
+    },
+    linkUuidWithSpeciesGenre(speciesGenreName){
+      const speciesGenre = this.speciesGenres.find((genre: SpeciesGenre) => genre.name === speciesGenreName)
+      if(speciesGenre !== undefined){
+        this.species.species_naming.species_genre = speciesGenre
+        return
+      }
     }
   }
 }
