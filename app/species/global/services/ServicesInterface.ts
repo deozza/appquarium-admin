@@ -1,6 +1,7 @@
 import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
+import User from "~/app/user/entities/User";
 
 export default interface ServicesInterface {
   queryTotalSpecies(jwt: string): Promise<number|null>
@@ -12,4 +13,5 @@ export default interface ServicesInterface {
   updateWaterConstraints(jwt: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Array<Error>>
   createWaterConstraints(jwt: string, uuid: string, waterConstraints: WaterConstraints): Promise<string|Array<Error>>
   addWaterConstraintsToSpecies(jwt: string, speciesUuid: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Error>
+  initNewSpecies(user: User, category: string): Species
 }

@@ -23,6 +23,7 @@ import User from "~/app/user/entities/User";
 import BaseCard from "~/components/molecules/card/BaseCard.vue";
 import Species from "~/app/species/global/entities/Species";
 import NamingForm from "~/components/molecules/speciesForm/NamingForm.vue";
+import FishUseCase from "~/app/species/fish/useCases/UseCase";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -37,15 +38,8 @@ export default Vue.extend({
 
     const jwt: string = this.$cookies.get('appquarium-jwt')
     const user: User = new User(jwt)
-
-    let newFish = new Species([])
-    newFish.category = 'fish'
-    newFish.user = user.uid
-    newFish.publication_state = 'DRAFT'
-    newFish.species_naming.species_family.category = 'fish'
-    newFish.species_naming.species_family.user = user.uid
-    newFish.species_naming.species_genre.category = 'fish'
-    newFish.species_naming.species_genre.user = user.uid
+    const fishUseCase: FishUseCase = new FishUseCase()
+    const newFish: Species = fishUseCase.initNewFish(user)
 
     return {
       header: header,

@@ -5,6 +5,7 @@ import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import Result from "~/app/utils/useCasesResult/Result";
+import User from "~/app/user/entities/User";
 
 export default class Services implements ServicesInterface {
   async queryTotalSpecies(jwt: string): Promise<number|null> {
@@ -35,6 +36,19 @@ export default class Services implements ServicesInterface {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.queryListOfSpeciesOrigins()
+  }
+
+  initNewSpecies(user: User, category: string): Species {
+    let newSpecies = new Species([])
+    newSpecies.category = category
+    newSpecies.user = user.uid
+    newSpecies.publication_state = 'DRAFT'
+    newSpecies.species_naming.species_family.category = category
+    newSpecies.species_naming.species_family.user = user.uid
+    newSpecies.species_naming.species_genre.category = category
+    newSpecies.species_naming.species_genre.user = user.uid
+
+    return newSpecies
   }
 
   async createSpecies(jwt: string, species: Species): Promise<string | Error> {

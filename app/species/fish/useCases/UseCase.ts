@@ -1,11 +1,12 @@
 import UseCaseInterface from "~/app/species/fish/useCases/UseCaseInterface";
-import FishInit from "~/app/species/fish/entities/FishInit";
 import Result from "~/app/utils/useCasesResult/Result";
 import Services from "~/app/species/fish/services/Services";
+import { default as SpeciesServices } from "~/app/species/global/services/Services" ;
 import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
+import User from "~/app/user/entities/User";
 
 export default class FishUseCase implements UseCaseInterface{
 
@@ -55,5 +56,10 @@ export default class FishUseCase implements UseCaseInterface{
     result.content = fishFamilies
     result.addSuccess("Query is ok", 200)
     return result
+  }
+
+  initNewFish(user: User): Species {
+    const speciesService: SpeciesServices = new SpeciesServices()
+    return speciesService.initNewSpecies(user, 'fish')
   }
 }
