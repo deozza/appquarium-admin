@@ -17,7 +17,7 @@ export default class FirebaseAdapter implements AdapterInterface {
         password
       )
 
-      return new User(userFromFirebase.user?.uid!, userFromFirebase.user?.email!, await userFromFirebase.user?.getIdToken()!, userFromFirebase.user?.metadata.lastSignInTime!);
+      return new User(await userFromFirebase.user?.getIdToken()!);
     }
     catch (e) {
       return null
