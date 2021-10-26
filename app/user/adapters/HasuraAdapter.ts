@@ -1,7 +1,8 @@
 import AdapterInterface from "~/app/user/adapters/AdapterInterface";
 import HasuraClient from "~/app/utils/hasura/HasuraClient";
 import User from "~/app/user/entities/User";
-import HasuraQueryBuilder from "~/app/utils/hasura/HasuraQueryBuilder/HasuraQueryBuilder";
+import HasuraRequestBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraRequestBuilder";
+import HasuraQueryBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraQueryBuilder";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
   getRefreshedToken(): Promise<string | null> {
@@ -13,14 +14,13 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   }
 
   async queryTotalUsers(): Promise<number | null> {
-    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('query', 'user_aggretaget')
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('user_aggretaget')
     queryBuilder.addReturn('aggregate {count}')
-    const query: string = queryBuilder.getQuery()
+    const query: string = queryBuilder.getRequest()
 
     try {
       const data = await this.client.request(query)
-      const totalUsers: number = data.users_aggregate.aggregate.count
-      return totalUsers
+      return data.users_aggregate.aggregate.count
     }
     catch (e) {
       return null

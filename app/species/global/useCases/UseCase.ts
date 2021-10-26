@@ -4,6 +4,7 @@ import Services from "~/app/species/global/services/Services";
 import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
+import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 
 export default class SpeciesUseCase implements UseCaseInterface{
   async getTotalSpecies(jwt: string): Promise<Result> {
@@ -93,55 +94,71 @@ export default class SpeciesUseCase implements UseCaseInterface{
     return result
   }
 
-  async createSpeciesOrEditSpeciesNaming(jwt: string, species: Species): Promise<Result> {
+  async createSpecies(jwt: string, species: Species): Promise<Result> {
     let result: Result = new Result()
     const speciesService: Services = new Services()
-    let speciesResult
 
-    if(species.uuid === ''){
-      speciesResult = await speciesService.createSpecies(jwt, species)
-    }else{
-
-    }
+    const speciesResult: string | Error = await speciesService.createSpecies(jwt, species)
 
     if(speciesResult instanceof Error){
       result.errors.push(speciesResult)
       return result
     }
 
-    result.content = speciesResult
-    result.addSuccess("Query is ok", species.uuid === '' ? 201 : 200)
+    result.addSuccess('Query is OK', 201)
     return result
   }
 
-  async addOrEditWaterConstraints(jwt: string, species: Species): Promise<Result> {
+  async updateSpeciesNaming(jwt: string, species: Species): Promise<Result> {
     let result: Result = new Result()
     const speciesService: Services = new Services()
-    let updatedSpecies: WaterConstraints | Array<Error>
 
-    if(species.water_constraint.uuid !== ''){
-      updatedSpecies = await speciesService.updateWaterConstraints(jwt, species.water_constraint)
-    }else{
-      const createdWaterConstraintsUuid : string | Array<Error> = await speciesService.createWaterConstraints(jwt, species.uuid, species.water_constraint)
-
-      if(typeof createdWaterConstraintsUuid !== 'string'){
-        result.errors = createdWaterConstraintsUuid
-        return result
-      }
-
-      species.water_constraint.uuid = createdWaterConstraintsUuid
-
-      updatedSpecies = await speciesService.addWaterConstraintsToSpecies(jwt, species.uuid, species.water_constraint)
+    const editedSpecies: SpeciesNaming | Error = await speciesService.updateSpeciesNaming(jwt, species.species_naming)
+    if(editedSpecies instanceof Error){
+      result.errors.push(editedSpecies)
+      return result
     }
+
+    result.addSuccess('Query is OK', 200)
+    return result
+  }
+
+  async updateWaterConstraints(jwt: string, species: Species): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+    const updatedWaterConstraints: WaterConstraints | Array<Error> = await speciesService.updateWaterConstraints(jwt, species.water_constraint)
+
+    if(updatedWaterConstraints instanceof WaterConstraints) {
+      result.addSuccess('Query is OK', 200)
+      return result
+    }
+
+    result.errors = updatedWaterConstraints
+    return result
+
+  }
+
+  async addWaterConstraints(jwt: string, species: Species): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+    const waterConstraintsUuid: string | Array<Error> = await speciesService.createWaterConstraints(jwt, species.uuid, species.water_constraint)
+
+    if(typeof waterConstraintsUuid !== 'string'){
+      result.errors = waterConstraintsUuid
+      return result
+    }
+
+    species.water_constraint.uuid = waterConstraintsUuid
+
+    const updatedSpecies: WaterConstraints | Error = await speciesService.addWaterConstraintsToSpecies(jwt, species.uuid, species.water_constraint)
+
 
     if(updatedSpecies instanceof Error) {
       result.errors.push(updatedSpecies)
       return result
     }
 
-    result.addSuccess('Query is OK', 201)
+    result.addSuccess('Query is OK', 200)
     return result
-
   }
-
 }

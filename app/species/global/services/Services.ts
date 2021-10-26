@@ -6,6 +6,7 @@ import Species from "~/app/species/global/entities/Species";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import Result from "~/app/utils/useCasesResult/Result";
 import User from "~/app/user/entities/User";
+import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 
 export default class Services implements ServicesInterface {
   async queryTotalSpecies(jwt: string): Promise<number|null> {
@@ -55,6 +56,30 @@ export default class Services implements ServicesInterface {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.mutationCreateSpecies(species)
+  }
+
+  async updateSpeciesNaming(jwt: string, speciesNaming: SpeciesNaming): Promise<SpeciesNaming | Error> {
+    const adapter: AdapterInterface = new HasuraAdapter(jwt)
+
+    if(speciesNaming.species_family.uuid === ''){
+      const newSpeciesFamily: string | Error = await adapter.mutationCreateSpeciesFamily(speciesNaming.species_family)
+      if(newSpeciesFamily instanceof Error){
+        return newSpeciesFamily
+      }
+
+      speciesNaming.species_family.uuid = newSpeciesFamily
+    }
+
+    if(speciesNaming.species_genre.uuid === ''){
+      const newSpeciesGenre: string | Error = await adapter.mutationCreateSpeciesGenre(speciesNaming.species_genre)
+      if(newSpeciesGenre instanceof Error){
+        return newSpeciesGenre
+      }
+
+      speciesNaming.species_genre.uuid = newSpeciesGenre
+    }
+
+    return await adapter.mutationUpdateSpeciesNaming(speciesNaming)
   }
 
   async createWaterConstraints(jwt: string, uuid: string, waterConstraints: WaterConstraints): Promise<string | Array<Error>> {

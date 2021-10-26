@@ -25,7 +25,7 @@
             <BaseHeader :base-header-model="namingCardHeader"/>
           </template>
           <template slot="body">
-            <NamingForm :species="fish" />
+            <NamingForm :jwt="jwt"  :species="fish" />
           </template>
         </BaseCard>
         <BaseCard>
@@ -102,6 +102,7 @@ export default Vue.extend({
           await this.$router.push('/species/fish')
         }
       }
+      console.log(fish.errors)
       return
     }
 

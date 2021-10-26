@@ -119,7 +119,12 @@ export default Vue.extend({
 
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
-      const result: Result = await speciesUseCase.createSpeciesOrEditSpeciesNaming(this.jwt, this.species)
+      let result: Result
+      if(this.species.uuid !== ''){
+        result = await speciesUseCase.updateSpeciesNaming(this.jwt, this.species)
+      }else{
+        result = await speciesUseCase.createSpecies(this.jwt, this.species)
+      }
 
       if (result.isFailed()) {
         console.log(result.content)

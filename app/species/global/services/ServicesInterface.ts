@@ -2,6 +2,7 @@ import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import User from "~/app/user/entities/User";
+import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 
 export default interface ServicesInterface {
   queryTotalSpecies(jwt: string): Promise<number|null>
@@ -10,6 +11,7 @@ export default interface ServicesInterface {
   querySpeciesCategories(jwt: string): Promise<Array<string>|Error>
   querySpeciesOrigins(jwt: string): Promise<Array<string>|Error>
   createSpecies(jwt: string, species: Species): Promise<string | Error>
+  updateSpeciesNaming(jwt: string, speciesNaming: SpeciesNaming): Promise<SpeciesNaming | Error>
   updateWaterConstraints(jwt: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Array<Error>>
   createWaterConstraints(jwt: string, uuid: string, waterConstraints: WaterConstraints): Promise<string|Array<Error>>
   addWaterConstraintsToSpecies(jwt: string, speciesUuid: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Error>

@@ -17,7 +17,7 @@
             <BaseHeader :base-header-model="generalCardHeader"/>
           </template>
           <template slot="body">
-            <GeneralInfoForm :species="invertebrate" />
+            <GeneralInfoForm :jwt="jwt" :species="invertebrate" />
           </template>
         </BaseCard>
         <BaseCard>
@@ -25,7 +25,7 @@
             <BaseHeader :base-header-model="namingCardHeader"/>
           </template>
           <template slot="body">
-            <NamingForm :species="invertebrate" />
+            <NamingForm :jwt="jwt" :species="invertebrate" />
           </template>
         </BaseCard>
         <BaseCard>
@@ -33,7 +33,7 @@
             <BaseHeader :base-header-model="waterConstraintsCardHeader"/>
           </template>
           <template slot="body">
-            <WaterConstraintsForm :species="invertebrate" />
+            <WaterConstraintsForm :jwt="jwt" :species="invertebrate" />
           </template>
         </BaseCard>
       </section>
@@ -74,6 +74,7 @@ export default Vue.extend({
     const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau", 2)
     const statusParagraph: BaseParagraphModel = new BaseParagraphModel("")
     const invertebrate: Species = new Species([])
+    const jwt: string = this.$cookies.get('appquarium-jwt')
 
     return {
       header: header,
@@ -81,15 +82,15 @@ export default Vue.extend({
       namingCardHeader: namingCardHeader,
       waterConstraintsCardHeader: waterConstraintsCardHeader,
       statusParagraph: statusParagraph,
-      invertebrate: invertebrate
+      invertebrate: invertebrate,
+      jwt: jwt
     }
   },
   async fetch(){
     const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
-    const jwt: string = this.$cookies.get('appquarium-jwt')
     const params = this.$route.params
 
-    const invertebrate: Result = await speciesUseCase.getSpecies(jwt, params.uuid)
+    const invertebrate: Result = await speciesUseCase.getSpecies(this.jwt, params.uuid)
     if(invertebrate.isFailed()){
       for(const error of invertebrate.errors) {
         if (error.code === 401) {

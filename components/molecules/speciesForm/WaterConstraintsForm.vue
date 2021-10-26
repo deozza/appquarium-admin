@@ -85,13 +85,20 @@ export default Vue.extend({
       this.submitButton.isLoading = true
 
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
-      const result: Result = await speciesUseCase.addOrEditWaterConstraints(this.jwt, this.species)
+
+      let result: Result
+
+      if(this.species.water_constraint.uuid === ''){
+        result = await speciesUseCase.addWaterConstraints(this.jwt, this.species)
+      }else{
+        result = await speciesUseCase.updateSpeciesNaming(this.jwt, this.species)
+      }
 
       if(result.isFailed()){
         console.log(result.content)
       }
 
-      if(this.submitButton.style === 'success'){
+      if(result.isSuccessful() && result.success?.code === 201){
         this.submitButton.style = 'warning'
         this.submitButton.content = 'Modifier'
       }
