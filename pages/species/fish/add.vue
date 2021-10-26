@@ -23,7 +23,6 @@ import User from "~/app/user/entities/User";
 import BaseCard from "~/components/molecules/card/BaseCard.vue";
 import Species from "~/app/species/global/entities/Species";
 import NamingForm from "~/components/molecules/speciesForm/NamingForm.vue";
-import HasuraQueryBuilder from "~/app/utils/hasura/HasuraQueryBuilder/HasuraQueryBuilder";
 
 export default Vue.extend({
   middleware: 'authenticated',

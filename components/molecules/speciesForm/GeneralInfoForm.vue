@@ -18,6 +18,7 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 
 import Species from "~/app/species/global/entities/Species";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
@@ -25,7 +26,7 @@ import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
 
-export default {
+export default Vue.extend({
   name: "GeneralInfoFormVue",
   components: {
     BaseButton
@@ -74,7 +75,7 @@ export default {
       //const updatedSpecies = await speciesUseCase.addOrUpdateOrigin(this.species.uuid, this.species.origin)
     }
   }
-}
+})
 
 </script>
 

@@ -7,5 +7,5 @@ export default interface UseCaseInterface {
   getSpeciesOrigins(jwt: string): Promise<Result>
   getSpecies(jwt: string, uuid: string): Promise<Result>
   createSpeciesOrEditSpeciesNaming(jwt: string, species: Species): Promise<Result>
-  addOrEditWaterConstraints(jwt: string, species: Species)
+  addOrEditWaterConstraints(jwt: string, species: Species): Promise<Result>
 }

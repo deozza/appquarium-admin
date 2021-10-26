@@ -67,7 +67,7 @@ export default class Services implements ServicesInterface {
     return await adapter.mutationAddWaterConstraintsToSpecies(waterConstraints, speciesUuid)
   }
 
-  async updateWaterConstraints(jwt: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Error> {
+  async updateWaterConstraints(jwt: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Array<Error>> {
     const areConstraintsValid: Result = Services.checkWaterConstraintsAreValid(waterConstraints)
 
 

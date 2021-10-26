@@ -117,7 +117,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
   async addOrEditWaterConstraints(jwt: string, species: Species): Promise<Result> {
     let result: Result = new Result()
     const speciesService: Services = new Services()
-    let updatedSpecies: WaterConstraints | Error
+    let updatedSpecies: WaterConstraints | Array<Error>
 
     if(species.water_constraint.uuid !== ''){
       updatedSpecies = await speciesService.updateWaterConstraints(jwt, species.water_constraint)

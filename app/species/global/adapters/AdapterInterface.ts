@@ -15,6 +15,6 @@ export default interface AdapterInterface {
   queryListOfSpeciesByCategory(category: string): Promise<Array<Species> | Error>
   mutationCreateSpecies(species: Species): Promise<string | Error>
   mutationCreateWaterConstraints(uuid: string, waterConstraints: WaterConstraints): Promise<string | Array<Error>>
-  mutationEditWaterConstraints(waterConstraints: WaterConstraints): Promise<WaterConstraints | Error>
+  mutationEditWaterConstraints(waterConstraints: WaterConstraints): Promise<WaterConstraints | Array<Error>>
   mutationAddWaterConstraintsToSpecies(waterConstraint: WaterConstraints, speciesUuid: string): Promise<WaterConstraints | Error>
 }

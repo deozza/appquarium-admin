@@ -43,6 +43,7 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 
 import Species from "~/app/species/global/entities/Species";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
@@ -53,7 +54,7 @@ import FishUseCase from "~/app/species/fish/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 
-export default {
+export default Vue.extend({
   name: "NamingFormVue",
   components: {
     BaseButton
@@ -64,7 +65,7 @@ export default {
       required: true
     },
     jwt: {
-      type: String as string,
+      type: String,
       required: true
     }
   },
@@ -136,14 +137,14 @@ export default {
 
       this.submitButton.isLoading = false
     },
-    linkUuidWithSpeciesFamily(speciesFamilyName){
+    linkUuidWithSpeciesFamily(speciesFamilyName: string){
       const speciesFamily = this.speciesFamilies.find((family: SpeciesFamily) => family.name === speciesFamilyName)
       if(speciesFamily !== undefined){
         this.species.species_naming.species_family = speciesFamily
         return
       }
     },
-    linkUuidWithSpeciesGenre(speciesGenreName){
+    linkUuidWithSpeciesGenre(speciesGenreName: string){
       const speciesGenre = this.speciesGenres.find((genre: SpeciesGenre) => genre.name === speciesGenreName)
       if(speciesGenre !== undefined){
         this.species.species_naming.species_genre = speciesGenre
@@ -151,7 +152,7 @@ export default {
       }
     }
   }
-}
+})
 
 </script>
 

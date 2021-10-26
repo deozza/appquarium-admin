@@ -46,6 +46,7 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 
 import Species from "~/app/species/global/entities/Species";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
@@ -53,7 +54,7 @@ import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
 
-export default {
+export default Vue.extend({
   name: "WaterConstraintsFormVue",
   components: {
     BaseButton
@@ -98,7 +99,7 @@ export default {
       this.submitButton.isLoading = false
     }
   }
-}
+})
 
 </script>
 

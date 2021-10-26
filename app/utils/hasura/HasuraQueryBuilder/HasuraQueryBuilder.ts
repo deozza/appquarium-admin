@@ -7,9 +7,9 @@ export default class HasuraQueryBuilder{
   type: string
   name: string
   params: Array<Param> = []
-  return = []
+  return: Array<string> = []
   insert: Array<Insert> = []
-  wheres = []
+  wheres: Array<Where> = []
   orders: Array<Order> = []
 
   constructor(type: string, name: string) {
@@ -60,12 +60,15 @@ export default class HasuraQueryBuilder{
   }
 
   public addReturn(...names: Array<string>){
-    names.forEach((name: string) => this.return.push(name))
+    names.forEach((name) => this.return.push(name))
   }
 
   public addWhere(property: string, compareMode: string, value: string|number){
     if(this.wheres.find((where: Where) => where.property === property) === undefined) {
-      this.wheres.push(new Where(property, compareMode, value))
+
+      let whereConstraint = new Where(property, compareMode, value)
+
+      this.wheres.push(whereConstraint)
     }
   }
 
@@ -84,7 +87,7 @@ export default class HasuraQueryBuilder{
     for(let param in this.params){
       computedParams += this.params[param].name+': '+this.params[param].type
 
-      if(param < (this.params.length-1)){
+      if(~~param < (this.params.length-1)){
         computedParams += ','
       }
     }
@@ -103,7 +106,7 @@ export default class HasuraQueryBuilder{
 
     for(let where in this.wheres){
       computedWhere += this.wheres[where].property + ': {' + this.wheres[where].compareMode + ': ' + this.wheres[where].value + '}'
-      if(where < (this.wheres.length-1)){
+      if(~~where < (this.wheres.length-1)){
         computedWhere += ','
       }
     }
@@ -121,7 +124,7 @@ export default class HasuraQueryBuilder{
     for(let order in this.orders){
       computedOrders += this.orders[order].property+': '+this.orders[order].order
 
-      if(order < (this.orders.length-1)){
+      if(~~order < (this.orders.length-1)){
         computedOrders += ','
       }
     }
@@ -137,7 +140,7 @@ export default class HasuraQueryBuilder{
     for(let returnMember in this.return){
       computedReturn += this.return[returnMember]
 
-      if(returnMember < (this.return.length-1)){
+      if(~~returnMember < (this.return.length-1)){
         computedReturn += ','
       }
     }

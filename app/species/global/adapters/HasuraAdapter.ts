@@ -1,12 +1,11 @@
 import AdapterInterface from "~/app/species/global/adapters/AdapterInterface";
 import HasuraClient from "~/app/utils/hasura/HasuraClient";
+import HasuraQueryBuilder from "~/app/utils/hasura/HasuraQueryBuilder/HasuraQueryBuilder";
 import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
-import HasuraQueryBuilder from "~/app/utils/hasura/HasuraQueryBuilder/HasuraQueryBuilder";
-import HasuraQueryBuilder from "~/app/utils/hasura/HasuraQueryBuilder/HasuraQueryBuilder";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
 
@@ -314,7 +313,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     }
   }
 
-  async mutationEditWaterConstraints(waterConstraints: WaterConstraints): Promise<WaterConstraints | Error> {
+  async mutationEditWaterConstraints(waterConstraints: WaterConstraints): Promise<WaterConstraints | Array<Error>> {
     const mutation: string = `mutation EditWaterConstraints($uuid: uuid!, $ph_min: numeric, $ph_max: numeric, $gh_min: Int, $gh_max: Int, $temp_min: Int, $temp_max: Int) {
         update_water_constraints_by_pk(pk_columns: {uuid: $uuid}, _set: {
           gh_max: $gh_max,
@@ -344,9 +343,9 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     }
     catch (e) {
       if(e.message.includes("JWTExpired")){
-        return new Error("JWT expired", 401)
+        return [new Error("JWT expired", 401)]
       }
-      return new Error(e.message, 400)
+      return [new Error(e.message, 400)]
     }
 
   }
