@@ -5,18 +5,17 @@ import Species from "~/app/species/global/entities/Species";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
+import HasuraQueryBuilder from "~/app/utils/hasura/HasuraQueryBuilder/HasuraQueryBuilder";
+import HasuraQueryBuilder from "~/app/utils/hasura/HasuraQueryBuilder/HasuraQueryBuilder";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
 
   async queryTotalSpecies(): Promise<number | null> {
-    const query: string = `query{
-      species_aggregate {
-        aggregate {
-          count
-        }
-      }
-    }
-    `
+
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('query', 'species_aggregate')
+    queryBuilder.addReturn('aggregate {count}')
+    const query: string = queryBuilder.getQuery()
+
     try {
       const data = await this.client.request(query)
       const totalSpecies: number = data.species_aggregate.aggregate.count
@@ -28,21 +27,11 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   }
 
   async queryListOfSpecies(): Promise<Array<Species> | Error> {
-    const query: string = `query{
-      species {
-        category
-        publication_state
-        updated_at
-        species_naming {
-          species_genre {
-            name
-          }
-          name
-        }
-        uuid
-      }
-    }
-    `
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('query', 'species')
+    queryBuilder.addReturn('uuid', 'cartegory', 'publication_state', 'updated_at', 'species_naming {name,  species_genre {name}}',)
+
+    const query: string = queryBuilder.getQuery()
+
     try {
       const data = await this.client.request(query)
       const listOfSpecies: Array<Species> = data.species.map((item: Array<string>) => new Species(item))
@@ -115,12 +104,13 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
 
 
   async queryListOfSpeciesCategories(): Promise<Array<string> | Error> {
-    const query: string = `query {
-      species_categories {
-        name
-      }
-    }
-    `
+
+
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('query', 'species_categories')
+    queryBuilder.addReturn('name')
+
+    const query: string = queryBuilder.getQuery()
+
     try {
       const data = await this.client.request(query)
       const listOfSpeciesCategories: Array<string> = data.species_categories
@@ -136,13 +126,12 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   }
 
   async queryListOfSpeciesFamiliesByCategory(category: string): Promise<Array<SpeciesFamily> | Error> {
-    const query: string = `query($category: species_categories_enum) {
-        species_family(where: {category: {_eq: $category}}) {
-          name
-          uuid
-        }
-      }
-    `
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('query', 'species_category_enum')
+    queryBuilder.addReturn('uuid', 'name', 'category', 'user')
+    queryBuilder.addParam('$category', 'species_categories_enum', category)
+    queryBuilder.addWhere('category', '_eq', '$category')
+    const query: string = queryBuilder.getQuery()
+
     try {
       const data = await this.client.request(query,{
         category: category
@@ -160,17 +149,17 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   }
 
   async queryListOfSpeciesGenresByCategory(category: string): Promise<Array<SpeciesGenre> | Error> {
-    const query: string = `query($category: species_categories_enum) {
-      species_genre(where: {category: {_eq: $category}}) {
-          name
-          uuid
-        }
-      }
-    `
+
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('query', 'species_category_enum')
+    queryBuilder.addReturn('uuid', 'name', 'category', 'user')
+    queryBuilder.addParam('$category', 'species_categories_enum', category)
+    queryBuilder.addWhere('category', '_eq', '$category')
+    const query: string = queryBuilder.getQuery()
     try {
       const data = await this.client.request(query,{
         category: category
       })
+
       const listOfSpeciesGenres: Array<SpeciesGenre> = data.species_genre.map((item: Array<string>) => new SpeciesGenre(item))
       return listOfSpeciesGenres
     }
@@ -184,12 +173,10 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   }
 
   async queryListOfSpeciesOrigins(): Promise<Array<string> | Error> {
-    const query: string = `query {
-      species_origin {
-          name
-        }
-      }
-    `
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('query', 'species_origin')
+    queryBuilder.addReturn('name')
+    const query: string = queryBuilder.getQuery()
+
     try {
       const data = await this.client.request(query)
       const listOfSpeciesOrigins: Array<string> = data.species_origin
@@ -205,21 +192,15 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   }
 
   async queryListOfSpeciesByCategory(category: string): Promise<Array<Species> | Error> {
-    const query: string = `query($category: species_categories_enum) {
-      species(where: {category: {_eq: $category}}, order_by: {updated_at: desc}) {
-        uuid
-        updated_at
-        category
-        publication_state
-        species_naming {
-          name
-          species_genre {
-            name
-          }
-        }
-      }
-    }
-    `
+
+    let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('query', 'species')
+    queryBuilder.addReturn('uuid', 'updated_at', 'category', 'publication_state', 'species_naming {name, species_genre {name}}')
+    queryBuilder.addParam('$category', 'species_categories_enum', category)
+    queryBuilder.addWhere('category', '_eq', '$category')
+    queryBuilder.addOrderBy('updated_at', 'desc')
+
+    const query: string = queryBuilder.getQuery()
+
     try {
       const data = await this.client.request(query,{
         category: category
