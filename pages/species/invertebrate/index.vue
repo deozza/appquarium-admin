@@ -18,16 +18,18 @@
             <th scope="col">Nom scientifique</th>
             <th scope="col">Etat</th>
             <th scope="col">Créé le</th>
+            <th scope="col">Modifié le</th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="(invertebrate, index) in listOfInvertebrates" v-bind:key="index">
             <td>{{index + 1}}</td>
             <td>
-              <a :href="computeLinkToSpecies(invertebrate)">{{computeName(invertebrate)}}</a>
+              <a :href="invertebrate | speciesComputedLink">{{ invertebrate.species_naming | speciesComputedName }}</a>
             </td>
             <td>{{invertebrate.publication_state}}</td>
-            <td>{{invertebrate.created_at }}</td>
+            <td>{{invertebrate.created_at | date }}</td>
+            <td>{{invertebrate.updated_at | date }}</td>
           </tr>
           </tbody>
         </table>

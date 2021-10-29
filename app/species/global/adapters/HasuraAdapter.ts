@@ -31,7 +31,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
   async queryListOfSpecies(): Promise<Array<Species> | Error> {
     let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('species')
     queryBuilder.addOrderBy('created_at')
-    queryBuilder.addReturn('uuid', 'category', 'publication_state', 'updated_at', 'species_naming {name,  species_genre {name}}')
+    queryBuilder.addReturn('uuid', 'category', 'publication_state', 'created_at', 'updated_at', 'species_naming {name,  species_genre {name}}')
 
     const query: string = queryBuilder.getRequest()
 
@@ -165,10 +165,10 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
 
   async queryListOfSpeciesByCategory(category: string): Promise<Array<Species> | Error> {
     let queryBuilder: HasuraQueryBuilder = new HasuraQueryBuilder('species')
-    queryBuilder.addReturn('uuid', 'updated_at', 'category', 'publication_state', 'species_naming {name, species_genre {name}}')
+    queryBuilder.addReturn('uuid', 'created_at', 'updated_at', 'category', 'publication_state', 'species_naming {name, species_genre {name}}')
     queryBuilder.addParam('$category', 'species_categories_enum', category)
     queryBuilder.addWhere('category', '_eq', '$category')
-    queryBuilder.addOrderBy('updated_at', 'desc')
+    queryBuilder.addOrderBy('created_at')
 
     const query: string = queryBuilder.getRequest()
 

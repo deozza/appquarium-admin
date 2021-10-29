@@ -21,16 +21,18 @@
           <th scope="col">Nom scientifique</th>
           <th scope="col">Etat</th>
           <th scope="col">Créé le</th>
+          <th scope="col">Modifié le</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="(fish, index) in listOfFishes" v-bind:key="index">
           <td>{{index + 1}}</td>
           <td>
-            <a :href="computeLinkToSpecies(fish)">{{computeName(fish)}}</a>
+            <a :href="fish | speciesComputedLink">{{fish.species_naming | speciesComputedName}}</a>
           </td>
           <td>{{fish.publication_state}}</td>
-          <td>{{fish.created_at  }}</td>
+          <td>{{fish.updated_at | date }}</td>
+          <td>{{fish.created_at | date }}</td>
         </tr>
         </tbody>
       </table>
@@ -87,17 +89,6 @@ export default Vue.extend({
       listOfFishes.content.forEach((item: Species) => this.listOfFishes.push(item))
     }
 
-  },
-  methods : {
-    computeLinkToSpecies(species: Species): string {
-      return '/species/'+species.category+'/'+species.uuid
-    },
-    computeName(species: Species): string{
-      if(species.species_naming !== null && species.species_naming.species_genre !== null){
-        return species.species_naming.species_genre?.name + " " + species.species_naming.name
-      }
-      return 'NA'
-    }
   }
 })
 </script>

@@ -19,17 +19,19 @@
             <th scope="col">Type</th>
             <th scope="col">Etat</th>
             <th scope="col">Créé le</th>
+            <th scope="col">Modifié le</th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="(species, index) in listOfSpecies" v-bind:key="index">
             <td>{{index + 1}}</td>
             <td>
-              <a :href="computeLinkToSpecies(species)">{{computeName(species)}}</a>
+              <a :href="species | speciesComputedLink">{{ species.species_naming | speciesComputedName}}</a>
             </td>
             <td>{{species.category}}</td>
             <td>{{species.publication_state}}</td>
-            <td>{{species.created_at }}</td>
+            <td>{{species.created_at | date }}</td>
+            <td>{{species.updated_at | date }}</td>
           </tr>
           </tbody>
         </table>
@@ -93,17 +95,6 @@ export default Vue.extend({
 
     if(listOfSpecies.isSuccessful()){
       listOfSpecies.content.forEach((item: Species) => this.listOfSpecies.push(item))
-    }
-  },
-  methods : {
-    computeLinkToSpecies(species: Species): string {
-      return '/species/'+species.category+'/'+species.uuid
-    },
-    computeName(species: Species): string{
-      if(species.species_naming !== null && species.species_naming.species_genre !== null){
-        return species.species_naming.species_genre?.name + " " + species.species_naming.name
-      }
-      return 'NA'
     }
   }
 })

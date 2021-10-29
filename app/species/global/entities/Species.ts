@@ -14,8 +14,8 @@ export default class Species {
 
   constructor(species: Array<string>) {
     this.uuid = species.hasOwnProperty('uuid') ? species['uuid'] : ''
-    this.created_at = species.hasOwnProperty('created_at') ? species['created_at'] : ''
-    this.updated_at = species.hasOwnProperty('updated_at') ? species['updated_at'] : ''
+    this.created_at = species.hasOwnProperty('created_at') ? new Date(species['created_at']) : new Date()
+    this.updated_at = species.hasOwnProperty('updated_at') ? new Date(species['updated_at']) : new Date()
     this.user = species.hasOwnProperty('user') ? species['user'] : ''
     this.species_naming = species.hasOwnProperty('species_naming') && species['species_naming'] !== null ? new SpeciesNaming(species['species_naming']) : new SpeciesNaming([])
     this.water_constraint = species.hasOwnProperty('water_constraint') && species['water_constraint'] !== null ? new WaterConstraints(species['water_constraint']) : new  WaterConstraints([])
