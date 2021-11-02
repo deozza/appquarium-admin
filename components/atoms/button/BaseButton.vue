@@ -9,7 +9,7 @@
     ]"
     :type="baseButtonModel.type"
     :disabled="baseButtonModel.isDisabled || baseButtonModel.isLoading"
-    @click="emitEvent()"
+    @click="$nuxt.$emit(baseButtonModel.event)"
   >
     <i v-if="baseButtonModel.isLoading" class="fa fa-spinner fa-spin"></i>
     <i v-if="!baseButtonModel.isLoading && baseButtonModel.icon !== ''" :class="baseButtonModel.icon"></i>
@@ -29,11 +29,6 @@ export default Vue.extend( {
     baseButtonModel: {
       type: BaseButtonModel,
       required: true
-    }
-  },
-  methods: {
-    emitEvent(){
-      this.$emit('buttonClicked')
     }
   }
 })
