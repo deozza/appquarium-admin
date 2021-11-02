@@ -199,4 +199,29 @@ export default class SpeciesUseCase implements UseCaseInterface{
     result.addSuccess('Query is OK', 201)
     return result
   }
+
+  async updatePublicationState(jwt: string, species: Species, nextState: string): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+
+    const isAbleToMoveToState: boolean | Array<Error> = await speciesService.checkNextState(species, nextState)
+
+    if(typeof isAbleToMoveToState !== 'boolean'){
+      result.errors = isAbleToMoveToState
+      return result
+    }
+
+    const speciesPublicationState: string | Array<Error> = await speciesService.updatePublicationState(jwt, species.uuid, nextState)
+
+    if(typeof speciesPublicationState !== 'string'){
+      result.errors = speciesPublicationState
+      return result
+    }
+
+    result.content = speciesPublicationState
+    result.addSuccess('Query is OK', 200)
+    return result
+  }
+
+
 }

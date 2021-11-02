@@ -78,6 +78,20 @@ export default Vue.extend({
     WaterConstraintsForm,
     PublicationActions
   },
+  created() {
+    this.$nuxt.$on('prePublishClicked', () => this.prePublishFish())
+    this.$nuxt.$on('publishClicked', () => this.publishFish())
+    this.$nuxt.$on('moderateClicked', () => this.moderateFish())
+    this.$nuxt.$on('archiveClicked', () => this.archiveFish())
+    this.$nuxt.$on('deleteClicked', () => this.deleteFish())
+  },
+  beforeDestroy() {
+    this.$nuxt.$off('prePublishClicked')
+    this.$nuxt.$off('publishClicked')
+    this.$nuxt.$off('moderateClicked')
+    this.$nuxt.$off('archiveClicked')
+    this.$nuxt.$off('deleteClicked')
+  },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel("", 1)
     const generalCardHeader: BaseHeaderModel = new BaseHeaderModel("Infos générales", 2)
@@ -127,6 +141,116 @@ export default Vue.extend({
       case 'MODERATED': this.statusParagraph.style = 'warning';break;
     }
   },
+  methods: {
+    async prePublishFish(){
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'PRE_PUBLISHED')
+
+      if(fish.isFailed()) {
+        for (const error of fish.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(fish.errors)
+        return
+      }
+
+      this.fish.publication_state = fish.content
+      this.statusParagraph.style = 'info'
+    },
+    async publishFish(){
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'PUBLISHED')
+
+      if(fish.isFailed()) {
+        for (const error of fish.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(fish.errors)
+        return
+      }
+
+      this.fish.publication_state = fish.content
+      this.statusParagraph.style = 'info'
+    },
+    async moderateFish(){
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'MODERATED')
+
+      if(fish.isFailed()) {
+        for (const error of fish.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(fish.errors)
+        return
+      }
+
+      this.fish.publication_state = fish.content
+      this.statusParagraph.style = 'warning'
+    },
+    async archiveFish(){
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'ARCHIVED')
+
+      if(fish.isFailed()) {
+        for (const error of fish.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(fish.errors)
+        return
+      }
+
+      this.fish.publication_state = fish.content
+      this.statusParagraph.style = 'light'
+    },
+    async deleteFish(){
+      /*
+
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const fish: Result = await speciesUseCase.deleteSpecies(this.jwt, this.fish)
+
+      if(fish.isFailed()) {
+        for (const error of fish.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(fish.errors)
+        return
+      }
+
+      await this.$router.push('/species/fish')
+      */
+
+    },
+  }
 })
 </script>
 

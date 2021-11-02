@@ -16,4 +16,6 @@ export default interface ServicesInterface {
   createWaterConstraints(jwt: string, uuid: string, waterConstraints: WaterConstraints): Promise<string|Array<Error>>
   addWaterConstraintsToSpecies(jwt: string, speciesUuid: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Error>
   initNewSpecies(user: User, category: string): Species
+  checkNextState(species: Species, nextState: string): Promise<boolean | Array<Error>>
+  updatePublicationState(jwt: string, uuid: string, state: string): Promise<string|Array<Error>>
 }

@@ -408,4 +408,33 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     }
 
   }
+
+  async mutationUpdatePublicationState(uuid: string, nextState: string): Promise<string | Array<Error>> {
+    let queryBuilder: HasuraMutationUpdateBuilder = new HasuraMutationUpdateBuilder('update_species_by_pk')
+
+    queryBuilder.addParam('$uuid', 'uuid!', uuid)
+    queryBuilder.addParam('$nextState', 'String', nextState)
+
+    queryBuilder.addPkColumn('uuid', '$uuid')
+
+    queryBuilder.addInsert('publication_state', '$nextState')
+
+    queryBuilder.addReturn('publication_state')
+
+    const mutation: string = queryBuilder.getRequest()
+
+    try {
+      const data = await this.client.request(mutation, {
+        uuid: uuid,
+        nextState: nextState
+      })
+
+      return data.publication_state
+    }catch (e) {
+      if(e.message.includes("JWTExpired")){
+        return [new Error("JWT expired", 401)]
+      }
+      return [new Error(e.message, 400)]
+    }
+  }
 }

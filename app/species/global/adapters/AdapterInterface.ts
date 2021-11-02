@@ -21,4 +21,5 @@ export default interface AdapterInterface {
   mutationCreateWaterConstraints(uuid: string, waterConstraints: WaterConstraints): Promise<string | Array<Error>>
   mutationEditWaterConstraints(waterConstraints: WaterConstraints): Promise<WaterConstraints | Array<Error>>
   mutationAddWaterConstraintsToSpecies(waterConstraint: WaterConstraints, speciesUuid: string): Promise<WaterConstraints | Error>
+  mutationUpdatePublicationState(uuid: string, nextState: string): Promise<string | Array<Error>>
 }
