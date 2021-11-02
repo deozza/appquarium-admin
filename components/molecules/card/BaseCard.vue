@@ -1,12 +1,12 @@
 <template>
   <div class="flex-column card">
-    <div class="card-header flex-column">
+    <div v-if="isSlotEmpty('header')" class="card-header flex-column">
       <slot name="header"></slot>
     </div>
-    <div class="card-body">
+    <div v-if="isSlotEmpty('body')"  class="card-body">
       <slot name="body"></slot>
     </div>
-    <div class="card-footer">
+    <div v-if="isSlotEmpty('footer')"  class="card-footer">
       <slot name="footer"></slot>
     </div>
   </div>
@@ -14,9 +14,16 @@
 
 <script lang="ts">
 
-export default {
-  name: "BaseCardVue"
-}
+import Vue from 'vue'
+
+export default Vue.extend({
+  name: "BaseCardVue",
+  methods: {
+    isSlotEmpty(slotName: string): boolean {
+      return !!this.$slots[slotName]
+    }
+  }
+})
 
 </script>
 
