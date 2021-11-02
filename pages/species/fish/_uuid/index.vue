@@ -11,6 +11,7 @@
         <BaseHeader :base-header-model="header" />
         <BaseParagraph :base-paragraph-model="statusParagraph" />
       </section>
+
       <section id="cards" class="flex-row flex-around">
         <BaseCard>
           <template slot="header">
@@ -20,6 +21,7 @@
             <GeneralInfoForm :species="fish" />
           </template>
         </BaseCard>
+
         <BaseCard>
           <template slot="header">
             <BaseHeader :base-header-model="namingCardHeader"/>
@@ -28,12 +30,19 @@
             <NamingForm :jwt="jwt"  :species="fish" />
           </template>
         </BaseCard>
+
         <BaseCard>
           <template slot="header">
             <BaseHeader :base-header-model="waterConstraintsCardHeader"/>
           </template>
           <template slot="body">
             <WaterConstraintsForm :species="fish" :jwt="jwt"/>
+          </template>
+        </BaseCard>
+
+        <BaseCard>
+          <template slot="footer">
+            <PublicationActions :publication-state="fish.publication_state"/>
           </template>
         </BaseCard>
       </section>
@@ -55,6 +64,7 @@ import BaseParagraph from "~/components/atoms/typography/paragraph/BaseParagraph
 import GeneralInfoForm from "~/components/molecules/speciesForm/GeneralInfoForm.vue";
 import NamingForm from "~/components/molecules/speciesForm/NamingForm.vue";
 import WaterConstraintsForm from "~/components/molecules/speciesForm/WaterConstraintsForm.vue";
+import PublicationActions from "~/components/molecules/speciesForm/PublicationActions.vue";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -65,7 +75,8 @@ export default Vue.extend({
     BaseCard,
     GeneralInfoForm,
     NamingForm,
-    WaterConstraintsForm
+    WaterConstraintsForm,
+    PublicationActions
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel("", 1)
