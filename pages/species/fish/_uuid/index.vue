@@ -8,8 +8,7 @@
     </div>
     <div class="flex-column" id="content" v-else>
       <section id="title" class="flex-row">
-        <BaseHeader :base-header-model="header" />
-        <BaseParagraph :base-paragraph-model="statusParagraph" />
+        <BaseHeader :base-header-model="header" > <BaseBadge :base-badge-model="statusBadge" /></BaseHeader>
       </section>
 
       <section id="cards" class="flex-row flex-around">
@@ -42,7 +41,10 @@
 
         <BaseCard>
           <template slot="footer">
-            <PublicationActions :publication-state="fish.publication_state"/>
+            <PublicationActions  v-if="isUpdatingPublicationState === false" :publication-state="fish.publication_state"/>
+            <div v-else class="flex-row flex-around" >
+              <i class="fas fa-spinner fa-spin fa-5x"></i>
+            </div>
           </template>
         </BaseCard>
       </section>
@@ -59,18 +61,18 @@ import Result from "../../../../app/utils/useCasesResult/Result";
 import BaseCard from "~/components/molecules/card/BaseCard.vue";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
-import BaseParagraphModel from "~/components/atoms/typography/paragraph/BaseParagraphModel";
-import BaseParagraph from "~/components/atoms/typography/paragraph/BaseParagraph.vue";
 import GeneralInfoForm from "~/components/molecules/speciesForm/GeneralInfoForm.vue";
 import NamingForm from "~/components/molecules/speciesForm/NamingForm.vue";
 import WaterConstraintsForm from "~/components/molecules/speciesForm/WaterConstraintsForm.vue";
 import PublicationActions from "~/components/molecules/speciesForm/PublicationActions.vue";
+import BaseBadge from "~/components/atoms/badge/BaseBadge.vue";
+import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
 
 export default Vue.extend({
   middleware: 'authenticated',
   components: {
     BaseHeader,
-    BaseParagraph,
+    BaseBadge,
     BaseButton,
     BaseCard,
     GeneralInfoForm,
@@ -97,7 +99,6 @@ export default Vue.extend({
     const generalCardHeader: BaseHeaderModel = new BaseHeaderModel("Infos générales", 2)
     const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms", 2)
     const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau", 2)
-    const statusParagraph: BaseParagraphModel = new BaseParagraphModel("")
     const fish: Species = new Species([])
     const jwt: string = this.$cookies.get('appquarium-jwt')
 
@@ -106,9 +107,9 @@ export default Vue.extend({
       generalCardHeader: generalCardHeader,
       namingCardHeader: namingCardHeader,
       waterConstraintsCardHeader: waterConstraintsCardHeader,
-      statusParagraph: statusParagraph,
       fish: fish,
-      jwt: jwt
+      jwt: jwt,
+      isUpdatingPublicationState: false
     }
   },
   async fetch(){
@@ -133,16 +134,24 @@ export default Vue.extend({
 
     this.fish = fish.content
     this.header.content = this.fish.computeName()
-    this.statusParagraph.content = this.fish.publication_state
-    switch (this.fish.publication_state) {
-      case 'DRAFT': this.statusParagraph.style = 'info';break;
-      case 'PRE_PUBLISHED': this.statusParagraph.style = 'info';break;
-      case 'PUBLISHED': this.statusParagraph.style = 'success';break;
-      case 'MODERATED': this.statusParagraph.style = 'warning';break;
+  },
+  computed: {
+    statusBadge(): BaseBadgeModel{
+      const statusBadge: BaseBadgeModel = new BaseBadgeModel("")
+
+      if(this.fish === undefined || this.fish === null || this.fish.publication_state === ''){
+        return statusBadge
+      }
+
+      statusBadge.content = this.fish.getPublicationStateContent()
+      statusBadge.style = this.fish.getPublicationStateStyle()
+
+      return statusBadge
     }
   },
   methods: {
     async prePublishFish(){
+      this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'PRE_PUBLISHED')
@@ -161,9 +170,10 @@ export default Vue.extend({
       }
 
       this.fish.publication_state = fish.content
-      this.statusParagraph.style = 'info'
+      this.isUpdatingPublicationState = false
     },
     async publishFish(){
+      this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'PUBLISHED')
@@ -182,9 +192,10 @@ export default Vue.extend({
       }
 
       this.fish.publication_state = fish.content
-      this.statusParagraph.style = 'info'
+      this.isUpdatingPublicationState = false
     },
     async moderateFish(){
+      this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'MODERATED')
@@ -203,9 +214,10 @@ export default Vue.extend({
       }
 
       this.fish.publication_state = fish.content
-      this.statusParagraph.style = 'warning'
+      this.isUpdatingPublicationState = false
     },
     async archiveFish(){
+      this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'ARCHIVED')
@@ -224,7 +236,7 @@ export default Vue.extend({
       }
 
       this.fish.publication_state = fish.content
-      this.statusParagraph.style = 'light'
+      this.isUpdatingPublicationState = false
     },
     async deleteFish(){
       /*
@@ -249,7 +261,7 @@ export default Vue.extend({
       await this.$router.push('/species/fish')
       */
 
-    },
+    }
   }
 })
 </script>

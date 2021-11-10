@@ -117,7 +117,7 @@ export default class Services implements ServicesInterface {
   }
 
   async checkNextState(species: Species, nextState: string): Promise<boolean | Array<Error>> {
-    return []
+    return true
   }
 
   async updatePublicationState(jwt: string, uuid: string, state: string): Promise<string|Array<Error>> {

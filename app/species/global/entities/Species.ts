@@ -38,4 +38,28 @@ export default class Species {
     }
     return 'NA'
   }
+
+  public getPublicationStateStyle(): string {
+    const publicationStateStyle: object = {
+      'DRAFT': 'secondary',
+      'PRE_PUBLISHED': 'info',
+      'MODERATED': 'warning',
+      'PUBLISHED': 'success',
+      'ARCHIVED': 'secondary',
+    }
+
+    return publicationStateStyle[this.publication_state]
+  }
+
+  public getPublicationStateContent(): string {
+    const publicationStateContent: object = {
+      'DRAFT': 'brouillon',
+      'PRE_PUBLISHED': 'pré-publié',
+      'MODERATED': 'modéré',
+      'PUBLISHED': 'publié',
+      'ARCHIVED': 'archivé',
+    }
+
+    return publicationStateContent[this.publication_state]
+  }
 }

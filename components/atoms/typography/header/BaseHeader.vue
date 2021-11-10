@@ -1,9 +1,9 @@
 <template>
-  <h1 v-if="baseHeaderModel.size === 1" :class="baseHeaderModel.style">{{baseHeaderModel.content}}</h1>
-  <h2 v-else-if="baseHeaderModel.size === 2" :class="baseHeaderModel.style">{{baseHeaderModel.content}}</h2>
-  <h3 v-else-if="baseHeaderModel.size === 3" :class="baseHeaderModel.style">{{baseHeaderModel.content}}</h3>
-  <h4 v-else-if="baseHeaderModel.size === 4" :class="baseHeaderModel.style">{{baseHeaderModel.content}}</h4>
-  <h5 v-else-if="baseHeaderModel.size === 5" :class="baseHeaderModel.style">{{baseHeaderModel.content}}</h5>
+  <h1 v-if="baseHeaderModel.size === 1" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h1>
+  <h2 v-else-if="baseHeaderModel.size === 2" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h2>
+  <h3 v-else-if="baseHeaderModel.size === 3" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h3>
+  <h4 v-else-if="baseHeaderModel.size === 4" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h4>
+  <h5 v-else-if="baseHeaderModel.size === 5" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h5>
   <h6 v-else :class="baseHeaderModel.style">{{baseHeaderModel.content}}</h6>
 </template>
 

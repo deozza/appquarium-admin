@@ -413,7 +413,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     let queryBuilder: HasuraMutationUpdateBuilder = new HasuraMutationUpdateBuilder('update_species_by_pk')
 
     queryBuilder.addParam('$uuid', 'uuid!', uuid)
-    queryBuilder.addParam('$nextState', 'String', nextState)
+    queryBuilder.addParam('$nextState', 'publication_state_enum', nextState)
 
     queryBuilder.addPkColumn('uuid', '$uuid')
 
@@ -429,7 +429,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
         nextState: nextState
       })
 
-      return data.publication_state
+      return data.update_species_by_pk.publication_state
     }catch (e) {
       if(e.message.includes("JWTExpired")){
         return [new Error("JWT expired", 401)]
