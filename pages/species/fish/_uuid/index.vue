@@ -40,6 +40,15 @@
         </BaseCard>
 
         <BaseCard>
+          <template slot="header">
+            <BaseHeader :base-header-model="animalSpecsCardHeader"/>
+          </template>
+          <template slot="body">
+            <AnimalSpecsForm :species="fish" :jwt="jwt"/>
+          </template>
+        </BaseCard>
+
+        <BaseCard>
           <template slot="footer">
             <PublicationActions  v-if="isUpdatingPublicationState === false" :publication-state="fish.publication_state"/>
             <div v-else class="flex-row flex-around" >
@@ -54,16 +63,17 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import BaseHeaderModel from "../../../../components/atoms/typography/header/BaseHeaderModel";
-import Species from "../../../../app/species/global/entities/Species";
-import SpeciesUseCase from "../../../../app/species/global/useCases/UseCase";
-import Result from "../../../../app/utils/useCasesResult/Result";
+import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
+import Species from "~/app/species/global/entities/Species";
+import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
+import Result from "~/app/utils/useCasesResult/Result";
 import BaseCard from "~/components/molecules/card/BaseCard.vue";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
 import GeneralInfoForm from "~/components/molecules/speciesForm/GeneralInfoForm.vue";
 import NamingForm from "~/components/molecules/speciesForm/NamingForm.vue";
 import WaterConstraintsForm from "~/components/molecules/speciesForm/WaterConstraintsForm.vue";
+import AnimalSpecsForm from "~/components/molecules/speciesForm/AnimalSpecsForm.vue";
 import PublicationActions from "~/components/molecules/speciesForm/PublicationActions.vue";
 import BaseBadge from "~/components/atoms/badge/BaseBadge.vue";
 import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
@@ -78,6 +88,7 @@ export default Vue.extend({
     GeneralInfoForm,
     NamingForm,
     WaterConstraintsForm,
+    AnimalSpecsForm,
     PublicationActions
   },
   created() {
@@ -99,6 +110,7 @@ export default Vue.extend({
     const generalCardHeader: BaseHeaderModel = new BaseHeaderModel("Infos générales", 2)
     const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms", 2)
     const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau", 2)
+    const animalSpecsCardHeader: BaseHeaderModel = new BaseHeaderModel("Caractéristiques animales", 2)
     const fish: Species = new Species([])
     const jwt: string = this.$cookies.get('appquarium-jwt')
 
@@ -107,6 +119,7 @@ export default Vue.extend({
       generalCardHeader: generalCardHeader,
       namingCardHeader: namingCardHeader,
       waterConstraintsCardHeader: waterConstraintsCardHeader,
+      animalSpecsCardHeader: animalSpecsCardHeader,
       fish: fish,
       jwt: jwt,
       isUpdatingPublicationState: false
@@ -143,13 +156,35 @@ export default Vue.extend({
         return statusBadge
       }
 
-      statusBadge.content = this.fish.getPublicationStateContent()
-      statusBadge.style = this.fish.getPublicationStateStyle()
+      statusBadge.content = this.getPublicationStateContent(this.fish)
+      statusBadge.style = this.getPublicationStateStyle(this.fish)
 
       return statusBadge
     }
   },
   methods: {
+    getPublicationStateStyle(fish: Species): string {
+      const publicationStateStyle: object = {
+        'DRAFT': 'secondary',
+        'PRE_PUBLISHED': 'info',
+        'MODERATED': 'warning',
+        'PUBLISHED': 'success',
+        'ARCHIVED': 'secondary',
+      }
+
+      return publicationStateStyle[fish.publication_state]
+    },
+     getPublicationStateContent(fish: Species): string {
+      const publicationStateContent: object = {
+        'DRAFT': 'brouillon',
+        'PRE_PUBLISHED': 'pré-publié',
+        'MODERATED': 'modéré',
+        'PUBLISHED': 'publié',
+        'ARCHIVED': 'archivé',
+      }
+
+      return publicationStateContent[fish.publication_state]
+    },
     async prePublishFish(){
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
@@ -210,6 +245,7 @@ export default Vue.extend({
         }
 
         console.log(fish.errors)
+        this.isUpdatingPublicationState = false
         return
       }
 

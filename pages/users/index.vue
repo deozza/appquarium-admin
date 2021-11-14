@@ -6,7 +6,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
 
 export default Vue.extend({

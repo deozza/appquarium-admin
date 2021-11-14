@@ -10,6 +10,7 @@ import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 import FirebaseAdapter from "~/app/user/adapters/FirebaseAdapter";
+import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 
 export default class Services implements ServicesInterface {
   async queryTotalSpecies(jwt: string): Promise<number|null> {
@@ -116,17 +117,6 @@ export default class Services implements ServicesInterface {
     return await adapter.mutationEditWaterConstraints(waterConstraints)
   }
 
-  async checkNextState(species: Species, nextState: string): Promise<boolean | Array<Error>> {
-    return true
-  }
-
-  async updatePublicationState(jwt: string, uuid: string, state: string): Promise<string|Array<Error>> {
-    const adapter: AdapterInterface = new HasuraAdapter(jwt)
-
-    return await adapter.mutationUpdatePublicationState(uuid, state)
-  }
-
-
   private static checkWaterConstraintsAreValid(waterConstraints: WaterConstraints): Result {
     const result: Result = new Result()
 
@@ -145,5 +135,37 @@ export default class Services implements ServicesInterface {
     return result
   }
 
+  async createAnimalSpecs(jwt: string, uuid: string, animalSpecs: AnimalSpecs): Promise<string | Array<Error>> {
+    const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
+    const animalSpecsUuid: string | Array<Error> = await adapter.mutationCreateAnimalSpecs(uuid, animalSpecs)
+
+    if(typeof animalSpecsUuid !== 'string'){
+      return animalSpecsUuid
+    }
+
+    return animalSpecsUuid
+  }
+
+  async addAnimalSpecsToSpecies(jwt: string, speciesUuid: string, animalSpecs: AnimalSpecs): Promise<AnimalSpecs | Error> {
+    const adapter: AdapterInterface = new HasuraAdapter(jwt)
+
+    return await adapter.mutationAddAnimalSpecsToSpecies(animalSpecs, speciesUuid)
+  }
+
+  async updateAnimalSpecs(jwt: string, animalSpecs: AnimalSpecs): Promise<AnimalSpecs | Array<Error>> {
+    const adapter: AdapterInterface = new HasuraAdapter(jwt)
+
+    return await adapter.mutationEditAnimalSpecs(animalSpecs)
+  }
+
+  async checkNextState(species: Species, nextState: string): Promise<boolean | Array<Error>> {
+    return true
+  }
+
+  async updatePublicationState(jwt: string, uuid: string, state: string): Promise<string|Array<Error>> {
+    const adapter: AdapterInterface = new HasuraAdapter(jwt)
+
+    return await adapter.mutationUpdatePublicationState(uuid, state)
+  }
 }

@@ -9,6 +9,7 @@ import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 import HasuraQueryBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraQueryBuilder";
 import HasuraMutationInsertBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraMutationInsertBuilder";
 import HasuraMutationUpdateBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraMutationUpdateBuilder";
+import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
 
@@ -59,6 +60,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     queryBuilder.addReturn('uuid', 'created_at', 'updated_at', 'category', 'origin', 'publication_state')
     queryBuilder.addReturn('species_naming {uuid, created_at, updated_at, name, common_names, old_names, species_family {name, uuid}, species_genre {name, uuid}}')
     queryBuilder.addReturn('water_constraint {uuid, created_at, updated_at, ph_min, ph_max, gh_min, gh_max, temp_min ,temp_max}')
+    queryBuilder.addReturn('animal_spec {uuid, created_at, updated_at, male_size, female_size, longevity_in_years}')
 
     const query: string = queryBuilder.getRequest()
 
@@ -74,6 +76,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
         return new Error("JWT expired", 401)
 
       }
+      console.log(e.message)
+
       return new Error(e.message, 400)
     }
   }
@@ -399,6 +403,107 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       })
 
       return waterConstraints
+    }
+    catch (e) {
+      if(e.message.includes("JWTExpired")){
+        return [new Error("JWT expired", 401)]
+      }
+      return [new Error(e.message, 400)]
+    }
+
+  }
+
+  async mutationCreateAnimalSpecs(uuid: string, animalSpecs: AnimalSpecs): Promise<string | Array<Error>> {
+    let queryBuilder: HasuraMutationInsertBuilder = new HasuraMutationInsertBuilder('insert_animal_specs_one')
+    queryBuilder.addParam('$male_size', 'Int', animalSpecs.male_size)
+    queryBuilder.addParam('$female_size', 'Int', animalSpecs.female_size)
+    queryBuilder.addParam('$longevity_in_years', 'Int', animalSpecs.longevity_in_years)
+
+    queryBuilder.addInsert('male_size', '$male_size')
+    queryBuilder.addInsert('female_size', '$female_size')
+    queryBuilder.addInsert('longevity_in_years', '$longevity_in_years')
+
+    queryBuilder.addReturn('uuid')
+    const mutation: string = queryBuilder.getRequest()
+
+    try {
+      const data = await this.client.request(mutation,{
+        male_size: animalSpecs.male_size,
+        female_size: animalSpecs.female_size,
+        longevity_in_years: animalSpecs.longevity_in_years,
+      })
+      return data.insert_animal_specs_one.uuid
+    }
+    catch (e) {
+      let errors: Array<Error> = []
+      if(e.message.includes("JWTExpired")){
+        errors.push(new Error("JWT expired", 401))
+        return errors
+      }
+      errors.push(new Error(e.message, 400))
+      return errors
+    }
+
+  }
+
+  async mutationAddAnimalSpecsToSpecies(animalSpecs: AnimalSpecs, speciesUuid: string): Promise<AnimalSpecs | Error> {
+
+    let queryBuilder: HasuraMutationUpdateBuilder = new HasuraMutationUpdateBuilder('update_species_by_pk')
+
+    queryBuilder.addParam('$speciesUuid', 'uuid!', speciesUuid)
+    queryBuilder.addParam('$animalSpecsUuid', 'uuid', animalSpecs.uuid)
+
+    queryBuilder.addPkColumn('uuid', '$speciesUuid')
+
+    queryBuilder.addInsert('animal_specs', '$animalSpecsUuid')
+
+    queryBuilder.addReturn('uuid')
+
+    const mutation: string = queryBuilder.getRequest()
+
+    try {
+      await this.client.request(mutation,{
+        animalSpecsUuid: animalSpecs.uuid,
+        speciesUuid: speciesUuid,
+      })
+      return animalSpecs
+    }
+    catch (e) {
+      if(e.message.includes("JWTExpired")){
+        return new Error("JWT expired", 401)
+      }
+
+      return new Error(e.message, 400)
+    }
+  }
+
+  async mutationEditAnimalSpecs(animalSpecs: AnimalSpecs): Promise<AnimalSpecs | Array<Error>> {
+    let queryBuilder: HasuraMutationUpdateBuilder = new HasuraMutationUpdateBuilder('update_animal_specs_by_pk')
+
+    queryBuilder.addParam('$uuid', 'uuid!', animalSpecs.uuid)
+    queryBuilder.addParam('$male_size', 'Int', animalSpecs.male_size)
+    queryBuilder.addParam('$female_size', 'Int', animalSpecs.female_size)
+    queryBuilder.addParam('$longevity_in_years', 'Int', animalSpecs.longevity_in_years)
+
+    queryBuilder.addPkColumn('uuid', '$uuid')
+
+    queryBuilder.addInsert('male_size', '$male_size')
+    queryBuilder.addInsert('female_size', '$female_size')
+    queryBuilder.addInsert('longevity_in_years', '$longevity_in_years')
+
+    queryBuilder.addReturn('uuid')
+
+    const mutation: string = queryBuilder.getRequest()
+
+    try {
+      await this.client.request(mutation,{
+        uuid: animalSpecs.uuid,
+        male_size: animalSpecs.male_size,
+        female_size: animalSpecs.female_size,
+        longevity_in_years: animalSpecs.longevity_in_years,
+      })
+
+      return animalSpecs
     }
     catch (e) {
       if(e.message.includes("JWTExpired")){

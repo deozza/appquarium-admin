@@ -8,10 +8,10 @@
     </div>
     <div class="flex-column" id="content" v-else>
       <section id="title" class="flex-row">
-        <BaseHeader :base-header-model="header" />
-        <BaseParagraph :base-paragraph-model="statusParagraph" />
+        <BaseHeader :base-header-model="header"> <BaseBadge :base-badge-model="statusBadge" /></BaseHeader>
       </section>
       <section id="cards" class="flex-row flex-around">
+
         <BaseCard>
           <template slot="header">
             <BaseHeader :base-header-model="generalCardHeader"/>
@@ -20,6 +20,7 @@
             <GeneralInfoForm  :species="plant" />
           </template>
         </BaseCard>
+
         <BaseCard>
           <template slot="header">
             <BaseHeader :base-header-model="namingCardHeader"/>
@@ -28,6 +29,8 @@
             <NamingForm :jwt="jwt" :species="plant" />
           </template>
         </BaseCard>
+
+
         <BaseCard>
           <template slot="header">
             <BaseHeader :base-header-model="waterConstraintsCardHeader"/>
@@ -37,16 +40,26 @@
           </template>
         </BaseCard>
       </section>
+
+      <BaseCard>
+        <template slot="footer">
+          <PublicationActions  v-if="isUpdatingPublicationState === false" :publication-state="plant.publication_state"/>
+          <div v-else class="flex-row flex-around" >
+            <i class="fas fa-spinner fa-spin fa-5x"></i>
+          </div>
+        </template>
+      </BaseCard>
+
     </div>
   </main>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import BaseHeaderModel from "../../../../components/atoms/typography/header/BaseHeaderModel";
-import Species from "../../../../app/species/global/entities/Species";
-import SpeciesUseCase from "../../../../app/species/global/useCases/UseCase";
-import Result from "../../../../app/utils/useCasesResult/Result";
+import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
+import Species from "~/app/species/global/entities/Species";
+import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
+import Result from "~/app/utils/useCasesResult/Result";
 import BaseCard from "~/components/molecules/card/BaseCard.vue";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import BaseHeader from "~/components/atoms/typography/header/BaseHeader.vue";
@@ -55,6 +68,9 @@ import BaseParagraph from "~/components/atoms/typography/paragraph/BaseParagraph
 import GeneralInfoForm from "~/components/molecules/speciesForm/GeneralInfoForm.vue";
 import NamingForm from "~/components/molecules/speciesForm/NamingForm.vue";
 import WaterConstraintsForm from "~/components/molecules/speciesForm/WaterConstraintsForm.vue";
+import PublicationActions from "~/components/molecules/speciesForm/PublicationActions.vue";
+import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
+import BaseBadge from "~/components/atoms/badge/BaseBadge.vue";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -63,9 +79,25 @@ export default Vue.extend({
     BaseParagraph,
     BaseButton,
     BaseCard,
+    BaseBadge,
     GeneralInfoForm,
     NamingForm,
-    WaterConstraintsForm
+    WaterConstraintsForm,
+    PublicationActions
+  },
+  created() {
+    this.$nuxt.$on('prePublishClicked', () => this.prePublishPlant())
+    this.$nuxt.$on('publishClicked', () => this.publishPlant())
+    this.$nuxt.$on('moderateClicked', () => this.moderatePlant())
+    this.$nuxt.$on('archiveClicked', () => this.archivePlant())
+    this.$nuxt.$on('deleteClicked', () => this.deletePlant())
+  },
+  beforeDestroy() {
+    this.$nuxt.$off('prePublishClicked')
+    this.$nuxt.$off('publishClicked')
+    this.$nuxt.$off('moderateClicked')
+    this.$nuxt.$off('archiveClicked')
+    this.$nuxt.$off('deleteClicked')
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel("", 1)
@@ -83,7 +115,8 @@ export default Vue.extend({
       waterConstraintsCardHeader: waterConstraintsCardHeader,
       statusParagraph: statusParagraph,
       plant: plant,
-      jwt: jwt
+      jwt: jwt,
+      isUpdatingPublicationState: false
     }
   },
   async fetch(){
@@ -107,14 +140,158 @@ export default Vue.extend({
 
     this.plant = plant.content
     this.header.content = this.plant.computeName()
-    this.statusParagraph.content = this.plant.publication_state
-    switch (this.plant.publication_state) {
-      case 'DRAFT': this.statusParagraph.style = 'info';break;
-      case 'PRE_PUBLISHED': this.statusParagraph.style = 'info';break;
-      case 'PUBLISHED': this.statusParagraph.style = 'success';break;
-      case 'MODERATED': this.statusParagraph.style = 'warning';break;
+  },
+  computed: {
+    statusBadge(): BaseBadgeModel{
+      const statusBadge: BaseBadgeModel = new BaseBadgeModel("")
+
+      if(this.plant === undefined || this.plant === null || this.plant.publication_state === ''){
+        return statusBadge
+      }
+
+      statusBadge.content = this.getPublicationStateContent(this.plant)
+      statusBadge.style = this.getPublicationStateStyle(this.plant)
+
+      return statusBadge
     }
   },
+  methods: {
+    getPublicationStateStyle(plant: Species): string {
+      const publicationStateStyle: object = {
+        'DRAFT': 'secondary',
+        'PRE_PUBLISHED': 'info',
+        'MODERATED': 'warning',
+        'PUBLISHED': 'success',
+        'ARCHIVED': 'secondary',
+      }
+
+      return publicationStateStyle[plant.publication_state]
+    },
+    getPublicationStateContent(plant: Species): string {
+      const publicationStateContent: object = {
+        'DRAFT': 'brouillon',
+        'PRE_PUBLISHED': 'pré-publié',
+        'MODERATED': 'modéré',
+        'PUBLISHED': 'publié',
+        'ARCHIVED': 'archivé',
+      }
+
+      return publicationStateContent[plant.publication_state]
+    },
+    async prePublishPlant(){
+      this.isUpdatingPublicationState = true
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const plant: Result = await speciesUseCase.updatePublicationState(this.jwt, this.plant, 'PRE_PUBLISHED')
+
+      if(plant.isFailed()) {
+        for (const error of plant.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(plant.errors)
+        return
+      }
+
+      this.plant.publication_state = plant.content
+      this.isUpdatingPublicationState = false
+    },
+    async publishPlant(){
+      this.isUpdatingPublicationState = true
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const plant: Result = await speciesUseCase.updatePublicationState(this.jwt, this.plant, 'PUBLISHED')
+
+      if(plant.isFailed()) {
+        for (const error of plant.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(plant.errors)
+        return
+      }
+
+      this.plant.publication_state = plant.content
+      this.isUpdatingPublicationState = false
+    },
+    async moderatePlant(){
+      this.isUpdatingPublicationState = true
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const plant: Result = await speciesUseCase.updatePublicationState(this.jwt, this.plant, 'MODERATED')
+
+      if(plant.isFailed()) {
+        for (const error of plant.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(plant.errors)
+        this.isUpdatingPublicationState = false
+        return
+      }
+
+      this.plant.publication_state = plant.content
+      this.isUpdatingPublicationState = false
+    },
+    async archivePlant(){
+      this.isUpdatingPublicationState = true
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const plant: Result = await speciesUseCase.updatePublicationState(this.jwt, this.plant, 'ARCHIVED')
+
+      if(plant.isFailed()) {
+        for (const error of plant.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(plant.errors)
+        return
+      }
+
+      this.plant.publication_state = plant.content
+      this.isUpdatingPublicationState = false
+    },
+    async deletePlant(){
+      /*
+
+      const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
+
+      const plant: Result = await speciesUseCase.deleteSpecies(this.jwt, this.plant)
+
+      if(plant.isFailed()) {
+        for (const error of plant.errors) {
+
+          if (error.code === 401) {
+            this.$cookies.remove('appquarium-jwt')
+            await this.$router.push('/login')
+          }
+        }
+
+        console.log(plant.errors)
+        return
+      }
+
+      await this.$router.push('/species/plant')
+      */
+
+    }
+  }
 })
 </script>
 

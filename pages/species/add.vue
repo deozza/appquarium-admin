@@ -23,7 +23,6 @@ import BaseInput from "~/components/atoms/input/BaseInput.vue";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
 
-
 export default Vue.extend({
   middleware: 'authenticated',
   components: {

@@ -5,6 +5,7 @@ import Error from "~/app/utils/useCasesResult/types/Error";
 import Species from "~/app/species/global/entities/Species";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
+import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 
 export default class SpeciesUseCase implements UseCaseInterface{
   async getTotalSpecies(jwt: string): Promise<Result> {
@@ -190,6 +191,44 @@ export default class SpeciesUseCase implements UseCaseInterface{
     species.water_constraint.uuid = waterConstraintsUuid
 
     const updatedSpecies: WaterConstraints | Error = await speciesService.addWaterConstraintsToSpecies(jwt, species.uuid, species.water_constraint)
+
+    if(updatedSpecies instanceof Error) {
+      result.errors.push(updatedSpecies)
+      return result
+    }
+
+    result.addSuccess('Query is OK', 201)
+    return result
+  }
+
+  async updateAnimalSpecs(jwt: string, species: Species): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+    const updatedAnimalSpecs: AnimalSpecs | Array<Error> = await speciesService.updateAnimalSpecs(jwt, species.animal_specs)
+
+    if(updatedAnimalSpecs instanceof AnimalSpecs) {
+      result.addSuccess('Query is OK', 200)
+      return result
+    }
+
+    result.errors = updatedAnimalSpecs
+    return result
+
+  }
+
+  async addAnimalSpecs(jwt: string, species: Species): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+    const animalSpecsUuid: string | Array<Error> = await speciesService.createAnimalSpecs(jwt, species.uuid, species.animal_specs)
+
+    if(typeof animalSpecsUuid !== 'string'){
+      result.errors = animalSpecsUuid
+      return result
+    }
+
+    species.animal_specs.uuid = animalSpecsUuid
+
+    const updatedSpecies: AnimalSpecs | Error = await speciesService.addAnimalSpecsToSpecies(jwt, species.uuid, species.animal_specs)
 
     if(updatedSpecies instanceof Error) {
       result.errors.push(updatedSpecies)

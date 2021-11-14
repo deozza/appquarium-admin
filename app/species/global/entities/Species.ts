@@ -1,5 +1,6 @@
 import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
+import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 
 export default class Species {
   uuid: string
@@ -8,6 +9,7 @@ export default class Species {
   user: string
   species_naming: SpeciesNaming
   water_constraint: WaterConstraints
+  animal_specs: AnimalSpecs
   origin: string
   publication_state: string
   category: string
@@ -19,6 +21,7 @@ export default class Species {
     this.user = species.hasOwnProperty('user') ? species['user'] : ''
     this.species_naming = species.hasOwnProperty('species_naming') && species['species_naming'] !== null ? new SpeciesNaming(species['species_naming']) : new SpeciesNaming([])
     this.water_constraint = species.hasOwnProperty('water_constraint') && species['water_constraint'] !== null ? new WaterConstraints(species['water_constraint']) : new  WaterConstraints([])
+    this.animal_specs = species.hasOwnProperty('animal_specs') && species['animal_specs'] !== null ? new AnimalSpecs(species['animal_specs']) : new  AnimalSpecs([])
     this.origin = species.hasOwnProperty('origin') ? species['origin'] : ''
     this.publication_state = species.hasOwnProperty('publication_state') ? species['publication_state'] : ''
     this.category = species.hasOwnProperty('category') ? species['category'] : ''
