@@ -30,4 +30,6 @@ export default interface AdapterInterface {
   mutationAddAnimalSpecsToSpecies(animalSpecs: AnimalSpecs, speciesUuid: string): Promise<AnimalSpecs | Error>
 
   mutationUpdatePublicationState(uuid: string, nextState: string): Promise<string | Array<Error>>
+
+  mutationDeleteSpecies(uuid: string): Promise<boolean | Array<Error>>
 }

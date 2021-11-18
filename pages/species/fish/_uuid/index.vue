@@ -58,6 +58,18 @@
         </BaseCard>
       </section>
     </div>
+
+    <BaseModal :is-opened="deleteFishModalIsOpen">
+      <template slot="header">
+        <BaseHeader :base-header-model="deleteModalHeader" />
+      </template>
+      <template slot="footer">
+        <div class="flex-row flex-around">
+          <BaseButton :base-button-model="cancelDeleteSpeciesButton" />
+          <BaseButton :base-button-model="confirmDeleteSpeciesButton" />
+        </div>
+      </template>
+    </BaseModal>
   </main>
 </template>
 
@@ -77,6 +89,8 @@ import AnimalSpecsForm from "~/components/molecules/speciesForm/AnimalSpecsForm.
 import PublicationActions from "~/components/molecules/speciesForm/PublicationActions.vue";
 import BaseBadge from "~/components/atoms/badge/BaseBadge.vue";
 import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
+import BaseModal from "~/components/molecules/modal/BaseModal.vue";
+import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -85,6 +99,7 @@ export default Vue.extend({
     BaseBadge,
     BaseButton,
     BaseCard,
+    BaseModal,
     GeneralInfoForm,
     NamingForm,
     WaterConstraintsForm,
@@ -96,7 +111,9 @@ export default Vue.extend({
     this.$nuxt.$on('publishClicked', () => this.publishFish())
     this.$nuxt.$on('moderateClicked', () => this.moderateFish())
     this.$nuxt.$on('archiveClicked', () => this.archiveFish())
-    this.$nuxt.$on('deleteClicked', () => this.deleteFish())
+    this.$nuxt.$on('deleteClicked', () => this.deleteFishModalIsOpen = true)
+    this.$nuxt.$on('closeDeleteSpeciesModal', () => this.deleteFishModalIsOpen = false)
+    this.$nuxt.$on('confirmDeleteSpecies', () => this.deleteFish())
   },
   beforeDestroy() {
     this.$nuxt.$off('prePublishClicked')
@@ -104,6 +121,8 @@ export default Vue.extend({
     this.$nuxt.$off('moderateClicked')
     this.$nuxt.$off('archiveClicked')
     this.$nuxt.$off('deleteClicked')
+    this.$nuxt.$off('closeDeleteSpeciesModal')
+    this.$nuxt.$off('confirmDeleteSpecies')
   },
   data(){
     const header: BaseHeaderModel = new BaseHeaderModel("", 1)
@@ -111,6 +130,13 @@ export default Vue.extend({
     const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms", 2)
     const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau", 2)
     const animalSpecsCardHeader: BaseHeaderModel = new BaseHeaderModel("Caractéristiques animales", 2)
+    const deleteModalHeader: BaseHeaderModel = new BaseHeaderModel("Supprimer une espèce", 3)
+
+    const cancelDeleteSpeciesButton: BaseButtonModel = new BaseButtonModel('Non', 'secondary', 'button')
+    cancelDeleteSpeciesButton.event = 'closeDeleteSpeciesModal'
+    const confirmDeleteSpeciesButton: BaseButtonModel = new BaseButtonModel('Oui', 'danger', 'button')
+    confirmDeleteSpeciesButton.event = 'confirmDeleteSpecies'
+
     const fish: Species = new Species([])
     const jwt: string = this.$cookies.get('appquarium-jwt')
 
@@ -120,9 +146,13 @@ export default Vue.extend({
       namingCardHeader: namingCardHeader,
       waterConstraintsCardHeader: waterConstraintsCardHeader,
       animalSpecsCardHeader: animalSpecsCardHeader,
+      deleteModalHeader: deleteModalHeader,
+      cancelDeleteSpeciesButton: cancelDeleteSpeciesButton,
+      confirmDeleteSpeciesButton: confirmDeleteSpeciesButton,
       fish: fish,
       jwt: jwt,
-      isUpdatingPublicationState: false
+      isUpdatingPublicationState: false,
+      deleteFishModalIsOpen: false
     }
   },
   async fetch(){
@@ -275,7 +305,7 @@ export default Vue.extend({
       this.isUpdatingPublicationState = false
     },
     async deleteFish(){
-      /*
+      this.confirmDeleteSpeciesButton.isLoading = true
 
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
@@ -291,12 +321,12 @@ export default Vue.extend({
         }
 
         console.log(fish.errors)
+        this.confirmDeleteSpeciesButton.isLoading = false;
+        this.deleteFishModalIsOpen = false;
         return
       }
 
       await this.$router.push('/species/fish')
-      */
-
     }
   }
 })

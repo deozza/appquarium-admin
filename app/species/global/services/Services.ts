@@ -168,4 +168,10 @@ export default class Services implements ServicesInterface {
 
     return await adapter.mutationUpdatePublicationState(uuid, state)
   }
+
+  async deleteSpecies(jwt: string, uuid: string): Promise<boolean|Array<Error>> {
+    const adapter: AdapterInterface = new HasuraAdapter(jwt)
+
+    return await adapter.mutationDeleteSpecies(uuid)
+  }
 }

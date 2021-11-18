@@ -27,4 +27,6 @@ export default interface ServicesInterface {
   initNewSpecies(user: User, category: string): Species
   checkNextState(species: Species, nextState: string): Promise<boolean | Array<Error>>
   updatePublicationState(jwt: string, uuid: string, state: string): Promise<string|Array<Error>>
+
+  deleteSpecies(jwt: string, uuid: string): Promise<boolean|Array<Error>>
 }

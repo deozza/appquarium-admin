@@ -262,5 +262,19 @@ export default class SpeciesUseCase implements UseCaseInterface{
     return result
   }
 
+  async deleteSpecies(jwt: string, species: Species): Promise<Result> {
+    let result: Result = new Result()
+    const speciesService: Services = new Services()
+
+    const isSpeciesDeleted: boolean | Array<Error> = await speciesService.deleteSpecies(jwt, species.uuid)
+
+    if(typeof isSpeciesDeleted !== "boolean"){
+      result.errors = isSpeciesDeleted
+      return result
+    }
+
+    result.addSuccess('Resource is deleted', 204)
+    return result
+  }
 
 }

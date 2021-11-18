@@ -10,6 +10,7 @@ import HasuraQueryBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraQu
 import HasuraMutationInsertBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraMutationInsertBuilder";
 import HasuraMutationUpdateBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraMutationUpdateBuilder";
 import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
+import HasuraMutationDeleteBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraMutationDeleteBuilder";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
 
@@ -535,6 +536,31 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       })
 
       return data.update_species_by_pk.publication_state
+    }catch (e) {
+      if(e.message.includes("JWTExpired")){
+        return [new Error("JWT expired", 401)]
+      }
+      return [new Error(e.message, 400)]
+    }
+  }
+
+  async mutationDeleteSpecies(uuid: string): Promise<boolean | Array<Error>> {
+    let queryBuilder: HasuraMutationDeleteBuilder = new HasuraMutationDeleteBuilder('delete_species_by_pk')
+
+    queryBuilder.addParam('$uuid', 'uuid!', uuid)
+
+    queryBuilder.addPkColumn('uuid', '$uuid')
+
+    queryBuilder.addReturn('uuid')
+
+    const mutation: string = queryBuilder.getRequest()
+
+    try {
+      await this.client.request(mutation, {
+        uuid: uuid
+      })
+
+      return true
     }catch (e) {
       if(e.message.includes("JWTExpired")){
         return [new Error("JWT expired", 401)]
