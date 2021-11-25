@@ -32,17 +32,27 @@ export default class Species {
   }
 
   public computeLinkToSpecies(): string {
+    if(this.category === '' || this.uuid === ''){
+      throw new Error('Invalid species object')
+    }
+
     return '/species/'+this.category+'/'+this.uuid
   }
 
   public computeName(): string {
-    if(this.species_naming !== null && this.species_naming.species_genre !== null){
-      return this.species_naming.species_genre?.name + " " + this.species_naming.name
+    if(this.species_naming.species_genre.name === '' || this.species_naming.name === ''){
+      return 'NA'
     }
-    return 'NA'
+
+    return this.species_naming.species_genre?.name + " " + this.species_naming.name
   }
 
   public getPublicationStateStyle(): string {
+
+    if(this.publication_state === ''){
+      throw new Error('Invalid species object')
+    }
+
     const publicationStateStyle: object = {
       'DRAFT': 'secondary',
       'PRE_PUBLISHED': 'info',
@@ -51,16 +61,29 @@ export default class Species {
       'ARCHIVED': 'secondary',
     }
 
+    if(!publicationStateStyle.hasOwnProperty(this.publication_state)){
+      throw new Error('Unexpected publication_state : ' + this.publication_state)
+    }
+
     return publicationStateStyle[this.publication_state]
   }
 
   public getPublicationStateContent(): string {
+
+    if(this.publication_state === ''){
+      throw new Error('Invalid species object')
+    }
+
     const publicationStateContent: object = {
       'DRAFT': 'brouillon',
       'PRE_PUBLISHED': 'pré-publié',
       'MODERATED': 'modéré',
       'PUBLISHED': 'publié',
       'ARCHIVED': 'archivé',
+    }
+
+    if(!publicationStateContent.hasOwnProperty(this.publication_state)){
+      throw new Error('Unexpected publication_state : ' + this.publication_state)
     }
 
     return publicationStateContent[this.publication_state]
