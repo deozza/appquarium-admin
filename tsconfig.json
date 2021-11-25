@@ -29,7 +29,8 @@
       "@types/node",
       "@nuxtjs/firebase",
       "cookie-universal-nuxt",
-      "@nuxtjs/i18n"
+      "@nuxtjs/i18n",
+      "@types/jest"
     ]
   },
   "exclude": [
