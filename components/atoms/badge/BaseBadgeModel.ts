@@ -1,24 +1,10 @@
+import ExpectedCssStyle from "~/components/atoms/utils/ExpectedCssStyle";
+
 export default class BaseBadgeModel {
 
-  readonly EXPECTED_STYLES: Array<string> = [
-    'primary',
-    'secondary',
-    'success',
-    'danger',
-    'warning',
-    'info',
-    'link'
-  ]
+  readonly DEFAULT_STYLE: string = ExpectedCssStyle.getExpectedStyles()[0]
 
-  readonly DEFAULT_STYLE: string = this.EXPECTED_STYLES[0]
-
-  readonly EXPECTED_SIZES: Array<string> = [
-    'normal',
-    'small',
-    'large',
-  ]
-
-  readonly DEFAULT_SIZE: string = this.EXPECTED_SIZES[0]
+  readonly DEFAULT_SIZE: string = ExpectedCssStyle.getExpectedSizes()[0]
 
   content: string | any
   style: string
@@ -39,14 +25,14 @@ export default class BaseBadgeModel {
   }
 
   public setStyleOrThrowError(style: string): void {
-    if(this.EXPECTED_STYLES.includes(style) === false){
+    if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
       throw Error("Style '"+style+"' is not a valid style for BaseBadgeModel")
     }
     this.style = style
   }
 
   public setSizeOrThrowError(size: string): void {
-    if(this.EXPECTED_SIZES.includes(size) === false){
+    if(ExpectedCssStyle.getExpectedSizes().includes(size) === false){
       throw Error("Size '"+size+"' is not a valid size for BaseBadgeModel")
     }
     this.size = size

@@ -1,32 +1,12 @@
+import ExpectedCssStyle from "~/components/atoms/utils/ExpectedCssStyle";
+
 export default class BaseButtonModel {
 
-  readonly EXPECTED_STYLES: Array<string> = [
-    'primary',
-    'secondary',
-    'success',
-    'danger',
-    'warning',
-    'info',
-    'link'
-  ]
+  readonly DEFAULT_STYLE: string = ExpectedCssStyle.getExpectedStyles()[0]
 
-  readonly DEFAULT_STYLE: string = this.EXPECTED_STYLES[0]
+  readonly DEFAULT_SIZE: string = ExpectedCssStyle.getExpectedSizes()[0]
 
-  readonly EXPECTED_SIZES: Array<string> = [
-    'normal',
-    'small',
-    'large',
-  ]
-
-  readonly DEFAULT_SIZE: string = this.EXPECTED_SIZES[0]
-
-  readonly EXPECTED_TYPES: Array<string> = [
-    'submit',
-    'button',
-    'reset',
-  ]
-
-  readonly DEFAULT_TYPE: string = this.EXPECTED_TYPES[0]
+  readonly DEFAULT_TYPE: string = ExpectedCssStyle.getExpectedButtonTypes()[0]
 
   readonly DEFAULT_EVENT_NAME: string = 'buttonIsClicked'
 
@@ -61,7 +41,7 @@ export default class BaseButtonModel {
   }
 
   public setStyleOrThrowError(style: string, isOutlined: boolean = false, isRound: boolean = false): void{
-    if(this.EXPECTED_STYLES.includes(style) === false){
+    if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
       throw Error("Style '"+style+"' is not a valid style for BaseButtonModel")
     }
     this.style = style
@@ -70,14 +50,14 @@ export default class BaseButtonModel {
   }
 
   public setSizeOrThrowError(size: string): void{
-    if(this.EXPECTED_SIZES.includes(size) === false){
+    if(ExpectedCssStyle.getExpectedSizes().includes(size) === false){
       throw Error("Size '"+size+"' is not a valid size for BaseButtonModel")
     }
     this.size = size
   }
 
   public setTypeOrThrowError(type: string): void{
-    if(this.EXPECTED_TYPES.includes(type) === false){
+    if(ExpectedCssStyle.getExpectedButtonTypes().includes(type) === false){
       throw Error("Type '"+type+"' is not a valid type for BaseButtonModel")
     }
     this.type = type
