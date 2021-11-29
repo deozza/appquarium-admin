@@ -31,7 +31,7 @@ describe('Testing BaseBadgeModel.ts component', () => {
     let badge: BaseBadgeModel = new BaseBadgeModel('content')
     expect(badge.icon).toBeNull()
     expect(badge.isOnlyIcon).toBeNull()
-    badge.setIconOrThrowError('icon')
+    badge.setIcon('icon')
     expect(badge.icon).toEqual('icon')
     expect(badge.isOnlyIcon).toBeFalsy()
   })

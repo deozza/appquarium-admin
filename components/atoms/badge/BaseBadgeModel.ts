@@ -52,7 +52,7 @@ export default class BaseBadgeModel {
     this.size = size
   }
 
-  public setIconOrThrowError(icon: string, isOnlyIcon: boolean = false): void {
+  public setIcon(icon: string, isOnlyIcon: boolean = false): void {
     this.icon = icon
     this.isOnlyIcon = isOnlyIcon
   }
