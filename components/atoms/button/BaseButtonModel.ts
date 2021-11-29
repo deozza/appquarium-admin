@@ -6,7 +6,13 @@ export default class BaseButtonModel {
 
   readonly DEFAULT_SIZE: string = ExpectedCssStyle.getExpectedSizes()[0]
 
-  readonly DEFAULT_TYPE: string = ExpectedCssStyle.getExpectedButtonTypes()[0]
+  readonly EXPECTED_TYPES: Array<string> = [
+    'submit',
+    'button',
+    'reset'
+  ]
+
+  readonly DEFAULT_TYPE: string = this.EXPECTED_TYPES[0]
 
   readonly DEFAULT_EVENT_NAME: string = 'buttonIsClicked'
 
@@ -57,7 +63,7 @@ export default class BaseButtonModel {
   }
 
   public setTypeOrThrowError(type: string): void{
-    if(ExpectedCssStyle.getExpectedButtonTypes().includes(type) === false){
+    if(this.EXPECTED_TYPES.includes(type) === false){
       throw Error("Type '"+type+"' is not a valid type for BaseButtonModel")
     }
     this.type = type

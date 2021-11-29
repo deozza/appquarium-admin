@@ -20,12 +20,4 @@ export default class ExpectedCssStyle {
       'large'
     ]
   }
-
-  public static getExpectedButtonTypes(): Array<string> {
-    return [
-      'submit',
-      'button',
-      'reset'
-    ]
-  }
 }
