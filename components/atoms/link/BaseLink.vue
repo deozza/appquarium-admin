@@ -14,7 +14,7 @@
 </script>
 
 <template>
-  <a :href="baseLinkModel.linkTo" :class="baseLinkModel.style + ' ' + (baseLinkModel.hasUnderline ? '' : 'no-underline')" :target="baseLinkModel.isInteral ? '_self' : '_blank'" >{{baseLinkModel.content}}</a>
+  <a :href="baseLinkModel.linkTo" :class="baseLinkModel.style + (baseLinkModel.hasUnderline ? '' : ' no-underline')" :target="baseLinkModel.isExternal ? '_blank' : '_self'" >{{baseLinkModel.content}}</a>
 </template>
 
 <style scoped>
