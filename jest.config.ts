@@ -11,6 +11,8 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'js', 'vue', 'json'],
 
+  testEnvironment: 'jsdom',
+
   collectCoverageFrom: [
     'components/**/*.vue',
     'components/**/*.ts',
