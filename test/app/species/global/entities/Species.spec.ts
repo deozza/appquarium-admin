@@ -1,4 +1,5 @@
 import Species from "~/app/species/global/entities/Species";
+import InvalidSpeciesObjectError from "~/errors/app/species/global/entities/InvalidSpeciesObjectError";
 
 let species: Species
 
@@ -16,21 +17,21 @@ describe('Testing Species.ts entity', () => {
     test('without data would fail', () => {
       species = new Species([])
 
-      expect(()=>species.computeLinkToSpecies()).toThrow(new Error('Invalid species object'))
+      expect(()=>species.computeLinkToSpecies()).toThrow(InvalidSpeciesObjectError)
     })
 
     test('without category would fail', () => {
       species = new Species([])
       species.uuid = 'uuid'
 
-      expect(()=>species.computeLinkToSpecies()).toThrow(new Error('Invalid species object'))
+      expect(()=>species.computeLinkToSpecies()).toThrow(InvalidSpeciesObjectError)
     })
 
     test('without uuid would fail', () => {
       species = new Species([])
       species.category = 'category'
 
-      expect(()=>species.computeLinkToSpecies()).toThrow(new Error('Invalid species object'))
+      expect(()=>species.computeLinkToSpecies()).toThrow(InvalidSpeciesObjectError)
     })
   })
 
@@ -75,7 +76,7 @@ describe('Testing Species.ts entity', () => {
     test('without data would fail', () => {
       species = new Species([])
 
-      expect(()=>species.getPublicationStateStyle()).toThrow(new Error('Invalid species object'))
+      expect(()=>species.getPublicationStateStyle()).toThrow(InvalidSpeciesObjectError)
     })
 
     test('without valid data would fail', () => {
@@ -97,7 +98,7 @@ describe('Testing Species.ts entity', () => {
     test('without data would fail', () => {
       species = new Species([])
 
-      expect(()=>species.getPublicationStateContent()).toThrow(new Error('Invalid species object'))
+      expect(()=>species.getPublicationStateContent()).toThrow(InvalidSpeciesObjectError)
     })
 
     test('without valid data would fail', () => {

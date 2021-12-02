@@ -1,6 +1,7 @@
 import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
+import InvalidSpeciesObjectError from "~/errors/app/species/global/entities/InvalidSpeciesObjectError";
 
 export default class Species {
   uuid: string
@@ -33,7 +34,7 @@ export default class Species {
 
   public computeLinkToSpecies(): string {
     if(this.category === '' || this.uuid === ''){
-      throw new Error('Invalid species object')
+      throw new InvalidSpeciesObjectError()
     }
 
     return '/species/'+this.category+'/'+this.uuid
@@ -50,7 +51,7 @@ export default class Species {
   public getPublicationStateStyle(): string {
 
     if(this.publication_state === ''){
-      throw new Error('Invalid species object')
+      throw new InvalidSpeciesObjectError()
     }
 
     const publicationStateStyle: object = {
@@ -71,7 +72,7 @@ export default class Species {
   public getPublicationStateContent(): string {
 
     if(this.publication_state === ''){
-      throw new Error('Invalid species object')
+      throw new InvalidSpeciesObjectError()
     }
 
     const publicationStateContent: object = {
