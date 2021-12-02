@@ -6,7 +6,6 @@ import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 
 export default interface ServicesInterface {
   queryGetListOfInvertebrates(jwt: string): Promise<Array<Species> | Error>
-  queryCreateNewInvertebrate(newInvertebrate: InvertebrateInit): Promise<string | Error>
   queryInvertebrateFamilies(jwt: string): Promise<Array<SpeciesFamily> | Error>
   queryInvertebrateGenres(jwt: string): Promise<Array<SpeciesGenre> | Error>
 }

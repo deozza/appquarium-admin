@@ -26,10 +26,4 @@ export default class Services implements ServicesInterface {
 
     return await adapter.queryListOfSpeciesGenresByCategory('invertebrate')
   }
-
-  async queryCreateNewInvertebrate(newInvertebrate: InvertebrateInit): Promise<string | Error> {
-    const adapter: AdapterInterface = new HasuraAdapter(newInvertebrate.owner.jwt.toString())
-
-    return await adapter.mutationCreateNewInvertebrate(newInvertebrate)
-  }
 }

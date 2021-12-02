@@ -6,7 +6,6 @@ import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 
 export default interface ServicesInterface {
   queryGetListOfPlants(jwt: string): Promise<Array<Species> | Error>
-  queryCreateNewPlant(newPlant: PlantInit): Promise<string | Error>
   queryPlantFamilies(jwt: string): Promise<Array<SpeciesFamily> | Error>
   queryPlantGenres(jwt: string): Promise<Array<SpeciesGenre> | Error>
 }
