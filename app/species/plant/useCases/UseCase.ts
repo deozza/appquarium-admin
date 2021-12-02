@@ -3,7 +3,6 @@ import Result from "~/app/utils/useCasesResult/Result";
 import Services from "~/app/species/plant/services/Services";
 import UseCaseError from "~/app/utils/useCasesResult/types/UseCaseError";
 import Species from "~/app/species/global/entities/Species";
-import PlantInit from "~/app/species/plant/entities/PlantInit";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 

@@ -5,7 +5,6 @@ import UseCaseError from "~/app/utils/useCasesResult/types/UseCaseError";
 import Species from "~/app/species/global/entities/Species";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
-import InvertebrateInit from "~/app/species/invertebrate/entities/InvertebrateInit";
 
 export default class InvertebrateUseCase implements UseCaseInterface{
   async getListOfInvertebrates(jwt: string): Promise<Result> {
