@@ -88,13 +88,7 @@ export default class Services implements ServicesInterface {
 
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
-    const waterConstraintsUuid: string | Array<UseCaseError> = await adapter.mutationCreateWaterConstraints(uuid, waterConstraints)
-
-    if(typeof waterConstraintsUuid !== 'string'){
-      return waterConstraintsUuid
-    }
-
-    return waterConstraintsUuid
+    return await adapter.mutationCreateWaterConstraints(uuid, waterConstraints)
   }
 
   async addWaterConstraintsToSpecies(jwt: string, speciesUuid: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | UseCaseError> {
@@ -105,7 +99,6 @@ export default class Services implements ServicesInterface {
 
   async updateWaterConstraints(jwt: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Array<UseCaseError>> {
     const areConstraintsValid: Result = Services.checkWaterConstraintsAreValid(waterConstraints)
-
 
     if(areConstraintsValid.isFailed()){
       return areConstraintsValid.errors
@@ -137,13 +130,7 @@ export default class Services implements ServicesInterface {
   async createAnimalSpecs(jwt: string, uuid: string, animalSpecs: AnimalSpecs): Promise<string | Array<UseCaseError>> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
-    const animalSpecsUuid: string | Array<UseCaseError> = await adapter.mutationCreateAnimalSpecs(uuid, animalSpecs)
-
-    if(typeof animalSpecsUuid !== 'string'){
-      return animalSpecsUuid
-    }
-
-    return animalSpecsUuid
+    return await adapter.mutationCreateAnimalSpecs(uuid, animalSpecs)
   }
 
   async addAnimalSpecsToSpecies(jwt: string, speciesUuid: string, animalSpecs: AnimalSpecs): Promise<AnimalSpecs | UseCaseError> {

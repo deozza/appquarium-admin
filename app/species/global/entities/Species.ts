@@ -2,8 +2,7 @@ import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 import InvalidSpeciesObjectError from "~/errors/app/species/global/entities/InvalidSpeciesObjectError";
-import UnexpectedSpeciesPublicationStateError
-  from "~/errors/app/species/global/entities/UnexpectedSpeciesPublicationStateError";
+import UnexpectedSpeciesPublicationStateError from "~/errors/app/species/global/entities/UnexpectedSpeciesPublicationStateError";
 
 export default class Species {
   uuid: string
