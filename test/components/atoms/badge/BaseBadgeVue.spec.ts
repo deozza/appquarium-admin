@@ -1,5 +1,5 @@
-import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
 import { mount } from "@vue/test-utils";
+import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
 import BaseBadge from "~/components/atoms/badge/BaseBadge.vue";
 
 describe('Testing BaseBadge.vue component', () => {
@@ -18,6 +18,7 @@ describe('Testing BaseBadge.vue component', () => {
 
   test('with an icon', () => {
     const badge: BaseBadgeModel = new BaseBadgeModel('content')
+    badge.setIcon('icon')
     const component = mount(BaseBadge, {
       propsData: {
         baseBadgeModel: badge
@@ -25,7 +26,7 @@ describe('Testing BaseBadge.vue component', () => {
     })
 
     expect(component.find('span').text()).toBe('content')
-    expect(component.find('span').classes()).toContain('badge-primary')
+    expect(component.find('span').find('i').classes()).toContain('icon')
   })
 
   test('only icon', () => {
