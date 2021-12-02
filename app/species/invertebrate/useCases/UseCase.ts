@@ -1,7 +1,7 @@
 import UseCaseInterface from "~/app/species/invertebrate/useCases/UseCaseInterface";
 import Result from "~/app/utils/useCasesResult/Result";
 import Services from "~/app/species/invertebrate/services/Services";
-import Error from "~/app/utils/useCasesResult/types/Error";
+import UseCaseError from "~/app/utils/useCasesResult/types/UseCaseError";
 import Species from "~/app/species/global/entities/Species";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
@@ -12,9 +12,9 @@ export default class InvertebrateUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const invertebrateService: Services = new Services()
 
-    const listOfInvertebrates: Array<Species> | Error = await invertebrateService.queryGetListOfInvertebrates(jwt)
+    const listOfInvertebrates: Array<Species> | UseCaseError = await invertebrateService.queryGetListOfInvertebrates(jwt)
 
-    if(listOfInvertebrates instanceof Error){
+    if(listOfInvertebrates instanceof UseCaseError){
       result.errors.push(listOfInvertebrates)
       return result
     }
@@ -28,9 +28,9 @@ export default class InvertebrateUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const invertebrateService: Services = new Services()
 
-    const invertebrateGenres: Array<SpeciesGenre> | Error = await invertebrateService.queryInvertebrateGenres(jwt)
+    const invertebrateGenres: Array<SpeciesGenre> | UseCaseError = await invertebrateService.queryInvertebrateGenres(jwt)
 
-    if(invertebrateGenres instanceof Error){
+    if(invertebrateGenres instanceof UseCaseError){
       result.errors.push(invertebrateGenres)
       return result
     }
@@ -44,30 +44,14 @@ export default class InvertebrateUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const invertebrateService: Services = new Services()
 
-    const invertebrateFamilies: Array<SpeciesFamily> | Error = await invertebrateService.queryInvertebrateFamilies(jwt)
+    const invertebrateFamilies: Array<SpeciesFamily> | UseCaseError = await invertebrateService.queryInvertebrateFamilies(jwt)
 
-    if(invertebrateFamilies instanceof Error){
+    if(invertebrateFamilies instanceof UseCaseError){
       result.errors.push(invertebrateFamilies)
       return result
     }
 
     result.content = invertebrateFamilies
-    result.addSuccess("Query is ok", 200)
-    return result
-  }
-
-  async createNewInvertebrate(newInvertebrate: InvertebrateInit): Promise<Result> {
-    let result: Result = new Result()
-    const invertebrateService: Services = new Services()
-
-    const createdInvertebrateUuid: string | Error = await invertebrateService.queryCreateNewInvertebrate(newInvertebrate)
-
-    if(createdInvertebrateUuid instanceof Error){
-      result.errors.push(createdInvertebrateUuid)
-      return result
-    }
-
-    result.content = createdInvertebrateUuid
     result.addSuccess("Query is ok", 200)
     return result
   }
