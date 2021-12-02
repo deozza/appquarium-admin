@@ -1,4 +1,7 @@
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
+import UnexpectedSizeError from "~/errors/components/atoms/UnexpectedSizeError";
+import UnexpectedButtonTypeError from "~/errors/components/atoms/UnexpectedButtonTypeError";
 
 describe('Testing BaseButtonModel.ts component', () => {
 
@@ -21,7 +24,7 @@ describe('Testing BaseButtonModel.ts component', () => {
 
   test('set unexpected style throw error', () => {
     let button: BaseButtonModel = new BaseButtonModel('content')
-    expect(() => button.setStyleOrThrowError('unexpected')).toThrowError(Error("Style 'unexpected' is not a valid style for BaseButtonModel"))
+    expect(() => button.setStyleOrThrowError('unexpected')).toThrowError(UnexpectedStyleError)
   })
 
   test('set valid size', () => {
@@ -33,7 +36,7 @@ describe('Testing BaseButtonModel.ts component', () => {
 
   test('set unexpected size throw error', () => {
     let button: BaseButtonModel = new BaseButtonModel('content')
-    expect(() => button.setSizeOrThrowError('unexpected')).toThrowError(Error("Size 'unexpected' is not a valid size for BaseButtonModel"))
+    expect(() => button.setSizeOrThrowError('unexpected')).toThrowError(UnexpectedSizeError)
   })
 
   test('set valid type', () => {
@@ -45,7 +48,7 @@ describe('Testing BaseButtonModel.ts component', () => {
 
   test('set unexpected type throw error', () => {
     let button: BaseButtonModel = new BaseButtonModel('content')
-    expect(() => button.setTypeOrThrowError('unexpected')).toThrowError(Error("Type 'unexpected' is not a valid type for BaseButtonModel"))
+    expect(() => button.setTypeOrThrowError('unexpected')).toThrowError(UnexpectedButtonTypeError)
   })
 
   test('set icon', () => {

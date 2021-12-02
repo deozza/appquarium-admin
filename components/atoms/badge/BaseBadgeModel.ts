@@ -1,4 +1,6 @@
 import ExpectedCssStyle from "~/components/atoms/utils/ExpectedCssStyle";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
+import UnexpectedSizeError from "~/errors/components/atoms/UnexpectedSizeError";
 
 export default class BaseBadgeModel {
 
@@ -26,14 +28,14 @@ export default class BaseBadgeModel {
 
   public setStyleOrThrowError(style: string): void {
     if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
-      throw Error("Style '"+style+"' is not a valid style for BaseBadgeModel")
+      throw new UnexpectedStyleError(style, this.constructor.name)
     }
     this.style = style
   }
 
   public setSizeOrThrowError(size: string): void {
     if(ExpectedCssStyle.getExpectedSizes().includes(size) === false){
-      throw Error("Size '"+size+"' is not a valid size for BaseBadgeModel")
+      throw new UnexpectedSizeError(size, this.constructor.name)
     }
     this.size = size
   }

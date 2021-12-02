@@ -1,4 +1,5 @@
 import BaseParagraphModel from "~/components/atoms/typography/paragraph/BaseParagraphModel";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
 
 describe('Testing BaseParagraphModel.ts component', () => {
 
@@ -16,6 +17,6 @@ describe('Testing BaseParagraphModel.ts component', () => {
 
   test('set unexpected style throw error', () => {
     let paragraph: BaseParagraphModel = new BaseParagraphModel('content')
-    expect(() => paragraph.setStyleOrThrowError('unexpected')).toThrowError(Error("Style 'unexpected' is not a valid style for BaseParagraphModel"))
+    expect(() => paragraph.setStyleOrThrowError('unexpected')).toThrowError(UnexpectedStyleError)
   })
 })

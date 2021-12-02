@@ -1,4 +1,6 @@
 import ExpectedCssStyle from "~/components/atoms/utils/ExpectedCssStyle";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
+import UnexpectedSizeError from "~/errors/components/atoms/UnexpectedSizeError";
 
 export default class BaseHeaderModel {
 
@@ -21,14 +23,14 @@ export default class BaseHeaderModel {
 
   public setStyleOrThrowError(style: string): void{
     if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
-      throw Error("Style '"+style+"' is not a valid style for BaseHeaderModel")
+      throw new UnexpectedStyleError(style, this.constructor.name)
     }
     this.style = style
   }
 
   public setSizeOrThrowError(size: number): void{
     if(size < 1 || size > 6){
-      throw Error("Size '"+size+"' is out of bounds for BaseHeaderModel")
+      throw new UnexpectedSizeError(size, this.constructor.name)
     }
 
     this.size = size

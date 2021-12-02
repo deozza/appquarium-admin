@@ -1,4 +1,6 @@
 import BaseHeaderModel from "~/components/atoms/typography/header/BaseHeaderModel";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
+import UnexpectedSizeError from "~/errors/components/atoms/UnexpectedSizeError";
 
 describe('Testing BaseHeaderModel.ts component', () => {
 
@@ -17,7 +19,7 @@ describe('Testing BaseHeaderModel.ts component', () => {
 
   test('set unexpected style throw error', () => {
     let header: BaseHeaderModel = new BaseHeaderModel('content')
-    expect(() => header.setStyleOrThrowError('unexpected')).toThrowError(Error("Style 'unexpected' is not a valid style for BaseHeaderModel"))
+    expect(() => header.setStyleOrThrowError('unexpected')).toThrowError(UnexpectedStyleError)
   })
 
 
@@ -30,7 +32,7 @@ describe('Testing BaseHeaderModel.ts component', () => {
 
   test('set unexpected size throw error', () => {
     let header: BaseHeaderModel = new BaseHeaderModel('content')
-    expect(() => header.setSizeOrThrowError(10)).toThrowError(Error("Size '10' is out of bounds for BaseHeaderModel"))
+    expect(() => header.setSizeOrThrowError(10)).toThrowError(UnexpectedSizeError)
   })
 
 })

@@ -1,4 +1,5 @@
 import ExpectedCssStyle from "~/components/atoms/utils/ExpectedCssStyle";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
 
 export default class BaseLinkModel {
 
@@ -25,7 +26,7 @@ export default class BaseLinkModel {
   public setStyleOrThrowError(style: string, hasUnderline: boolean = false): void{
 
     if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
-      throw Error("Style '"+style+"' is not a valid style for BaseLinkModel")
+      throw new UnexpectedStyleError(style, this.constructor.name)
     }
     this.style = style
     this.hasUnderline = hasUnderline

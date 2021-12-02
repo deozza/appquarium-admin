@@ -1,4 +1,5 @@
 import ExpectedCssStyle from "~/components/atoms/utils/ExpectedCssStyle";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
 
 export default class BaseParagraphModel {
   readonly DEFAULT_STYLE: string = ExpectedCssStyle.getExpectedStyles()[7]
@@ -17,7 +18,7 @@ export default class BaseParagraphModel {
 
   public setStyleOrThrowError(style: string): void{
     if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
-      throw Error("Style '"+style+"' is not a valid style for BaseParagraphModel")
+      throw new UnexpectedStyleError(style, this.constructor.name)
     }
     this.style = style
   }

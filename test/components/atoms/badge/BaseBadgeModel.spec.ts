@@ -1,4 +1,6 @@
 import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
+import UnexpectedSizeError from "~/errors/components/atoms/UnexpectedSizeError";
 
 describe('Testing BaseBadgeModel.ts component', () => {
 
@@ -12,7 +14,7 @@ describe('Testing BaseBadgeModel.ts component', () => {
   test('unexpected style throw error', () => {
     let badge: BaseBadgeModel = new BaseBadgeModel('content')
 
-    expect(() => badge.setStyleOrThrowError('unexpectedStyle')).toThrowError(Error("Style 'unexpectedStyle' is not a valid style for BaseBadgeModel"))
+    expect(() => badge.setStyleOrThrowError('unexpectedStyle')).toThrowError(UnexpectedStyleError)
   })
 
   test('customize with valid size', () => {
@@ -24,7 +26,7 @@ describe('Testing BaseBadgeModel.ts component', () => {
 
   test('unexpected size throw error', () => {
     let badge: BaseBadgeModel = new BaseBadgeModel('content')
-    expect(() => badge.setSizeOrThrowError('unexpectedSize')).toThrowError(Error("Size 'unexpectedSize' is not a valid size for BaseBadgeModel"))
+    expect(() => badge.setSizeOrThrowError('unexpectedSize')).toThrowError(UnexpectedSizeError)
   })
 
   test('customize with icon', () => {

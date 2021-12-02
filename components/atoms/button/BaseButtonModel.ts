@@ -1,4 +1,7 @@
 import ExpectedCssStyle from "~/components/atoms/utils/ExpectedCssStyle";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
+import UnexpectedSizeError from "~/errors/components/atoms/UnexpectedSizeError";
+import UnexpectedButtonTypeError from "~/errors/components/atoms/UnexpectedButtonTypeError";
 
 export default class BaseButtonModel {
 
@@ -48,7 +51,7 @@ export default class BaseButtonModel {
 
   public setStyleOrThrowError(style: string, isOutlined: boolean = false, isRound: boolean = false): void{
     if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
-      throw Error("Style '"+style+"' is not a valid style for BaseButtonModel")
+      throw new UnexpectedStyleError(style, this.constructor.name)
     }
     this.style = style
     this.isOutlined = isOutlined
@@ -57,14 +60,14 @@ export default class BaseButtonModel {
 
   public setSizeOrThrowError(size: string): void{
     if(ExpectedCssStyle.getExpectedSizes().includes(size) === false){
-      throw Error("Size '"+size+"' is not a valid size for BaseButtonModel")
+      throw new UnexpectedSizeError(size, this.constructor.name)
     }
     this.size = size
   }
 
   public setTypeOrThrowError(type: string): void{
     if(this.EXPECTED_TYPES.includes(type) === false){
-      throw Error("Type '"+type+"' is not a valid type for BaseButtonModel")
+      throw new UnexpectedButtonTypeError(type, this.constructor.name)
     }
     this.type = type
   }

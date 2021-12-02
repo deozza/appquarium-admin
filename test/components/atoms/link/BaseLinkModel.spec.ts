@@ -1,4 +1,5 @@
 import BaseLinkModel from "~/components/atoms/link/BaseLinkModel";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
 
 describe('Testing BaseLinkModel.ts component', () => {
 
@@ -30,7 +31,7 @@ describe('Testing BaseLinkModel.ts component', () => {
 
   test('set unexpected style throw error', () => {
     let link: BaseLinkModel = new BaseLinkModel('content')
-    expect(() => link.setStyleOrThrowError('unexpected')).toThrowError(Error("Style 'unexpected' is not a valid style for BaseLinkModel"))
+    expect(() => link.setStyleOrThrowError('unexpected')).toThrowError(UnexpectedStyleError)
   })
 
 })
