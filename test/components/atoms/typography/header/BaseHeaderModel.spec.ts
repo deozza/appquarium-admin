@@ -28,7 +28,7 @@ describe('Testing BaseHeaderModel.ts component', () => {
     expect(header.size).toEqual(2)
   })
 
-  test('set unexpected sizee throw error', () => {
+  test('set unexpected size throw error', () => {
     let header: BaseHeaderModel = new BaseHeaderModel('content')
     expect(() => header.setSizeOrThrowError(10)).toThrowError(Error("Size '10' is out of bounds for BaseHeaderModel"))
   })
