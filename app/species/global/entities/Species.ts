@@ -2,6 +2,8 @@ import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 import InvalidSpeciesObjectError from "~/errors/app/species/global/entities/InvalidSpeciesObjectError";
+import UnexpectedSpeciesPublicationStateError
+  from "~/errors/app/species/global/entities/UnexpectedSpeciesPublicationStateError";
 
 export default class Species {
   uuid: string
@@ -63,7 +65,7 @@ export default class Species {
     }
 
     if(!publicationStateStyle.hasOwnProperty(this.publication_state)){
-      throw new Error('Unexpected publication_state : ' + this.publication_state)
+      throw new UnexpectedSpeciesPublicationStateError(this.publication_state)
     }
 
     return publicationStateStyle[this.publication_state]
@@ -84,7 +86,7 @@ export default class Species {
     }
 
     if(!publicationStateContent.hasOwnProperty(this.publication_state)){
-      throw new Error('Unexpected publication_state : ' + this.publication_state)
+      throw new UnexpectedSpeciesPublicationStateError(this.publication_state)
     }
 
     return publicationStateContent[this.publication_state]

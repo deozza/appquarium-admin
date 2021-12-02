@@ -1,5 +1,7 @@
 import Species from "~/app/species/global/entities/Species";
 import InvalidSpeciesObjectError from "~/errors/app/species/global/entities/InvalidSpeciesObjectError";
+import UnexpectedSpeciesPublicationStateError
+  from "~/errors/app/species/global/entities/UnexpectedSpeciesPublicationStateError";
 
 let species: Species
 
@@ -83,7 +85,7 @@ describe('Testing Species.ts entity', () => {
       species = new Species([])
       species.publication_state = 'invalid'
 
-      expect(()=>species.getPublicationStateStyle()).toThrow(new Error('Unexpected publication_state : invalid'))
+      expect(()=>species.getPublicationStateStyle()).toThrow(UnexpectedSpeciesPublicationStateError)
     })
   })
 
@@ -105,7 +107,7 @@ describe('Testing Species.ts entity', () => {
       species = new Species([])
       species.publication_state = 'invalid'
 
-      expect(()=>species.getPublicationStateContent()).toThrow(new Error('Unexpected publication_state : invalid'))
+      expect(()=>species.getPublicationStateContent()).toThrow(UnexpectedSpeciesPublicationStateError)
     })
   })
 
