@@ -235,6 +235,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
       return result
     }
 
+    result.content = species.animal_specs.uuid
     result.addSuccess('Query is OK', 201)
     return result
   }

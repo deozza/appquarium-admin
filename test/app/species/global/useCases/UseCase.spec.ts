@@ -5,6 +5,7 @@ import UseCaseSuccess from "~/app/utils/useCasesResult/types/UseCaseSuccess";
 import UseCaseError from "~/app/utils/useCasesResult/types/UseCaseError";
 import Species from "~/app/species/global/entities/Species";
 import User from "~/app/user/entities/User";
+import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 
 jest.mock("~/app/species/global/services/Services")
 
@@ -170,6 +171,146 @@ describe('Testing SpeciesUseCase.ts', () => {
     expectedResponse.errors = [new UseCaseError('error', 400)]
 
     expect(await useCase.getSpeciesOrigins('jwt')).toEqual(expectedResponse)
+  })
+
+  test('updateAnimalSpecs returns error if service has failed', async () => {
+    const species: Species = new Species([])
+
+    Services.prototype.updateAnimalSpecs = jest.fn().mockImplementationOnce(() => {
+      return [new UseCaseError('error', 400)];
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.errors = [new UseCaseError('error', 400)]
+
+    expect(await useCase.updateAnimalSpecs('jwt', species)).toEqual(expectedResponse)
+  })
+
+  test('updateAnimalSpecs returns success', async () => {
+    const species: Species = new Species([])
+    const animalSpecs: AnimalSpecs = new AnimalSpecs([])
+
+    Services.prototype.updateAnimalSpecs = jest.fn().mockImplementationOnce(() => {
+      return animalSpecs;
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.success = new UseCaseSuccess('Query is OK', 200)
+
+    expect(await useCase.updateAnimalSpecs('jwt', species)).toEqual(expectedResponse)
+  })
+
+  test('addAnimalSpecs returns error if creation is failed', async () => {
+    const species: Species = new Species([])
+
+    Services.prototype.createAnimalSpecs = jest.fn().mockImplementationOnce(() => {
+      return [new UseCaseError('error', 400)];
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.errors = [new UseCaseError('error', 400)]
+
+    expect(await useCase.addAnimalSpecs('jwt', species)).toEqual(expectedResponse)
+  })
+
+  test('addAnimalSpecs returns error if add is failed', async () => {
+    const species: Species = new Species([])
+
+    Services.prototype.createAnimalSpecs = jest.fn().mockImplementationOnce(() => {
+      return 'animal_specs_uuid';
+    });
+
+    Services.prototype.addAnimalSpecsToSpecies = jest.fn().mockImplementationOnce(() => {
+      return new UseCaseError('error', 400);
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.errors = [new UseCaseError('error', 400)]
+
+    expect(await useCase.addAnimalSpecs('jwt', species)).toEqual(expectedResponse)
+  })
+
+  test('addAnimalSpecs returns success', async () => {
+    const species: Species = new Species([])
+    const animalSpecs: AnimalSpecs = new AnimalSpecs([])
+
+    Services.prototype.createAnimalSpecs = jest.fn().mockImplementationOnce(() => {
+      return 'animal_specs_uuid';
+    });
+
+    Services.prototype.addAnimalSpecsToSpecies = jest.fn().mockImplementationOnce(() => {
+      return animalSpecs;
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.content = 'animal_specs_uuid'
+    expectedResponse.success = new UseCaseSuccess('Query is OK', 201)
+
+    expect(await useCase.addAnimalSpecs('jwt', species)).toEqual(expectedResponse)
+  })
+
+  test('updatePublicationState returns error if state is not reachable', async () => {
+    const species: Species = new Species([])
+
+    Services.prototype.checkNextState = jest.fn().mockImplementationOnce(() => {
+      return [new UseCaseError('error', 409)];
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.errors = [new UseCaseError('error', 409)]
+
+    expect(await useCase.updatePublicationState('jwt', species, 'nextState')).toEqual(expectedResponse)
+  })
+
+  test('updatePublicationState returns error if query is failed', async () => {
+    const species: Species = new Species([])
+
+    Services.prototype.checkNextState = jest.fn().mockImplementationOnce(() => {
+      return true;
+    });
+
+    Services.prototype.updatePublicationState = jest.fn().mockImplementationOnce(() => {
+      return [new UseCaseError('error', 400)];
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.errors = [new UseCaseError('error', 400)]
+
+    expect(await useCase.updatePublicationState('jwt', species, 'nextState')).toEqual(expectedResponse)
+  })
+
+  test('updatePublicationState returns success ', async () => {
+    const species: Species = new Species([])
+
+    Services.prototype.checkNextState = jest.fn().mockImplementationOnce(() => {
+      return true;
+    });
+
+    Services.prototype.updatePublicationState = jest.fn().mockImplementationOnce(() => {
+      return 'success';
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.content = 'success'
+    expectedResponse.success = new UseCaseSuccess('Query is OK', 200)
+
+    expect(await useCase.updatePublicationState('jwt', species, 'nextState')).toEqual(expectedResponse)
   })
 
   test('deleteSpecies returns success on Services success', async () => {
