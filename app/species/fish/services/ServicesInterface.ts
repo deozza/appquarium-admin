@@ -1,4 +1,4 @@
-import Error from "~/app/utils/useCasesResult/types/Error";
+import Error from "~/app/utils/useCasesResult/types/UseCaseError";
 import Species from "~/app/species/global/entities/Species";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";

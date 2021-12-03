@@ -1,17 +1,17 @@
-import Success from "./types/Success";
-import Error from "./types/Error";
+import UseCaseSuccess from "./types/UseCaseSuccess";
+import UseCaseError from "./types/UseCaseError";
 
 export default class Result {
-  success: Success | null = null
-  errors: Array<Error> = []
+  success: UseCaseSuccess | null = null
+  errors: Array<UseCaseError> = []
   content: any = {}
 
   public addSuccess(type: string,  code: number){
-    this.success = new Success(type, code)
+    this.success = new UseCaseSuccess(type, code)
   }
 
   public addError(type: string, code: number){
-    const error: Error = new Error(type, code)
+    const error: UseCaseError = new UseCaseError(type, code)
     this.errors.push(error)
   }
 

@@ -1,7 +1,6 @@
 import AdapterInterface from "~/app/user/adapters/AdapterInterface";
 import HasuraClient from "~/app/utils/hasura/HasuraClient";
 import User from "~/app/user/entities/User";
-import HasuraRequestBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraRequestBuilder";
 import HasuraQueryBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraQueryBuilder";
 
 export default class HasuraAdapter extends HasuraClient implements AdapterInterface{

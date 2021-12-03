@@ -1,7 +1,7 @@
 import UseCaseInterface from "~/app/species/global/useCases/UseCaseInterface";
 import Result from "~/app/utils/useCasesResult/Result";
 import Services from "~/app/species/global/services/Services";
-import Error from "~/app/utils/useCasesResult/types/Error";
+import UseCaseError from "~/app/utils/useCasesResult/types/UseCaseError";
 import Species from "~/app/species/global/entities/Species";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
@@ -28,9 +28,9 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const species: Species | Error = await speciesService.queryGetSpecies(jwt, uuid)
+    const species: Species | UseCaseError = await speciesService.queryGetSpecies(jwt, uuid)
 
-    if(species instanceof Error){
+    if(species instanceof UseCaseError){
       if(species.code === 400){
         result.addError('Query failed', species.code)
         return result
@@ -51,9 +51,9 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const listOfSpecies: Array<Species> | Error = await speciesService.queryListOfSpecies(jwt)
+    const listOfSpecies: Array<Species> | UseCaseError = await speciesService.queryListOfSpecies(jwt)
 
-    if(listOfSpecies instanceof Error){
+    if(listOfSpecies instanceof UseCaseError){
       result.errors.push(listOfSpecies)
       return result
     }
@@ -67,9 +67,9 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const speciesCategories: Array<string> | Error = await speciesService.querySpeciesCategories(jwt)
+    const speciesCategories: Array<string> | UseCaseError = await speciesService.querySpeciesCategories(jwt)
 
-    if(speciesCategories instanceof Error){
+    if(speciesCategories instanceof UseCaseError){
       result.errors.push(speciesCategories)
       return result
     }
@@ -83,9 +83,9 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const speciesOrigins: Array<string> | Error = await speciesService.querySpeciesOrigins(jwt)
+    const speciesOrigins: Array<string> | UseCaseError = await speciesService.querySpeciesOrigins(jwt)
 
-    if(speciesOrigins instanceof Error){
+    if(speciesOrigins instanceof UseCaseError){
       result.errors.push(speciesOrigins)
       return result
     }
@@ -99,16 +99,16 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const updatedSpecies: Species | Error = await SpeciesUseCase.handleNewSpeciesNaming(jwt, species)
+    const updatedSpecies: Species | UseCaseError = await SpeciesUseCase.handleNewSpeciesNaming(jwt, species)
 
-    if(updatedSpecies instanceof Error){
+    if(updatedSpecies instanceof UseCaseError){
       result.errors.push(updatedSpecies)
       return result
     }
 
-    const speciesResult: string | Error = await speciesService.createSpecies(jwt, updatedSpecies)
+    const speciesResult: string | UseCaseError = await speciesService.createSpecies(jwt, updatedSpecies)
 
-    if(speciesResult instanceof Error){
+    if(speciesResult instanceof UseCaseError){
       result.errors.push(speciesResult)
       return result
     }
@@ -122,15 +122,15 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const updatedSpecies: Species | Error = await SpeciesUseCase.handleNewSpeciesNaming(jwt, species)
+    const updatedSpecies: Species | UseCaseError = await SpeciesUseCase.handleNewSpeciesNaming(jwt, species)
 
-    if(updatedSpecies instanceof Error){
+    if(updatedSpecies instanceof UseCaseError){
       result.errors.push(updatedSpecies)
       return result
     }
 
-    const editedSpecies: SpeciesNaming | Error = await speciesService.updateSpeciesNaming(jwt, updatedSpecies.species_naming)
-    if(editedSpecies instanceof Error){
+    const editedSpecies: SpeciesNaming | UseCaseError = await speciesService.updateSpeciesNaming(jwt, updatedSpecies.species_naming)
+    if(editedSpecies instanceof UseCaseError){
       result.errors.push(editedSpecies)
       return result
     }
@@ -139,12 +139,12 @@ export default class SpeciesUseCase implements UseCaseInterface{
     return result
   }
 
-  private static async handleNewSpeciesNaming(jwt: string, species: Species): Promise<Species | Error> {
+  private static async handleNewSpeciesNaming(jwt: string, species: Species): Promise<Species | UseCaseError> {
     const speciesService: Services = new Services()
 
     if(species.species_naming.species_family.uuid === ''){
-      const newSpeciesFamily: string | Error = await speciesService.createSpeciesFamily(jwt, species.species_naming.species_family)
-      if(newSpeciesFamily instanceof Error){
+      const newSpeciesFamily: string | UseCaseError = await speciesService.createSpeciesFamily(jwt, species.species_naming.species_family)
+      if(newSpeciesFamily instanceof UseCaseError){
         return newSpeciesFamily
       }
 
@@ -152,8 +152,8 @@ export default class SpeciesUseCase implements UseCaseInterface{
     }
 
     if(species.species_naming.species_genre.uuid === ''){
-      const newSpeciesGenre: string | Error = await speciesService.createSpeciesGenre(jwt, species.species_naming.species_genre)
-      if(newSpeciesGenre instanceof Error){
+      const newSpeciesGenre: string | UseCaseError = await speciesService.createSpeciesGenre(jwt, species.species_naming.species_genre)
+      if(newSpeciesGenre instanceof UseCaseError){
         return newSpeciesGenre
       }
 
@@ -166,7 +166,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
   async updateWaterConstraints(jwt: string, species: Species): Promise<Result> {
     let result: Result = new Result()
     const speciesService: Services = new Services()
-    const updatedWaterConstraints: WaterConstraints | Array<Error> = await speciesService.updateWaterConstraints(jwt, species.water_constraint)
+    const updatedWaterConstraints: WaterConstraints | Array<UseCaseError> = await speciesService.updateWaterConstraints(jwt, species.water_constraint)
 
     if(updatedWaterConstraints instanceof WaterConstraints) {
       result.addSuccess('Query is OK', 200)
@@ -181,7 +181,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
   async addWaterConstraints(jwt: string, species: Species): Promise<Result> {
     let result: Result = new Result()
     const speciesService: Services = new Services()
-    const waterConstraintsUuid: string | Array<Error> = await speciesService.createWaterConstraints(jwt, species.uuid, species.water_constraint)
+    const waterConstraintsUuid: string | Array<UseCaseError> = await speciesService.createWaterConstraints(jwt, species.uuid, species.water_constraint)
 
     if(typeof waterConstraintsUuid !== 'string'){
       result.errors = waterConstraintsUuid
@@ -190,21 +190,22 @@ export default class SpeciesUseCase implements UseCaseInterface{
 
     species.water_constraint.uuid = waterConstraintsUuid
 
-    const updatedSpecies: WaterConstraints | Error = await speciesService.addWaterConstraintsToSpecies(jwt, species.uuid, species.water_constraint)
+    const updatedSpecies: WaterConstraints | UseCaseError = await speciesService.addWaterConstraintsToSpecies(jwt, species.uuid, species.water_constraint)
 
-    if(updatedSpecies instanceof Error) {
+    if(updatedSpecies instanceof UseCaseError) {
       result.errors.push(updatedSpecies)
       return result
     }
 
     result.addSuccess('Query is OK', 201)
+    result.content = waterConstraintsUuid
     return result
   }
 
   async updateAnimalSpecs(jwt: string, species: Species): Promise<Result> {
     let result: Result = new Result()
     const speciesService: Services = new Services()
-    const updatedAnimalSpecs: AnimalSpecs | Array<Error> = await speciesService.updateAnimalSpecs(jwt, species.animal_specs)
+    const updatedAnimalSpecs: AnimalSpecs | Array<UseCaseError> = await speciesService.updateAnimalSpecs(jwt, species.animal_specs)
 
     if(updatedAnimalSpecs instanceof AnimalSpecs) {
       result.addSuccess('Query is OK', 200)
@@ -219,7 +220,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
   async addAnimalSpecs(jwt: string, species: Species): Promise<Result> {
     let result: Result = new Result()
     const speciesService: Services = new Services()
-    const animalSpecsUuid: string | Array<Error> = await speciesService.createAnimalSpecs(jwt, species.uuid, species.animal_specs)
+    const animalSpecsUuid: string | Array<UseCaseError> = await speciesService.createAnimalSpecs(jwt, species.uuid, species.animal_specs)
 
     if(typeof animalSpecsUuid !== 'string'){
       result.errors = animalSpecsUuid
@@ -228,13 +229,14 @@ export default class SpeciesUseCase implements UseCaseInterface{
 
     species.animal_specs.uuid = animalSpecsUuid
 
-    const updatedSpecies: AnimalSpecs | Error = await speciesService.addAnimalSpecsToSpecies(jwt, species.uuid, species.animal_specs)
+    const updatedSpecies: AnimalSpecs | UseCaseError = await speciesService.addAnimalSpecsToSpecies(jwt, species.uuid, species.animal_specs)
 
-    if(updatedSpecies instanceof Error) {
+    if(updatedSpecies instanceof UseCaseError) {
       result.errors.push(updatedSpecies)
       return result
     }
 
+    result.content = animalSpecsUuid
     result.addSuccess('Query is OK', 201)
     return result
   }
@@ -243,14 +245,14 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const isAbleToMoveToState: boolean | Array<Error> = await speciesService.checkNextState(species, nextState)
+    const isAbleToMoveToState: boolean | Array<UseCaseError> = await speciesService.checkNextState(species, nextState)
 
     if(typeof isAbleToMoveToState !== 'boolean'){
       result.errors = isAbleToMoveToState
       return result
     }
 
-    const speciesPublicationState: string | Array<Error> = await speciesService.updatePublicationState(jwt, species.uuid, nextState)
+    const speciesPublicationState: string | Array<UseCaseError> = await speciesService.updatePublicationState(jwt, species.uuid, nextState)
 
     if(typeof speciesPublicationState !== 'string'){
       result.errors = speciesPublicationState
@@ -266,7 +268,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
     let result: Result = new Result()
     const speciesService: Services = new Services()
 
-    const isSpeciesDeleted: boolean | Array<Error> = await speciesService.deleteSpecies(jwt, species.uuid)
+    const isSpeciesDeleted: boolean | Array<UseCaseError> = await speciesService.deleteSpecies(jwt, species.uuid)
 
     if(typeof isSpeciesDeleted !== "boolean"){
       result.errors = isSpeciesDeleted

@@ -1,6 +1,8 @@
 import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
+import InvalidSpeciesObjectError from "~/errors/app/species/global/entities/InvalidSpeciesObjectError";
+import UnexpectedSpeciesPublicationStateError from "~/errors/app/species/global/entities/UnexpectedSpeciesPublicationStateError";
 
 export default class Species {
   uuid: string
@@ -32,17 +34,27 @@ export default class Species {
   }
 
   public computeLinkToSpecies(): string {
+    if(this.category === '' || this.uuid === ''){
+      throw new InvalidSpeciesObjectError()
+    }
+
     return '/species/'+this.category+'/'+this.uuid
   }
 
   public computeName(): string {
-    if(this.species_naming !== null && this.species_naming.species_genre !== null){
-      return this.species_naming.species_genre?.name + " " + this.species_naming.name
+    if(this.species_naming.species_genre.name === '' || this.species_naming.name === ''){
+      return 'NA'
     }
-    return 'NA'
+
+    return this.species_naming.species_genre?.name + " " + this.species_naming.name
   }
 
   public getPublicationStateStyle(): string {
+
+    if(this.publication_state === ''){
+      throw new InvalidSpeciesObjectError()
+    }
+
     const publicationStateStyle: object = {
       'DRAFT': 'secondary',
       'PRE_PUBLISHED': 'info',
@@ -51,16 +63,29 @@ export default class Species {
       'ARCHIVED': 'secondary',
     }
 
+    if(!publicationStateStyle.hasOwnProperty(this.publication_state)){
+      throw new UnexpectedSpeciesPublicationStateError(this.publication_state)
+    }
+
     return publicationStateStyle[this.publication_state]
   }
 
   public getPublicationStateContent(): string {
+
+    if(this.publication_state === ''){
+      throw new InvalidSpeciesObjectError()
+    }
+
     const publicationStateContent: object = {
       'DRAFT': 'brouillon',
       'PRE_PUBLISHED': 'pré-publié',
       'MODERATED': 'modéré',
       'PUBLISHED': 'publié',
       'ARCHIVED': 'archivé',
+    }
+
+    if(!publicationStateContent.hasOwnProperty(this.publication_state)){
+      throw new UnexpectedSpeciesPublicationStateError(this.publication_state)
     }
 
     return publicationStateContent[this.publication_state]

@@ -1,78 +1,84 @@
+import ExpectedCssStyle from "~/components/atoms/utils/ExpectedCssStyle";
+import UnexpectedStyleError from "~/errors/components/atoms/UnexpectedStyleError";
+import UnexpectedSizeError from "~/errors/components/atoms/UnexpectedSizeError";
+import UnexpectedButtonTypeError from "~/errors/components/atoms/UnexpectedButtonTypeError";
+
 export default class BaseButtonModel {
+
+  readonly DEFAULT_STYLE: string = ExpectedCssStyle.getExpectedStyles()[0]
+
+  readonly DEFAULT_SIZE: string = ExpectedCssStyle.getExpectedSizes()[0]
+
+  readonly EXPECTED_TYPES: Array<string> = [
+    'submit',
+    'button',
+    'reset'
+  ]
+
+  readonly DEFAULT_TYPE: string = this.EXPECTED_TYPES[0]
+
+  readonly DEFAULT_EVENT_NAME: string = 'buttonIsClicked'
+
     content: string | any
     style: string
     size: string
     type: string
     isLoading: boolean
     isDisabled: boolean
-    icon: string
-    isOnlyIcon: boolean
+    icon: string | null
+    isOnlyIcon: boolean | null
     isOutlined: boolean
     isRound: boolean
     event: string
 
-    constructor(
-        content: string | any,
-        style: string = 'primary',
-        type: string = 'submit',
-        size: string = 'normal',
-        icon: string = '',
-        isOnlyIcon: boolean = false,
-        isOutlined: boolean = false,
-        isRound: boolean = false,
-        isLoading: boolean = false,
-        isDisabled: boolean = false
-    ) {
+    constructor(content: string | any) {
         this.content = content
-
-        const EXPECTED_STYLES: Array<string> = [
-            'primary',
-            'secondary',
-            'success',
-            'danger',
-            'warning',
-            'info',
-            'link'
-        ]
-        if(EXPECTED_STYLES.includes(style) === false){
-            throw Error("Style '"+style+"' is not a valid style for BaseButtonModel")
-        }
-        this.style = style
-
-        const EXPECTED_SIZES: Array<string> = [
-            'small',
-            'normal',
-            'large',
-        ]
-        if(EXPECTED_SIZES.includes(size) === false){
-            throw Error("Size '"+size+"' is not a valid size for BaseButtonModel")
-        }
-        this.size = size
-
-        const EXPECTED_TYPES: Array<string> = [
-            'submit',
-            'button',
-            'reset',
-        ]
-        if(EXPECTED_TYPES.includes(type) === false){
-            throw Error("Type '"+type+"' is not a valid type for BaseButtonModel")
-        }
-        this.type = type
-
-        this.isLoading = isLoading
-        this.isDisabled = isDisabled
-        this.icon = icon
-
-        if(this.icon !== '' && isOnlyIcon === true){
-            throw Error("If no icon is set for BaseButtonModel, the value for 'isOnlyIcon' can not be 'true'")
-        }
-        this.isOnlyIcon = isOnlyIcon
-        this.isOutlined = isOutlined
-        this.isRound = isRound
-        this.event = 'buttonIsClicked'
+      this.style = this.DEFAULT_STYLE
+      this.size = this.DEFAULT_SIZE
+      this.type = this.DEFAULT_TYPE
+      this.isRound = false
+      this.isOutlined = false
+        this.isLoading = false
+        this.isDisabled = false
+        this.icon = null
+      this.isOnlyIcon = null
+        this.event = this.DEFAULT_EVENT_NAME
     }
 
   toJSON () {
     return { ...this } // here I make a POJO's copy of the class instance
+  }
+
+  public setStyleOrThrowError(style: string, isOutlined: boolean = false, isRound: boolean = false): void{
+    if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
+      throw new UnexpectedStyleError(style, this.constructor.name)
+    }
+    this.style = style
+    this.isOutlined = isOutlined
+    this.isRound = isRound
+  }
+
+  public setSizeOrThrowError(size: string): void{
+    if(ExpectedCssStyle.getExpectedSizes().includes(size) === false){
+      throw new UnexpectedSizeError(size, this.constructor.name)
+    }
+    this.size = size
+  }
+
+  public setTypeOrThrowError(type: string): void{
+    if(this.EXPECTED_TYPES.includes(type) === false){
+      throw new UnexpectedButtonTypeError(type, this.constructor.name)
+    }
+    this.type = type
+  }
+
+  public setIcon(icon: string, isOnlyIcon: boolean = false): void{
+    this.icon = icon
+    this.isOnlyIcon = isOnlyIcon
+  }
+
+  public setLoading(isLoading: boolean): void{
+    this.isLoading = isLoading
+    this.isDisabled = isLoading
   }
 }
