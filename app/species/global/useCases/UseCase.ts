@@ -198,6 +198,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
     }
 
     result.addSuccess('Query is OK', 201)
+    result.content = waterConstraintsUuid
     return result
   }
 
@@ -235,7 +236,7 @@ export default class SpeciesUseCase implements UseCaseInterface{
       return result
     }
 
-    result.content = species.animal_specs.uuid
+    result.content = animalSpecsUuid
     result.addSuccess('Query is OK', 201)
     return result
   }

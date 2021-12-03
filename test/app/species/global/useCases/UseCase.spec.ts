@@ -6,6 +6,7 @@ import UseCaseError from "~/app/utils/useCasesResult/types/UseCaseError";
 import Species from "~/app/species/global/entities/Species";
 import User from "~/app/user/entities/User";
 import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
+import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 
 jest.mock("~/app/species/global/services/Services")
 
@@ -172,6 +173,62 @@ describe('Testing SpeciesUseCase.ts', () => {
 
     expect(await useCase.getSpeciesOrigins('jwt')).toEqual(expectedResponse)
   })
+
+  test('addWaterConstraints returns error if creation is failed', async () => {
+    const species: Species = new Species([])
+
+    Services.prototype.createWaterConstraints = jest.fn().mockImplementationOnce(() => {
+      return [new UseCaseError('error', 400)];
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.errors = [new UseCaseError('error', 400)]
+
+    expect(await useCase.addWaterConstraints('jwt', species)).toEqual(expectedResponse)
+  })
+
+  test('addWaterConstraints returns error if add is failed', async () => {
+    const species: Species = new Species([])
+
+    Services.prototype.createWaterConstraints = jest.fn().mockImplementationOnce(() => {
+      return 'water_constraints_uuid';
+    });
+
+    Services.prototype.addWaterConstraintsToSpecies = jest.fn().mockImplementationOnce(() => {
+      return new UseCaseError('error', 400);
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.errors = [new UseCaseError('error', 400)]
+
+    expect(await useCase.addWaterConstraints('jwt', species)).toEqual(expectedResponse)
+  })
+
+  test('addWaterConstraints returns success', async () => {
+    const species: Species = new Species([])
+    const waterConstraints: WaterConstraints = new WaterConstraints([])
+
+    Services.prototype.createWaterConstraints = jest.fn().mockImplementationOnce(() => {
+      return 'water_constraints_uuid';
+    });
+
+    Services.prototype.addWaterConstraintsToSpecies = jest.fn().mockImplementationOnce(() => {
+      return waterConstraints;
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.content = 'water_constraints_uuid'
+    expectedResponse.success = new UseCaseSuccess('Query is OK', 201)
+
+    expect(await useCase.addWaterConstraints('jwt', species)).toEqual(expectedResponse)
+  })
+
 
   test('updateAnimalSpecs returns error if service has failed', async () => {
     const species: Species = new Species([])
