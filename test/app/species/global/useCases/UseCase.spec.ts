@@ -174,6 +174,37 @@ describe('Testing SpeciesUseCase.ts', () => {
     expect(await useCase.getSpeciesOrigins('jwt')).toEqual(expectedResponse)
   })
 
+  test('updateWaterConstraints returns error if service has failed', async () => {
+    const species: Species = new Species([])
+
+    Services.prototype.updateWaterConstraints = jest.fn().mockImplementationOnce(() => {
+      return [new UseCaseError('error', 400)];
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.errors = [new UseCaseError('error', 400)]
+
+    expect(await useCase.updateWaterConstraints('jwt', species)).toEqual(expectedResponse)
+  })
+
+  test('updateWaterConstraints returns success', async () => {
+    const species: Species = new Species([])
+    const waterConstraints: WaterConstraints = new WaterConstraints([])
+
+    Services.prototype.updateWaterConstraints = jest.fn().mockImplementationOnce(() => {
+      return waterConstraints;
+    });
+
+    const useCase: SpeciesUseCase = new SpeciesUseCase()
+
+    const expectedResponse: Result = new Result()
+    expectedResponse.success = new UseCaseSuccess('Query is OK', 200)
+
+    expect(await useCase.updateWaterConstraints('jwt', species)).toEqual(expectedResponse)
+  })
+
   test('addWaterConstraints returns error if creation is failed', async () => {
     const species: Species = new Species([])
 
@@ -228,7 +259,6 @@ describe('Testing SpeciesUseCase.ts', () => {
 
     expect(await useCase.addWaterConstraints('jwt', species)).toEqual(expectedResponse)
   })
-
 
   test('updateAnimalSpecs returns error if service has failed', async () => {
     const species: Species = new Species([])
