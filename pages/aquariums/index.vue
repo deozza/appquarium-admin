@@ -1,7 +1,7 @@
 <template>
-<main>
+  <main>
 
-</main>
+  </main>
 </template>
 
 <script lang="ts">
@@ -13,10 +13,9 @@ export default Vue.extend({
   components: {
     BaseHeader,
   },
-  data(){
+  data() {
 
-    return {
-    }
+    return {}
   },
 })
 </script>

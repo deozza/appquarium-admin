@@ -1,16 +1,17 @@
 <template>
-<main>
-  <div class="flex-column">
-    <p v-if="$fetchState.pending">Récupération des infos️</p>
-    <p v-else-if="$fetchState.error">Une erreur est survenue :(</p>
-    <section v-else id="add">
-      <BaseHeader :base-header-model="header"/>
-      <div class="flex-row flex-around">
-        <a v-for="(category, index) in speciesCategories" :href="category.link" v-bind:key="index">{{category.label}}</a>
-      </div>
-    </section>
-  </div>
-</main>
+  <main>
+    <div class="flex-column">
+      <p v-if="$fetchState.pending">Récupération des infos️</p>
+      <p v-else-if="$fetchState.error">Une erreur est survenue :(</p>
+      <section v-else id="add">
+        <BaseHeader :base-header-model="header"/>
+        <div class="flex-row flex-around">
+          <a v-for="(category, index) in speciesCategories" :href="category.link"
+             v-bind:key="index">{{ category.label }}</a>
+        </div>
+      </section>
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
@@ -30,8 +31,8 @@ export default Vue.extend({
     BaseHeader,
     BaseInput
   },
-  data(){
-    const header: BaseHeaderModel = new BaseHeaderModel('Ajouter une espèce', 1)
+  data() {
+    const header: BaseHeaderModel = new BaseHeaderModel('Ajouter une espèce')
     const speciesCategories: Array<any> = []
 
     return {
@@ -39,24 +40,24 @@ export default Vue.extend({
       speciesCategories: speciesCategories
     }
   },
-  async fetch(){
+  async fetch() {
     const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
     const jwt: string = this.$cookies.get('appquarium-jwt')
 
     const speciesCategories: Result = await speciesUseCase.getSpeciesCategories(jwt)
 
-    if(speciesCategories.isSuccessful()){
-      for(const category of speciesCategories.content){
+    if (speciesCategories.isSuccessful()) {
+      for (const category of speciesCategories.content) {
         this.speciesCategories.push({
-          link: "/species/"+category.name+"/add",
-          label: this.$t("species.categories."+category.name)
+          link: "/species/" + category.name + "/add",
+          label: this.$t("species.categories." + category.name)
         })
       }
       return
     }
 
-    for(const error of speciesCategories.errors){
-      if(error.code === 401){
+    for (const error of speciesCategories.errors) {
+      if (error.code === 401) {
         this.$cookies.remove('appquarium-jwt')
         await this.$router.push('/login')
       }

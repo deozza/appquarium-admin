@@ -42,7 +42,7 @@ const config: NuxtConfig = {
       {
         clientConfigs: {
           default: {
-            httpEndpoint: 'https://appquarium.hasura.app/v1/graphql'
+            httpEndpoint: process.env.HASURA_ENDPOINT ?? ''
           }
         }
       }

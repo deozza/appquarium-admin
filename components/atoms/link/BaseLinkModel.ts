@@ -6,26 +6,26 @@ export default class BaseLinkModel {
   readonly DEFAULT_STYLE: string = ExpectedCssStyle.getExpectedStyles()[7]
 
   content: string | any
-    style: string
-    linkTo: string
-    isExternal: boolean
-    hasUnderline: boolean
+  style: string
+  linkTo: string
+  isExternal: boolean
+  hasUnderline: boolean
 
-    constructor(content: string | any, linkTo: string = '/') {
-        this.content = content
-      this.style = this.DEFAULT_STYLE
-        this.linkTo = linkTo
-      this.isExternal = linkTo.substring(0, 7) === 'http://' || linkTo.substring(0, 8) === 'https://'
-        this.hasUnderline = false
-    }
-
-  toJSON () {
-    return { ...this } // here I make a POJO's copy of the class instance
+  constructor(content: string | any, linkTo: string = '/') {
+    this.content = content
+    this.style = this.DEFAULT_STYLE
+    this.linkTo = linkTo
+    this.isExternal = linkTo.substring(0, 7) === 'http://' || linkTo.substring(0, 8) === 'https://'
+    this.hasUnderline = false
   }
 
-  public setStyleOrThrowError(style: string, hasUnderline: boolean = false): void{
+  toJSON() {
+    return {...this} // here I make a POJO's copy of the class instance
+  }
 
-    if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
+  public setStyleOrThrowError(style: string, hasUnderline: boolean = false): void {
+
+    if (ExpectedCssStyle.getExpectedStyles().includes(style) === false) {
       throw new UnexpectedStyleError(style, this.constructor.name)
     }
     this.style = style

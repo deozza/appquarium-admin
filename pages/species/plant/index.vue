@@ -1,18 +1,18 @@
 <template>
-<main>
-  <BaseHeader :base-header-model="header" />
+  <main>
+    <BaseHeader :base-header-model="header"/>
 
-  <div id="loading" v-if="$fetchState.pending">
-    <p >Récupération des infos️</p>
-  </div>
-  <div id="error" v-else-if="$fetchState.error">
-    <p >Une erreur est survenue :(</p>
-  </div>
-  <div class="flex-column" id="content" v-else>
-    <BaseCard>
-      <template slot="body">
-        <table>
-          <thead>
+    <div id="loading" v-if="$fetchState.pending">
+      <p>Récupération des infos️</p>
+    </div>
+    <div id="error" v-else-if="$fetchState.error">
+      <p>Une erreur est survenue :(</p>
+    </div>
+    <div class="flex-column" id="content" v-else>
+      <BaseCard>
+        <template slot="body">
+          <table>
+            <thead>
             <tr>
               <th scope="col">#</th>
               <th scope="col">Nom scientifique</th>
@@ -20,29 +20,29 @@
               <th scope="col">Créé le</th>
               <th scope="col">Modifié le</th>
             </tr>
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
             <tr v-for="(plant, index) in listOfPlants" v-bind:key="index">
-              <td>{{index + 1}}</td>
+              <td>{{ index + 1 }}</td>
               <td>
-                <a :href="plant | speciesComputedLink">{{ plant.species_naming | speciesComputedName}}</a>
+                <a :href="plant | speciesComputedLink">{{ plant.species_naming | speciesComputedName }}</a>
               </td>
-              <td>{{plant.publication_state}}</td>
-              <td>{{plant.created_at | date }}</td>
-              <td>{{plant.updated_at | date }}</td>
+              <td>{{ plant.publication_state }}</td>
+              <td>{{ plant.created_at | date }}</td>
+              <td>{{ plant.updated_at | date }}</td>
             </tr>
-          </tbody>
-        </table>
-      </template>
-    </BaseCard>
-    <div class="flex-row flex-around">
-      <a href="/species/plant/add">
-        <BaseButton :base-button-model="addPlantButton" />
-      </a>
-    </div>
+            </tbody>
+          </table>
+        </template>
+      </BaseCard>
+      <div class="flex-row flex-around">
+        <a href="/species/plant/add">
+          <BaseButton :base-button-model="addPlantButton"/>
+        </a>
+      </div>
 
-  </div>
-</main>
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
@@ -63,10 +63,12 @@ export default Vue.extend({
     BaseButton,
     BaseCard
   },
-  data(){
-    const header: BaseHeaderModel = new BaseHeaderModel('Dashboard plantes', 1)
+  data() {
+    const header: BaseHeaderModel = new BaseHeaderModel('Dashboard plantes')
     const listOfPlants: Array<Species> = []
-    const addPlantButton: BaseButtonModel = new BaseButtonModel('Ajouter une plante', 'success', 'button')
+    const addPlantButton: BaseButtonModel = new BaseButtonModel('Ajouter une plante')
+    addPlantButton.setStyleOrThrowError('success')
+    addPlantButton.setTypeOrThrowError('button')
 
     return {
       header: header,
@@ -74,12 +76,12 @@ export default Vue.extend({
       listOfPlants: listOfPlants
     }
   },
-  async fetch(){
+  async fetch() {
     const jwt: string = this.$cookies.get('appquarium-jwt')
     const plantUseCase: PlantUseCase = new PlantUseCase()
 
     const listOfPlants: Result = await plantUseCase.getListOfPlants(jwt)
-    if(listOfPlants.isSuccessful()){
+    if (listOfPlants.isSuccessful()) {
       listOfPlants.content.forEach((item: Species) => this.listOfPlants.push(item))
     }
 

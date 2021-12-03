@@ -23,7 +23,7 @@ export default class WaterConstraints {
     this.gh_max = waterConstraints.hasOwnProperty('gh_max') ? waterConstraints['gh_max'] : 0
   }
 
-  toJSON () {
-    return { ...this } // here I make a POJO's copy of the class instance
+  toJSON() {
+    return {...this} // here I make a POJO's copy of the class instance
   }
 }

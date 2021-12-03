@@ -3,7 +3,7 @@ import HasuraClient from "~/app/utils/hasura/HasuraClient";
 import User from "~/app/user/entities/User";
 import HasuraQueryBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraQueryBuilder";
 
-export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
+export default class HasuraAdapter extends HasuraClient implements AdapterInterface {
   getRefreshedToken(): Promise<string | null> {
     return Promise.resolve(null);
   }
@@ -20,8 +20,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     try {
       const data = await this.client.request(query)
       return data.users_aggregate.aggregate.count
-    }
-    catch (e) {
+    } catch (e) {
       return null
     }
   }

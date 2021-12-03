@@ -42,19 +42,21 @@ export default Vue.extend({
     BaseParagraph
   },
   layout: 'login',
-  data(){
+  data() {
     const header: BaseHeaderModel = new BaseHeaderModel('Connexion')
 
-    const loginInput: BaseInputModele = new BaseInputModele('email', 'login', 'login', 'Email', true, )
-    const passwordInput: BaseInputModele = new BaseInputModele('password', 'password', 'password', 'Mot de passe', true, )
+    const loginInput: BaseInputModele = new BaseInputModele('email', 'login', 'login', 'Email', true,)
+    const passwordInput: BaseInputModele = new BaseInputModele('password', 'password', 'password', 'Mot de passe', true,)
     const formInputs = {
       email: loginInput,
       password: passwordInput
     }
 
-    const submitFormButton: BaseButtonModel = new BaseButtonModel('Se connecter', 'success', 'submit')
+    const submitFormButton: BaseButtonModel = new BaseButtonModel('Se connecter')
+    submitFormButton.setStyleOrThrowError('success')
 
-    const errorParagraph: BaseParagraphModel = new BaseParagraphModel('Votre email ou votre mot de passe est incorrect', 'danger')
+    const errorParagraph: BaseParagraphModel = new BaseParagraphModel('Votre email ou votre mot de passe est incorrect')
+    errorParagraph.setStyleOrThrowError('danger')
 
     const loginResult: Result = new Result()
 
@@ -67,14 +69,14 @@ export default Vue.extend({
     }
   },
   methods: {
-    async login(){
+    async login() {
       this.submitFormButton.isLoading = true
       const credentials: Credentials = new Credentials(this.formInputs.email, this.formInputs.password)
       const userUseCase: UserUseCase = new UserUseCase(this.$fire.auth)
 
       this.loginResult = await userUseCase.login(credentials)
 
-      if(this.loginResult.isFailed()){
+      if (this.loginResult.isFailed()) {
         this.submitFormButton.isLoading = false
         return
       }
@@ -93,7 +95,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-form{
+form {
   background-color: white;
   border: 1px solid black;
   border-radius: 10px;
@@ -110,6 +112,7 @@ form > div.flex-column > ul {
     min-height: 33vh;
   }
 }
+
 @media only screen and (max-width: 1024px) {
   form {
     width: 80vw;

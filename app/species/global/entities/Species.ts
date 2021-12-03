@@ -2,7 +2,8 @@ import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 import InvalidSpeciesObjectError from "~/errors/app/species/global/entities/InvalidSpeciesObjectError";
-import UnexpectedSpeciesPublicationStateError from "~/errors/app/species/global/entities/UnexpectedSpeciesPublicationStateError";
+import UnexpectedSpeciesPublicationStateError
+  from "~/errors/app/species/global/entities/UnexpectedSpeciesPublicationStateError";
 
 export default class Species {
   uuid: string
@@ -22,27 +23,27 @@ export default class Species {
     this.updated_at = species.hasOwnProperty('updated_at') ? new Date(species['updated_at']) : new Date()
     this.user = species.hasOwnProperty('user') ? species['user'] : ''
     this.species_naming = species.hasOwnProperty('species_naming') && species['species_naming'] !== null ? new SpeciesNaming(species['species_naming']) : new SpeciesNaming([])
-    this.water_constraint = species.hasOwnProperty('water_constraint') && species['water_constraint'] !== null ? new WaterConstraints(species['water_constraint']) : new  WaterConstraints([])
-    this.animal_specs = species.hasOwnProperty('animal_specs') && species['animal_specs'] !== null ? new AnimalSpecs(species['animal_specs']) : new  AnimalSpecs([])
+    this.water_constraint = species.hasOwnProperty('water_constraint') && species['water_constraint'] !== null ? new WaterConstraints(species['water_constraint']) : new WaterConstraints([])
+    this.animal_specs = species.hasOwnProperty('animal_specs') && species['animal_specs'] !== null ? new AnimalSpecs(species['animal_specs']) : new AnimalSpecs([])
     this.origin = species.hasOwnProperty('origin') ? species['origin'] : ''
     this.publication_state = species.hasOwnProperty('publication_state') ? species['publication_state'] : ''
     this.category = species.hasOwnProperty('category') ? species['category'] : ''
   }
 
-  toJSON () {
-    return { ...this } // here I make a POJO's copy of the class instance
+  toJSON() {
+    return {...this} // here I make a POJO's copy of the class instance
   }
 
   public computeLinkToSpecies(): string {
-    if(this.category === '' || this.uuid === ''){
+    if (this.category === '' || this.uuid === '') {
       throw new InvalidSpeciesObjectError()
     }
 
-    return '/species/'+this.category+'/'+this.uuid
+    return '/species/' + this.category + '/' + this.uuid
   }
 
   public computeName(): string {
-    if(this.species_naming.species_genre.name === '' || this.species_naming.name === ''){
+    if (this.species_naming.species_genre.name === '' || this.species_naming.name === '') {
       return 'NA'
     }
 
@@ -51,7 +52,7 @@ export default class Species {
 
   public getPublicationStateStyle(): string {
 
-    if(this.publication_state === ''){
+    if (this.publication_state === '') {
       throw new InvalidSpeciesObjectError()
     }
 
@@ -63,7 +64,7 @@ export default class Species {
       'ARCHIVED': 'secondary',
     }
 
-    if(!publicationStateStyle.hasOwnProperty(this.publication_state)){
+    if (!publicationStateStyle.hasOwnProperty(this.publication_state)) {
       throw new UnexpectedSpeciesPublicationStateError(this.publication_state)
     }
 
@@ -72,7 +73,7 @@ export default class Species {
 
   public getPublicationStateContent(): string {
 
-    if(this.publication_state === ''){
+    if (this.publication_state === '') {
       throw new InvalidSpeciesObjectError()
     }
 
@@ -84,7 +85,7 @@ export default class Species {
       'ARCHIVED': 'archivé',
     }
 
-    if(!publicationStateContent.hasOwnProperty(this.publication_state)){
+    if (!publicationStateContent.hasOwnProperty(this.publication_state)) {
       throw new UnexpectedSpeciesPublicationStateError(this.publication_state)
     }
 

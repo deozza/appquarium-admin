@@ -12,25 +12,25 @@ import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 
 export default class Services implements ServicesInterface {
-  async queryTotalSpecies(jwt: string): Promise<number|null> {
+  async queryTotalSpecies(jwt: string): Promise<number | null> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.queryTotalSpecies()
   }
 
-  async queryListOfSpecies(jwt: string): Promise<Array<Species>|UseCaseError> {
+  async queryListOfSpecies(jwt: string): Promise<Array<Species> | UseCaseError> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.queryListOfSpecies()
   }
 
-  async queryGetSpecies(jwt: string, uuid: string): Promise<Species|UseCaseError> {
+  async queryGetSpecies(jwt: string, uuid: string): Promise<Species | UseCaseError> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.queryGetSpecies(uuid)
   }
 
-  async querySpeciesCategories(jwt: string): Promise<Array<string>|UseCaseError> {
+  async querySpeciesCategories(jwt: string): Promise<Array<string> | UseCaseError> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.queryListOfSpeciesCategories()
@@ -82,7 +82,7 @@ export default class Services implements ServicesInterface {
   async createWaterConstraints(jwt: string, uuid: string, waterConstraints: WaterConstraints): Promise<string | Array<UseCaseError>> {
     const areConstraintsValid: Result = Services.checkWaterConstraintsAreValid(waterConstraints)
 
-    if(areConstraintsValid.isFailed()){
+    if (areConstraintsValid.isFailed()) {
       return areConstraintsValid.errors
     }
 
@@ -100,7 +100,7 @@ export default class Services implements ServicesInterface {
   async updateWaterConstraints(jwt: string, waterConstraints: WaterConstraints): Promise<WaterConstraints | Array<UseCaseError>> {
     const areConstraintsValid: Result = Services.checkWaterConstraintsAreValid(waterConstraints)
 
-    if(areConstraintsValid.isFailed()){
+    if (areConstraintsValid.isFailed()) {
       return areConstraintsValid.errors
     }
 
@@ -112,15 +112,15 @@ export default class Services implements ServicesInterface {
   private static checkWaterConstraintsAreValid(waterConstraints: WaterConstraints): Result {
     const result: Result = new Result()
 
-    if(waterConstraints.ph_min > waterConstraints.ph_max){
+    if (waterConstraints.ph_min > waterConstraints.ph_max) {
       result.addError("ph_min", 400)
     }
 
-    if(waterConstraints.gh_min > waterConstraints.gh_max){
+    if (waterConstraints.gh_min > waterConstraints.gh_max) {
       result.addError("gh_min", 400)
     }
 
-    if(waterConstraints.temp_min > waterConstraints.temp_max){
+    if (waterConstraints.temp_min > waterConstraints.temp_max) {
       result.addError("temp_min", 400)
     }
 
@@ -149,13 +149,13 @@ export default class Services implements ServicesInterface {
     return true
   }
 
-  async updatePublicationState(jwt: string, uuid: string, state: string): Promise<string|Array<UseCaseError>> {
+  async updatePublicationState(jwt: string, uuid: string, state: string): Promise<string | Array<UseCaseError>> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.mutationUpdatePublicationState(uuid, state)
   }
 
-  async deleteSpecies(jwt: string, uuid: string): Promise<boolean|Array<UseCaseError>> {
+  async deleteSpecies(jwt: string, uuid: string): Promise<boolean | Array<UseCaseError>> {
     const adapter: AdapterInterface = new HasuraAdapter(jwt)
 
     return await adapter.mutationDeleteSpecies(uuid)

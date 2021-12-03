@@ -12,7 +12,7 @@ import HasuraMutationUpdateBuilder from "~/app/utils/hasura/HasuraRequestBuilder
 import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 import HasuraMutationDeleteBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraMutationDeleteBuilder";
 
-export default class HasuraAdapter extends HasuraClient implements AdapterInterface{
+export default class HasuraAdapter extends HasuraClient implements AdapterInterface {
 
   async queryTotalSpecies(): Promise<number | null> {
 
@@ -24,8 +24,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       const data = await this.client.request(query)
       const totalSpecies: number = data.species_aggregate.aggregate.count
       return totalSpecies
-    }
-    catch (e) {
+    } catch (e) {
       return null
     }
   }
@@ -41,9 +40,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       const data = await this.client.request(query)
       const listOfSpecies: Array<Species> = data.species.map((item: Array<string>) => new Species(item))
       return listOfSpecies
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
 
       }
@@ -66,14 +64,13 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const query: string = queryBuilder.getRequest()
 
     try {
-      const data = await this.client.request(query,{
+      const data = await this.client.request(query, {
         uuid: uuid
       })
 
       return new Species(data.species_by_pk)
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
 
       }
@@ -94,9 +91,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       const data = await this.client.request(query)
       const listOfSpeciesCategories: Array<string> = data.species_categories
       return listOfSpeciesCategories
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
 
       }
@@ -112,14 +108,13 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const query: string = queryBuilder.getRequest()
 
     try {
-      const data = await this.client.request(query,{
+      const data = await this.client.request(query, {
         category: category
       })
       const listOfSpeciesFamilies: Array<SpeciesGenre> = data.species_family.map((item: Array<string>) => new SpeciesFamily(item))
       return listOfSpeciesFamilies
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
       }
       return new UseCaseError(e.message, 400)
@@ -133,15 +128,14 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     queryBuilder.addWhere('category', '_eq', '$category')
     const query: string = queryBuilder.getRequest()
     try {
-      const data = await this.client.request(query,{
+      const data = await this.client.request(query, {
         category: category
       })
 
       const listOfSpeciesGenres: Array<SpeciesGenre> = data.species_genre.map((item: Array<string>) => new SpeciesGenre(item))
       return listOfSpeciesGenres
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
 
       }
@@ -158,9 +152,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       const data = await this.client.request(query)
       const listOfSpeciesOrigins: Array<string> = data.species_origin
       return listOfSpeciesOrigins
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
 
       }
@@ -178,22 +171,21 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const query: string = queryBuilder.getRequest()
 
     try {
-      const data = await this.client.request(query,{
+      const data = await this.client.request(query, {
         category: category
       })
 
       const listOfSpecies: Array<Species> = data.species.map((item: Array<string>) => new Species(item))
       return listOfSpecies
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
       }
       return new UseCaseError(e.message, 400)
     }
   }
 
-  async mutationCreateSpeciesFamily(speciesFamily: SpeciesFamily): Promise<string | UseCaseError>{
+  async mutationCreateSpeciesFamily(speciesFamily: SpeciesFamily): Promise<string | UseCaseError> {
     let queryBuilder: HasuraMutationInsertBuilder = new HasuraMutationInsertBuilder('insert_species_family_one')
     queryBuilder.addParam('$category', 'species_categories_enum', speciesFamily.category)
     queryBuilder.addParam('$name', 'String', speciesFamily.name)
@@ -209,16 +201,15 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
         name: speciesFamily.name,
       })
       return data.insert_species_family_one.uuid
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
       }
       return new UseCaseError(e.message, 400)
     }
   }
 
-  async mutationCreateSpeciesGenre(speciesGenre: SpeciesGenre): Promise<string | UseCaseError>{
+  async mutationCreateSpeciesGenre(speciesGenre: SpeciesGenre): Promise<string | UseCaseError> {
     let queryBuilder: HasuraMutationInsertBuilder = new HasuraMutationInsertBuilder('insert_species_genre_one')
     queryBuilder.addParam('$category', 'species_categories_enum', speciesGenre.category)
     queryBuilder.addParam('$name', 'String', speciesGenre.name)
@@ -234,9 +225,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
         name: speciesGenre.name,
       })
       return data.insert_species_genre_one.uuid
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
       }
       return new UseCaseError(e.message, 400)
@@ -248,23 +238,22 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const mutation: string = 'mutation ($category: species_categories_enum, $family: uuid!, $genre: uuid!, $name: String!) {insert_species_one(object: {category: $category, species_naming: {data: {family: $family, genre: $genre, name: $name}}}) {uuid}}'
 
     try {
-      const data = await this.client.request(mutation,{
+      const data = await this.client.request(mutation, {
         category: species.category,
         name: species.species_naming.name,
         family: species.species_naming.species_family.uuid,
         genre: species.species_naming.species_genre.uuid
       })
       return data.insert_species_one.uuid
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
       }
       return new UseCaseError(e.message, 400)
     }
   }
 
-  async mutationUpdateSpeciesNaming(speciesNaming: SpeciesNaming): Promise<SpeciesNaming | UseCaseError>{
+  async mutationUpdateSpeciesNaming(speciesNaming: SpeciesNaming): Promise<SpeciesNaming | UseCaseError> {
     let queryBuilder: HasuraMutationUpdateBuilder = new HasuraMutationUpdateBuilder('update_species_naming_by_pk')
     queryBuilder.addParam('$uuid', 'uuid!', speciesNaming.uuid)
     queryBuilder.addParam('$genre', 'uuid', speciesNaming.species_genre.uuid)
@@ -274,7 +263,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     queryBuilder.addInsert('genre', '$genre')
     queryBuilder.addInsert('family', '$family')
     queryBuilder.addInsert('name', '$name')
-    queryBuilder.addReturn('uuid','updated_at', 'name', 'common_names', 'old_names', 'species_family {name}', 'species_genre {name}')
+    queryBuilder.addReturn('uuid', 'updated_at', 'name', 'common_names', 'old_names', 'species_family {name}', 'species_genre {name}')
 
     const mutation: string = queryBuilder.getRequest()
 
@@ -286,9 +275,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
         name: speciesNaming.name
       })
       return data.insert_species_genre_one.uuid
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
       }
       return new UseCaseError(e.message, 400)
@@ -315,7 +303,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const mutation: string = queryBuilder.getRequest()
 
     try {
-      const data = await this.client.request(mutation,{
+      const data = await this.client.request(mutation, {
         ph_min: waterConstraints.ph_min,
         ph_max: waterConstraints.ph_max,
         gh_min: waterConstraints.gh_min,
@@ -324,10 +312,9 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
         temp_max: waterConstraints.temp_max,
       })
       return data.insert_water_constraints_one.uuid
-    }
-    catch (e) {
+    } catch (e) {
       let errors: Array<UseCaseError> = []
-      if(e.message.includes("JWTExpired")){
+      if (e.message.includes("JWTExpired")) {
         errors.push(new UseCaseError("JWT expired", 401))
         return errors
       }
@@ -353,14 +340,13 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const mutation: string = queryBuilder.getRequest()
 
     try {
-      await this.client.request(mutation,{
+      await this.client.request(mutation, {
         waterConstraintsUuid: waterConstraints.uuid,
         speciesUuid: speciesUuid,
       })
       return waterConstraints
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
       }
 
@@ -393,7 +379,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const mutation: string = queryBuilder.getRequest()
 
     try {
-      await this.client.request(mutation,{
+      await this.client.request(mutation, {
         uuid: waterConstraints.uuid,
         ph_min: waterConstraints.ph_min,
         ph_max: waterConstraints.ph_max,
@@ -404,9 +390,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       })
 
       return waterConstraints
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return [new UseCaseError("JWT expired", 401)]
       }
       return [new UseCaseError(e.message, 400)]
@@ -428,16 +413,15 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const mutation: string = queryBuilder.getRequest()
 
     try {
-      const data = await this.client.request(mutation,{
+      const data = await this.client.request(mutation, {
         male_size: animalSpecs.male_size,
         female_size: animalSpecs.female_size,
         longevity_in_years: animalSpecs.longevity_in_years,
       })
       return data.insert_animal_specs_one.uuid
-    }
-    catch (e) {
+    } catch (e) {
       let errors: Array<UseCaseError> = []
-      if(e.message.includes("JWTExpired")){
+      if (e.message.includes("JWTExpired")) {
         errors.push(new UseCaseError("JWT expired", 401))
         return errors
       }
@@ -463,14 +447,13 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const mutation: string = queryBuilder.getRequest()
 
     try {
-      await this.client.request(mutation,{
+      await this.client.request(mutation, {
         animalSpecsUuid: animalSpecs.uuid,
         speciesUuid: speciesUuid,
       })
       return animalSpecs
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
       }
 
@@ -497,7 +480,7 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     const mutation: string = queryBuilder.getRequest()
 
     try {
-      await this.client.request(mutation,{
+      await this.client.request(mutation, {
         uuid: animalSpecs.uuid,
         male_size: animalSpecs.male_size,
         female_size: animalSpecs.female_size,
@@ -505,9 +488,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       })
 
       return animalSpecs
-    }
-    catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return [new UseCaseError("JWT expired", 401)]
       }
       return [new UseCaseError(e.message, 400)]
@@ -536,8 +518,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       })
 
       return data.update_species_by_pk.publication_state
-    }catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return [new UseCaseError("JWT expired", 401)]
       }
       return [new UseCaseError(e.message, 400)]
@@ -561,8 +543,8 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       })
 
       return true
-    }catch (e) {
-      if(e.message.includes("JWTExpired")){
+    } catch (e) {
+      if (e.message.includes("JWTExpired")) {
         return [new UseCaseError("JWT expired", 401)]
       }
       return [new UseCaseError(e.message, 400)]

@@ -12,14 +12,13 @@ export default class FirebaseAdapter implements AdapterInterface {
 
   async authenticateWithEmailAndPassword(email: string, password: string): Promise<User | null> {
     try {
-      const userFromFirebase: firebase.auth.UserCredential =  await this.auth.signInWithEmailAndPassword(
+      const userFromFirebase: firebase.auth.UserCredential = await this.auth.signInWithEmailAndPassword(
         email,
         password
       )
 
       return new User(await userFromFirebase.user?.getIdToken()!);
-    }
-    catch (e) {
+    } catch (e) {
       return null
     }
   }
@@ -28,11 +27,10 @@ export default class FirebaseAdapter implements AdapterInterface {
     return Promise.resolve(null);
   }
 
-  async getRefreshedToken(): Promise<string | null>{
+  async getRefreshedToken(): Promise<string | null> {
     try {
       return await this.auth.currentUser.getIdToken()
-    }
-    catch (e) {
+    } catch (e) {
       return null
     }
   }

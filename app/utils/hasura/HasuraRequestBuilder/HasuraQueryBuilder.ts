@@ -3,7 +3,7 @@ import Where from "~/app/utils/hasura/HasuraRequestBuilder/Where";
 import Order from "~/app/utils/hasura/HasuraRequestBuilder/Order";
 import PkColumns from "~/app/utils/hasura/HasuraRequestBuilder/PkColumns";
 
-export default class HasuraQueryBuilder extends HasuraRequestBuilder{
+export default class HasuraQueryBuilder extends HasuraRequestBuilder {
   wheres: Array<Where> = []
   orders: Array<Order> = []
   byPk: PkColumns | null = null
@@ -12,7 +12,7 @@ export default class HasuraQueryBuilder extends HasuraRequestBuilder{
     super('query', name);
   }
 
-  public getRequest(): string{
+  public getRequest(): string {
     let request: string = this.type
 
     request += this.computeParams()
@@ -21,12 +21,12 @@ export default class HasuraQueryBuilder extends HasuraRequestBuilder{
 
     request += this.name
 
-    if(this.wheres.length > 0 || this.orders.length > 0){
+    if (this.wheres.length > 0 || this.orders.length > 0) {
       request += '('
 
       request += this.computeWhere()
 
-      if(this.wheres.length > 0 && this.orders.length > 0){
+      if (this.wheres.length > 0 && this.orders.length > 0) {
         request += ','
       }
 
@@ -35,7 +35,7 @@ export default class HasuraQueryBuilder extends HasuraRequestBuilder{
       request += ')'
     }
 
-    if(this.byPk !== null){
+    if (this.byPk !== null) {
       request += this.computeByPk()
     }
 
@@ -45,8 +45,8 @@ export default class HasuraQueryBuilder extends HasuraRequestBuilder{
     return request
   }
 
-  public addWhere(property: string, compareMode: string, value: string|number){
-    if(this.wheres.find((where: Where) => where.property === property) === undefined) {
+  public addWhere(property: string, compareMode: string, value: string | number) {
+    if (this.wheres.find((where: Where) => where.property === property) === undefined) {
 
       let whereConstraint = new Where(property, compareMode, value)
 
@@ -54,26 +54,26 @@ export default class HasuraQueryBuilder extends HasuraRequestBuilder{
     }
   }
 
-  public addOrderBy(property: string, order: string = 'asc'){
-    if(this.orders.find((order: Order) => order.property === property) === undefined) {
+  public addOrderBy(property: string, order: string = 'asc') {
+    if (this.orders.find((order: Order) => order.property === property) === undefined) {
       this.orders.push(new Order(property, order))
     }
   }
 
-  public addByPk(property: string, value: string){
-      this.byPk = new PkColumns(property, value)
+  public addByPk(property: string, value: string) {
+    this.byPk = new PkColumns(property, value)
   }
 
-  private computeWhere(): string{
-    if(this.wheres.length === 0 ){
+  private computeWhere(): string {
+    if (this.wheres.length === 0) {
       return ''
     }
 
     let computedWhere: string = 'where: {'
 
-    for(let where in this.wheres){
+    for (let where in this.wheres) {
       computedWhere += this.wheres[where].property + ': {' + this.wheres[where].compareMode + ': ' + this.wheres[where].value + '}'
-      if(~~where < (this.wheres.length-1)){
+      if (~~where < (this.wheres.length - 1)) {
         computedWhere += ', '
       }
     }
@@ -82,16 +82,16 @@ export default class HasuraQueryBuilder extends HasuraRequestBuilder{
     return computedWhere
   }
 
-  private computeOrder(): string{
-    if(this.orders.length === 0 ){
+  private computeOrder(): string {
+    if (this.orders.length === 0) {
       return ''
     }
 
     let computedOrders: string = 'order_by: {'
-    for(let order in this.orders){
-      computedOrders += this.orders[order].property+': '+this.orders[order].order
+    for (let order in this.orders) {
+      computedOrders += this.orders[order].property + ': ' + this.orders[order].order
 
-      if(~~order < (this.orders.length-1)){
+      if (~~order < (this.orders.length - 1)) {
         computedOrders += ', '
       }
     }

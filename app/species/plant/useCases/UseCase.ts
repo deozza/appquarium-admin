@@ -6,14 +6,14 @@ import Species from "~/app/species/global/entities/Species";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 
-export default class PlantUseCase implements UseCaseInterface{
+export default class PlantUseCase implements UseCaseInterface {
   async getListOfPlants(jwt: string): Promise<Result> {
     let result: Result = new Result()
     const plantService: Services = new Services()
 
     const listOfPlants: Array<Species> | UseCaseError = await plantService.queryGetListOfPlants(jwt)
 
-    if(listOfPlants instanceof UseCaseError){
+    if (listOfPlants instanceof UseCaseError) {
       result.errors.push(listOfPlants)
       return result
     }
@@ -29,7 +29,7 @@ export default class PlantUseCase implements UseCaseInterface{
 
     const plantGenres: Array<SpeciesGenre> | UseCaseError = await plantService.queryPlantGenres(jwt)
 
-    if(plantGenres instanceof UseCaseError){
+    if (plantGenres instanceof UseCaseError) {
       result.errors.push(plantGenres)
       return result
     }
@@ -45,7 +45,7 @@ export default class PlantUseCase implements UseCaseInterface{
 
     const plantFamilies: Array<SpeciesFamily> | UseCaseError = await plantService.queryPlantFamilies(jwt)
 
-    if(plantFamilies instanceof UseCaseError){
+    if (plantFamilies instanceof UseCaseError) {
       result.errors.push(plantFamilies)
       return result
     }

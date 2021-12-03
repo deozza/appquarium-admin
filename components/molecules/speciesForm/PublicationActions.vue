@@ -1,6 +1,6 @@
 <template>
   <div class="flex-row flex-around">
-    <BaseButton v-for="(button, index) in publicationActions" :base-button-model="button" v-bind:key="index" />
+    <BaseButton v-for="(button, index) in publicationActions" :base-button-model="button" v-bind:key="index"/>
   </div>
 </template>
 
@@ -9,7 +9,7 @@ import Vue from 'vue'
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 
-export default Vue.extend( {
+export default Vue.extend({
   name: "PublicationActionsVue",
   components: {
     BaseButton
@@ -22,11 +22,25 @@ export default Vue.extend( {
   },
   data() {
 
-    const prePublishButton: BaseButtonModel = new BaseButtonModel('Pré-publier', 'success', 'button', 'normal', '', false, true)
-    const publishButton: BaseButtonModel = new BaseButtonModel('Publier', 'success', 'button')
-    const moderateButton: BaseButtonModel = new BaseButtonModel('Modérer', 'warning', 'button')
-    const archiveButton: BaseButtonModel = new BaseButtonModel('Archiver', 'danger', 'button')
-    const deleteButton: BaseButtonModel = new BaseButtonModel('Supprimer', 'danger', 'button')
+    const prePublishButton: BaseButtonModel = new BaseButtonModel('Pré-publier')
+    prePublishButton.setStyleOrThrowError('success', true)
+    prePublishButton.setTypeOrThrowError('button')
+
+    const publishButton: BaseButtonModel = new BaseButtonModel('Publier')
+    publishButton.setStyleOrThrowError('success')
+    publishButton.setTypeOrThrowError('button')
+
+    const moderateButton: BaseButtonModel = new BaseButtonModel('Modérer')
+    moderateButton.setStyleOrThrowError('warning')
+    moderateButton.setTypeOrThrowError('button')
+
+    const archiveButton: BaseButtonModel = new BaseButtonModel('Archiver')
+    prePublishButton.setStyleOrThrowError('danger')
+    prePublishButton.setTypeOrThrowError('button')
+
+    const deleteButton: BaseButtonModel = new BaseButtonModel('Supprimer')
+    prePublishButton.setStyleOrThrowError('danger')
+    prePublishButton.setTypeOrThrowError('button')
 
     prePublishButton.event = 'prePublishClicked'
     publishButton.event = 'publishClicked'

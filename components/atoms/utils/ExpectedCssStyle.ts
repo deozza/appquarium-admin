@@ -1,5 +1,5 @@
 export default class ExpectedCssStyle {
-  public static getExpectedStyles(): Array<string>{
+  public static getExpectedStyles(): Array<string> {
     return [
       'primary',
       'secondary',
@@ -14,7 +14,7 @@ export default class ExpectedCssStyle {
   }
 
   public static getExpectedSizes(): Array<string> {
-    return  [
+    return [
       'normal',
       'small',
       'large'

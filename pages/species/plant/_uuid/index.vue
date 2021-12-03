@@ -1,14 +1,16 @@
 <template>
   <main>
     <div id="loading" v-if="$fetchState.pending">
-      <p >Récupération des infos️</p>
+      <p>Récupération des infos️</p>
     </div>
     <div id="error" v-else-if="$fetchState.error">
-      <p >Une erreur est survenue :(</p>
+      <p>Une erreur est survenue :(</p>
     </div>
     <div class="flex-column" id="content" v-else>
       <section id="title" class="flex-row">
-        <BaseHeader :base-header-model="header"> <BaseBadge :base-badge-model="statusBadge" /></BaseHeader>
+        <BaseHeader :base-header-model="header">
+          <BaseBadge :base-badge-model="statusBadge"/>
+        </BaseHeader>
       </section>
       <section id="cards" class="flex-row flex-around">
 
@@ -17,7 +19,7 @@
             <BaseHeader :base-header-model="generalCardHeader"/>
           </template>
           <template slot="body">
-            <GeneralInfoForm  :species="plant" />
+            <GeneralInfoForm :species="plant"/>
           </template>
         </BaseCard>
 
@@ -26,7 +28,7 @@
             <BaseHeader :base-header-model="namingCardHeader"/>
           </template>
           <template slot="body">
-            <NamingForm :jwt="jwt" :species="plant" />
+            <NamingForm :jwt="jwt" :species="plant"/>
           </template>
         </BaseCard>
 
@@ -36,15 +38,15 @@
             <BaseHeader :base-header-model="waterConstraintsCardHeader"/>
           </template>
           <template slot="body">
-            <WaterConstraintsForm :jwt="jwt" :species="plant" />
+            <WaterConstraintsForm :jwt="jwt" :species="plant"/>
           </template>
         </BaseCard>
       </section>
 
       <BaseCard>
         <template slot="footer">
-          <PublicationActions  v-if="isUpdatingPublicationState === false" :publication-state="plant.publication_state"/>
-          <div v-else class="flex-row flex-around" >
+          <PublicationActions v-if="isUpdatingPublicationState === false" :publication-state="plant.publication_state"/>
+          <div v-else class="flex-row flex-around">
             <i class="fas fa-spinner fa-spin fa-5x"></i>
           </div>
         </template>
@@ -99,11 +101,17 @@ export default Vue.extend({
     this.$nuxt.$off('archiveClicked')
     this.$nuxt.$off('deleteClicked')
   },
-  data(){
-    const header: BaseHeaderModel = new BaseHeaderModel("", 1)
-    const generalCardHeader: BaseHeaderModel = new BaseHeaderModel("Infos générales", 2)
-    const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms", 2)
-    const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau", 2)
+  data() {
+    const header: BaseHeaderModel = new BaseHeaderModel("")
+    const generalCardHeader: BaseHeaderModel = new BaseHeaderModel("Infos générales")
+    generalCardHeader.setSizeOrThrowError(2)
+
+    const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms")
+    namingCardHeader.setSizeOrThrowError(2)
+
+    const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau")
+    waterConstraintsCardHeader.setSizeOrThrowError(2)
+
     const statusParagraph: BaseParagraphModel = new BaseParagraphModel("")
     const plant: Species = new Species([])
     const jwt: string = this.$cookies.get('appquarium-jwt')
@@ -119,19 +127,19 @@ export default Vue.extend({
       isUpdatingPublicationState: false
     }
   },
-  async fetch(){
+  async fetch() {
     const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
     const params = this.$route.params
 
     const plant: Result = await speciesUseCase.getSpecies(this.jwt, params.uuid)
-    if(plant.isFailed()){
-      for(const error of plant.errors) {
+    if (plant.isFailed()) {
+      for (const error of plant.errors) {
         if (error.code === 401) {
           this.$cookies.remove('appquarium-jwt')
           await this.$router.push('/login')
         }
 
-        if(error.code === 404){
+        if (error.code === 404) {
           await this.$router.push('/species/plant')
         }
       }
@@ -142,10 +150,10 @@ export default Vue.extend({
     this.header.content = this.plant.computeName()
   },
   computed: {
-    statusBadge(): BaseBadgeModel{
+    statusBadge(): BaseBadgeModel {
       const statusBadge: BaseBadgeModel = new BaseBadgeModel("")
 
-      if(this.plant === undefined || this.plant === null || this.plant.publication_state === ''){
+      if (this.plant === undefined || this.plant === null || this.plant.publication_state === '') {
         return statusBadge
       }
 
@@ -178,13 +186,13 @@ export default Vue.extend({
 
       return publicationStateContent[plant.publication_state]
     },
-    async prePublishPlant(){
+    async prePublishPlant() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const plant: Result = await speciesUseCase.updatePublicationState(this.jwt, this.plant, 'PRE_PUBLISHED')
 
-      if(plant.isFailed()) {
+      if (plant.isFailed()) {
         for (const error of plant.errors) {
 
           if (error.code === 401) {
@@ -200,13 +208,13 @@ export default Vue.extend({
       this.plant.publication_state = plant.content
       this.isUpdatingPublicationState = false
     },
-    async publishPlant(){
+    async publishPlant() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const plant: Result = await speciesUseCase.updatePublicationState(this.jwt, this.plant, 'PUBLISHED')
 
-      if(plant.isFailed()) {
+      if (plant.isFailed()) {
         for (const error of plant.errors) {
 
           if (error.code === 401) {
@@ -222,13 +230,13 @@ export default Vue.extend({
       this.plant.publication_state = plant.content
       this.isUpdatingPublicationState = false
     },
-    async moderatePlant(){
+    async moderatePlant() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const plant: Result = await speciesUseCase.updatePublicationState(this.jwt, this.plant, 'MODERATED')
 
-      if(plant.isFailed()) {
+      if (plant.isFailed()) {
         for (const error of plant.errors) {
 
           if (error.code === 401) {
@@ -245,13 +253,13 @@ export default Vue.extend({
       this.plant.publication_state = plant.content
       this.isUpdatingPublicationState = false
     },
-    async archivePlant(){
+    async archivePlant() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const plant: Result = await speciesUseCase.updatePublicationState(this.jwt, this.plant, 'ARCHIVED')
 
-      if(plant.isFailed()) {
+      if (plant.isFailed()) {
         for (const error of plant.errors) {
 
           if (error.code === 401) {
@@ -267,7 +275,7 @@ export default Vue.extend({
       this.plant.publication_state = plant.content
       this.isUpdatingPublicationState = false
     },
-    async deletePlant(){
+    async deletePlant() {
       /*
 
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()

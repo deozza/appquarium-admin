@@ -11,26 +11,26 @@ export default class HasuraRequestBuilder {
     this.name = name
   }
 
-  public addParam(name: string, type: string, value: string|number){
-    if(this.params.find((param: Param) => param.name === name) === undefined) {
+  public addParam(name: string, type: string, value: string | number) {
+    if (this.params.find((param: Param) => param.name === name) === undefined) {
       this.params.push(new Param(name, type, value))
     }
   }
 
-  public addReturn(...names: Array<string>){
+  public addReturn(...names: Array<string>) {
     names.forEach((name) => this.return.push(name))
   }
 
-  protected computeParams(): string{
-    if(this.params.length === 0){
+  protected computeParams(): string {
+    if (this.params.length === 0) {
       return ''
     }
 
     let computedParams = '('
-    for(let param in this.params){
-      computedParams += this.params[param].name+': '+this.params[param].type
+    for (let param in this.params) {
+      computedParams += this.params[param].name + ': ' + this.params[param].type
 
-      if(~~param < (this.params.length-1)){
+      if (~~param < (this.params.length - 1)) {
         computedParams += ', '
       }
     }
@@ -40,13 +40,13 @@ export default class HasuraRequestBuilder {
     return computedParams
   }
 
-  protected computeReturn(): string{
+  protected computeReturn(): string {
     let computedReturn: string = '{'
 
-    for(let returnMember in this.return){
+    for (let returnMember in this.return) {
       computedReturn += this.return[returnMember]
 
-      if(~~returnMember < (this.return.length-1)){
+      if (~~returnMember < (this.return.length - 1)) {
         computedReturn += ', '
       }
     }

@@ -7,7 +7,7 @@ export default class HasuraClient {
     this.client = new GraphQLClient('https://appquarium.hasura.app/v1/graphql', {
       headers: {
         "content-type": "application/json",
-        "Authorization": `Bearer ${ jwt }`
+        "Authorization": `Bearer ${jwt}`
       }
     })
   }

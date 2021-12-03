@@ -1,14 +1,16 @@
 <template>
   <main>
     <div id="loading" v-if="$fetchState.pending">
-      <p >Récupération des infos️</p>
+      <p>Récupération des infos️</p>
     </div>
     <div id="error" v-else-if="$fetchState.error">
-      <p >Une erreur est survenue :(</p>
+      <p>Une erreur est survenue :(</p>
     </div>
     <div class="flex-column" id="content" v-else>
       <section id="title" class="flex-row">
-        <BaseHeader :base-header-model="header"> <BaseBadge :base-badge-model="statusBadge" /></BaseHeader>
+        <BaseHeader :base-header-model="header">
+          <BaseBadge :base-badge-model="statusBadge"/>
+        </BaseHeader>
       </section>
       <section id="cards" class="flex-row flex-around">
 
@@ -17,7 +19,7 @@
             <BaseHeader :base-header-model="generalCardHeader"/>
           </template>
           <template slot="body">
-            <GeneralInfoForm :jwt="jwt" :species="invertebrate" />
+            <GeneralInfoForm :jwt="jwt" :species="invertebrate"/>
           </template>
         </BaseCard>
 
@@ -26,7 +28,7 @@
             <BaseHeader :base-header-model="namingCardHeader"/>
           </template>
           <template slot="body">
-            <NamingForm :jwt="jwt" :species="invertebrate" />
+            <NamingForm :jwt="jwt" :species="invertebrate"/>
           </template>
         </BaseCard>
 
@@ -35,7 +37,7 @@
             <BaseHeader :base-header-model="waterConstraintsCardHeader"/>
           </template>
           <template slot="body">
-            <WaterConstraintsForm :jwt="jwt" :species="invertebrate" />
+            <WaterConstraintsForm :jwt="jwt" :species="invertebrate"/>
           </template>
         </BaseCard>
 
@@ -50,8 +52,9 @@
 
         <BaseCard>
           <template slot="footer">
-            <PublicationActions  v-if="isUpdatingPublicationState === false" :publication-state="invertebrate.publication_state"/>
-            <div v-else class="flex-row flex-around" >
+            <PublicationActions v-if="isUpdatingPublicationState === false"
+                                :publication-state="invertebrate.publication_state"/>
+            <div v-else class="flex-row flex-around">
               <i class="fas fa-spinner fa-spin fa-5x"></i>
             </div>
           </template>
@@ -107,12 +110,20 @@ export default Vue.extend({
     this.$nuxt.$off('archiveClicked')
     this.$nuxt.$off('deleteClicked')
   },
-  data(){
-    const header: BaseHeaderModel = new BaseHeaderModel("", 1)
-    const generalCardHeader: BaseHeaderModel = new BaseHeaderModel("Infos générales", 2)
-    const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms", 2)
-    const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau", 2)
-    const animalSpecsCardHeader: BaseHeaderModel = new BaseHeaderModel("Caractéristiques animales", 2)
+  data() {
+    const header: BaseHeaderModel = new BaseHeaderModel("")
+    const generalCardHeader: BaseHeaderModel = new BaseHeaderModel("Infos générales")
+    generalCardHeader.setSizeOrThrowError(2)
+
+    const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms")
+    namingCardHeader.setSizeOrThrowError(2)
+
+    const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau")
+    waterConstraintsCardHeader.setSizeOrThrowError(2)
+
+    const animalSpecsCardHeader: BaseHeaderModel = new BaseHeaderModel("Caractéristiques animales")
+    animalSpecsCardHeader.setSizeOrThrowError(2)
+
     const invertebrate: Species = new Species([])
     const jwt: string = this.$cookies.get('appquarium-jwt')
 
@@ -128,10 +139,10 @@ export default Vue.extend({
     }
   },
   computed: {
-    statusBadge(): BaseBadgeModel{
+    statusBadge(): BaseBadgeModel {
       const statusBadge: BaseBadgeModel = new BaseBadgeModel("")
 
-      if(this.invertebrate === undefined || this.invertebrate === null || this.invertebrate.publication_state === ''){
+      if (this.invertebrate === undefined || this.invertebrate === null || this.invertebrate.publication_state === '') {
         return statusBadge
       }
 
@@ -141,19 +152,19 @@ export default Vue.extend({
       return statusBadge
     }
   },
-  async fetch(){
+  async fetch() {
     const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
     const params = this.$route.params
 
     const invertebrate: Result = await speciesUseCase.getSpecies(this.jwt, params.uuid)
-    if(invertebrate.isFailed()){
-      for(const error of invertebrate.errors) {
+    if (invertebrate.isFailed()) {
+      for (const error of invertebrate.errors) {
         if (error.code === 401) {
           this.$cookies.remove('appquarium-jwt')
           await this.$router.push('/login')
         }
 
-        if(error.code === 404){
+        if (error.code === 404) {
           await this.$router.push('/species/invertebrate')
         }
       }
@@ -186,13 +197,13 @@ export default Vue.extend({
 
       return publicationStateContent[invertebrate.publication_state]
     },
-    async prePublishInvertebrate(){
+    async prePublishInvertebrate() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const invertebrate: Result = await speciesUseCase.updatePublicationState(this.jwt, this.invertebrate, 'PRE_PUBLISHED')
 
-      if(invertebrate.isFailed()) {
+      if (invertebrate.isFailed()) {
         for (const error of invertebrate.errors) {
 
           if (error.code === 401) {
@@ -208,13 +219,13 @@ export default Vue.extend({
       this.invertebrate.publication_state = invertebrate.content
       this.isUpdatingPublicationState = false
     },
-    async publishInvertebrate(){
+    async publishInvertebrate() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const invertebrate: Result = await speciesUseCase.updatePublicationState(this.jwt, this.invertebrate, 'PUBLISHED')
 
-      if(invertebrate.isFailed()) {
+      if (invertebrate.isFailed()) {
         for (const error of invertebrate.errors) {
 
           if (error.code === 401) {
@@ -230,13 +241,13 @@ export default Vue.extend({
       this.invertebrate.publication_state = invertebrate.content
       this.isUpdatingPublicationState = false
     },
-    async moderateInvertebrate(){
+    async moderateInvertebrate() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const invertebrate: Result = await speciesUseCase.updatePublicationState(this.jwt, this.invertebrate, 'MODERATED')
 
-      if(invertebrate.isFailed()) {
+      if (invertebrate.isFailed()) {
         for (const error of invertebrate.errors) {
 
           if (error.code === 401) {
@@ -253,13 +264,13 @@ export default Vue.extend({
       this.invertebrate.publication_state = invertebrate.content
       this.isUpdatingPublicationState = false
     },
-    async archiveInvertebrate(){
+    async archiveInvertebrate() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const invertebrate: Result = await speciesUseCase.updatePublicationState(this.jwt, this.invertebrate, 'ARCHIVED')
 
-      if(invertebrate.isFailed()) {
+      if (invertebrate.isFailed()) {
         for (const error of invertebrate.errors) {
 
           if (error.code === 401) {
@@ -275,7 +286,7 @@ export default Vue.extend({
       this.invertebrate.publication_state = invertebrate.content
       this.isUpdatingPublicationState = false
     },
-    async deleteInvertebrate(){
+    async deleteInvertebrate() {
       /*
 
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()

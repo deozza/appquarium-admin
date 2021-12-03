@@ -1,7 +1,7 @@
 <template>
-<main>
-  <p>users</p>
-</main>
+  <main>
+    <p>users</p>
+  </main>
 </template>
 
 <script lang="ts">
@@ -13,7 +13,7 @@ export default Vue.extend({
   components: {
     BaseHeader
   },
-  data(){
+  data() {
     return {}
   },
 })

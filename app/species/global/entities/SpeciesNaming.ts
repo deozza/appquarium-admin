@@ -25,7 +25,7 @@ export default class SpeciesNaming {
     this.species_genre = speciesNaming.hasOwnProperty('species_genre') && speciesNaming['species_genre'] !== null ? new SpeciesGenre(speciesNaming['species_genre']) : new SpeciesGenre([])
   }
 
-  toJSON () {
-    return { ...this } // here I make a POJO's copy of the class instance
+  toJSON() {
+    return {...this} // here I make a POJO's copy of the class instance
   }
 }

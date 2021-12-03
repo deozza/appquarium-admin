@@ -1,5 +1,5 @@
 import ServicesInterface from "~/app/species/fish/services/ServicesInterface";
-import SpeciesHasuraAdapter  from "~/app/species/global/adapters/HasuraAdapter";
+import SpeciesHasuraAdapter from "~/app/species/global/adapters/HasuraAdapter";
 import Error from "~/app/utils/useCasesResult/types/UseCaseError";
 import Species from "~/app/species/global/entities/Species";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
