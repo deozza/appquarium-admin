@@ -5,6 +5,11 @@ import Species from "~/app/species/global/entities/Species";
 import User from "~/app/user/entities/User";
 import WaterConstraints from "~/app/species/global/entities/WaterConstraints";
 import HasuraAdapter from "~/app/species/global/adapters/HasuraAdapter";
+import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
+import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
+import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
+import SpeciesNaming from "~/app/species/global/entities/SpeciesNaming";
+import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 
 jest.mock("~/app/species/global/adapters/HasuraAdapter")
 
@@ -25,6 +30,53 @@ describe('Testing FishUseCase.ts', () => {
   const user: User = new User(jwt)
   const service: Services = new Services()
 
+  test('queryTotalSpecies returns adapter response', async () => {
+
+    HasuraAdapter.prototype.queryTotalSpecies = jest.fn().mockImplementationOnce(() => {
+      return 1;
+    });
+
+    expect(await service.queryTotalSpecies('jwt')).toEqual(1)
+  })
+
+  test('queryListOfSpecies returns adapter response', async () => {
+
+    HasuraAdapter.prototype.queryListOfSpecies = jest.fn().mockImplementationOnce(() => {
+      return [];
+    });
+
+    expect(await service.queryListOfSpecies('jwt')).toEqual([])
+  })
+
+  test('queryGetSpecies returns adapter response', async () => {
+
+    const species: Species = new Species([])
+
+    HasuraAdapter.prototype.queryListOfSpecies = jest.fn().mockImplementationOnce(() => {
+      return species;
+    });
+
+    expect(await service.queryGetSpecies('jwt', 'species_uuid')).toEqual(species)
+  })
+
+  test('querySpeciesCategories returns adapter response', async () => {
+
+    HasuraAdapter.prototype.queryListOfSpeciesByCategory = jest.fn().mockImplementationOnce(() => {
+      return [];
+    });
+
+    expect(await service.querySpeciesCategories('jwt')).toEqual([])
+  })
+
+  test('querySpeciesOrigins returns adapter response', async () => {
+
+    HasuraAdapter.prototype.queryListOfSpeciesOrigins = jest.fn().mockImplementationOnce(() => {
+      return [];
+    });
+
+    expect(await service.querySpeciesOrigins('jwt')).toEqual([])
+  })
+
   test('initNewSpecies with valid category', () => {
 
     const fish: Species = service.initNewSpecies(user, 'fish')
@@ -41,6 +93,36 @@ describe('Testing FishUseCase.ts', () => {
     expect(fish).toEqual(fish)
   })
 
+  test('createSpecies returns adapter response', async () => {
+    const species: Species = new Species([])
+
+    HasuraAdapter.prototype.mutationCreateSpecies = jest.fn().mockImplementationOnce(() => {
+      return 'species_uuid';
+    });
+
+    expect(await service.createSpecies('jwt', species)).toEqual('species_uuid')
+  })
+
+  test('createSpeciesFamily returns adapter response', async () => {
+    const speciesFamily: SpeciesFamily = new SpeciesFamily([])
+
+    HasuraAdapter.prototype.mutationCreateSpeciesFamily = jest.fn().mockImplementationOnce(() => {
+      return 'species_uuid';
+    });
+
+    expect(await service.createSpeciesFamily('jwt', speciesFamily)).toEqual('species_uuid')
+  })
+
+  test('createSpeciesGenre returns adapter response', async () => {
+    const speciesGenre: SpeciesGenre = new SpeciesGenre([])
+
+    HasuraAdapter.prototype.mutationCreateSpeciesGenre = jest.fn().mockImplementationOnce(() => {
+      return 'species_uuid';
+    });
+
+    expect(await service.createSpeciesGenre('jwt', speciesGenre)).toEqual('species_uuid')
+  })
+
   test('checkWaterConstraintsAreValid with valid waterConstraints', () => {
     const validWaterConstraints: WaterConstraints = new WaterConstraints([])
     validWaterConstraints.temp_min = 20
@@ -55,6 +137,16 @@ describe('Testing FishUseCase.ts', () => {
     const expectedResult = new Result()
 
     expect(result).toEqual(expectedResult)
+  })
+
+  test('updateSpeciesNaming returns adapter response', async () => {
+    const speciesNaming: SpeciesNaming = new SpeciesNaming([])
+
+    HasuraAdapter.prototype.mutationUpdateSpeciesNaming = jest.fn().mockImplementationOnce(() => {
+      return 'species_uuid';
+    });
+
+    expect(await service.updateSpeciesNaming('jwt', speciesNaming)).toEqual('species_uuid')
   })
 
   test('checkWaterConstraintsAreValid with invalid temp', () => {
@@ -194,6 +286,44 @@ describe('Testing FishUseCase.ts', () => {
     validWaterConstraints.gh_max = 30
 
     expect(await service.updateWaterConstraints('jwt',  validWaterConstraints)).toEqual([new UseCaseError("ph_min", 400)])
+  })
+
+  test('createAnimalSpecs returns adapter response', async () => {
+    const animalSpecs: AnimalSpecs = new AnimalSpecs([])
+
+    HasuraAdapter.prototype.mutationCreateAnimalSpecs = jest.fn().mockImplementationOnce(() => {
+      return 'animal_specs_uuid';
+    });
+
+    expect(await service.createAnimalSpecs('jwt', 'species_uuid', animalSpecs)).toEqual('animal_specs_uuid')
+  })
+
+  test('( returns adapter response', async () => {
+    const animalSpecs: AnimalSpecs = new AnimalSpecs([])
+
+    HasuraAdapter.prototype.mutationAddAnimalSpecsToSpecies = jest.fn().mockImplementationOnce(() => {
+      return 'animal_specs_uuid';
+    });
+
+    expect(await service.addAnimalSpecsToSpecies('jwt', 'species_uuid', animalSpecs)).toEqual('animal_specs_uuid')
+  })
+
+  test('updateAnimalSpecs returns adapter response', async () => {
+    const animalSpecs: AnimalSpecs = new AnimalSpecs([])
+
+    HasuraAdapter.prototype.mutationEditAnimalSpecs = jest.fn().mockImplementationOnce(() => {
+      return 'animal_specs_uuid';
+    });
+
+    expect(await service.updateAnimalSpecs('jwt',  animalSpecs)).toEqual('animal_specs_uuid')
+  })
+
+  test('updatePublicationState returns adapter response', async () => {
+    HasuraAdapter.prototype.mutationUpdatePublicationState = jest.fn().mockImplementationOnce(() => {
+      return 'species_uuid';
+    });
+
+    expect(await service.updatePublicationState('jwt',  'species_uuid', 'new_state')).toEqual('species_uuid')
   })
 
 })
