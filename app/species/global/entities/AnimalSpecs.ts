@@ -17,7 +17,7 @@ export default class AnimalSpecs {
     this.longevity_in_years = animalSpecs.hasOwnProperty('longevity_in_years') ? animalSpecs['longevity_in_years'] : 0
   }
 
-  toJSON () {
-    return { ...this } // here I make a POJO's copy of the class instance
+  toJSON() {
+    return {...this} // here I make a POJO's copy of the class instance
   }
 }

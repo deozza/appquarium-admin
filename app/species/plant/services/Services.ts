@@ -1,6 +1,6 @@
 import ServicesInterface from "~/app/species/plant/services/ServicesInterface";
 import UseCaseError from "~/app/utils/useCasesResult/types/UseCaseError";
-import SpeciesHasuraAdapter  from "~/app/species/global/adapters/HasuraAdapter";
+import SpeciesHasuraAdapter from "~/app/species/global/adapters/HasuraAdapter";
 import Species from "~/app/species/global/entities/Species";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";

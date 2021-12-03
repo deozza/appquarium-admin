@@ -1,10 +1,20 @@
 <template>
-  <h1 v-if="baseHeaderModel.size === 1" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h1>
-  <h2 v-else-if="baseHeaderModel.size === 2" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h2>
-  <h3 v-else-if="baseHeaderModel.size === 3" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h3>
-  <h4 v-else-if="baseHeaderModel.size === 4" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h4>
-  <h5 v-else-if="baseHeaderModel.size === 5" :class="baseHeaderModel.style">{{baseHeaderModel.content}} <slot></slot></h5>
-  <h6 v-else :class="baseHeaderModel.style">{{baseHeaderModel.content}}</h6>
+  <h1 v-if="baseHeaderModel.size === 1" :class="baseHeaderModel.style">{{ baseHeaderModel.content }}
+    <slot></slot>
+  </h1>
+  <h2 v-else-if="baseHeaderModel.size === 2" :class="baseHeaderModel.style">{{ baseHeaderModel.content }}
+    <slot></slot>
+  </h2>
+  <h3 v-else-if="baseHeaderModel.size === 3" :class="baseHeaderModel.style">{{ baseHeaderModel.content }}
+    <slot></slot>
+  </h3>
+  <h4 v-else-if="baseHeaderModel.size === 4" :class="baseHeaderModel.style">{{ baseHeaderModel.content }}
+    <slot></slot>
+  </h4>
+  <h5 v-else-if="baseHeaderModel.size === 5" :class="baseHeaderModel.style">{{ baseHeaderModel.content }}
+    <slot></slot>
+  </h5>
+  <h6 v-else :class="baseHeaderModel.style">{{ baseHeaderModel.content }}</h6>
 </template>
 
 <script lang="ts">
@@ -23,54 +33,56 @@ export default {
 </script>
 
 <style scoped>
-    h1 {
-        font-size: 4rem;
-    }
+h1 {
+  font-size: 4rem;
+}
 
-    h2 {
-        font-size: 2rem;
-    }
+h2 {
+  font-size: 2rem;
+}
 
-    h3 {
-        font-size: 1.75rem;
-    }
+h3 {
+  font-size: 1.75rem;
+}
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin: 20px 0 20px 0;
-    }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 20px 0 20px 0;
+}
 
-    .light {
-        color: black;
-    }
-    .dark {
-        color: white;
-    }
-    .primary {
-        color: var(--primary_text);
-    }
+.light {
+  color: black;
+}
 
-    .secondary {
-        color: var(--secondary_text);
-    }
+.dark {
+  color: white;
+}
 
-    .success {
-        color: var(--success_text);
-    }
+.primary {
+  color: var(--primary_text);
+}
 
-    .danger {
-        color: var(--danger_text);
-    }
+.secondary {
+  color: var(--secondary_text);
+}
 
-    .warning {
-        color: var(--warning_text);
-    }
+.success {
+  color: var(--success_text);
+}
 
-    .info {
-        color: var(--info_text);
-    }
+.danger {
+  color: var(--danger_text);
+}
+
+.warning {
+  color: var(--warning_text);
+}
+
+.info {
+  color: var(--info_text);
+}
 </style>

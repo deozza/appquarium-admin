@@ -1,52 +1,52 @@
 <template>
-<main>
-  <BaseHeader :base-header-model="header" />
+  <main>
+    <BaseHeader :base-header-model="header"/>
 
-  <div id="loading" v-if="$fetchState.pending">
-    <p >Récupération des infos️</p>
-  </div>
-  <div id="error" v-else-if="$fetchState.error">
-    <p >Une erreur est survenue :(</p>
-  </div>
-  <div class="flex-column" id="content" v-else>
-    <BaseCard>
-      <template slot="header">
-        <BaseHeader :base-header-model="allFishesCardHeader" />
-      </template>
-      <template slot="body">
-      <table>
-        <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Nom scientifique</th>
-          <th scope="col">Etat</th>
-          <th scope="col">Créé le</th>
-          <th scope="col">Modifié le</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(fish, index) in listOfFishes" v-bind:key="index">
-          <td>{{index + 1}}</td>
-          <td>
-            <a :href="fish | speciesComputedLink">{{fish.species_naming | speciesComputedName}}</a>
-          </td>
-          <td>{{fish.publication_state}}</td>
-          <td>{{fish.updated_at | date }}</td>
-          <td>{{fish.created_at | date }}</td>
-        </tr>
-        </tbody>
-      </table>
-      </template>
-    </BaseCard>
-
-    <div class="flex-row flex-around">
-      <a href="/species/fish/add">
-        <BaseButton :base-button-model="addFishButton" />
-      </a>
+    <div id="loading" v-if="$fetchState.pending">
+      <p>Récupération des infos️</p>
     </div>
+    <div id="error" v-else-if="$fetchState.error">
+      <p>Une erreur est survenue :(</p>
+    </div>
+    <div class="flex-column" id="content" v-else>
+      <BaseCard>
+        <template slot="header">
+          <BaseHeader :base-header-model="allFishesCardHeader"/>
+        </template>
+        <template slot="body">
+          <table>
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Nom scientifique</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Créé le</th>
+              <th scope="col">Modifié le</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(fish, index) in listOfFishes" v-bind:key="index">
+              <td>{{ index + 1 }}</td>
+              <td>
+                <a :href="fish | speciesComputedLink">{{ fish.species_naming | speciesComputedName }}</a>
+              </td>
+              <td>{{ fish.publication_state }}</td>
+              <td>{{ fish.updated_at | date }}</td>
+              <td>{{ fish.created_at | date }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </template>
+      </BaseCard>
 
-  </div>
-</main>
+      <div class="flex-row flex-around">
+        <a href="/species/fish/add">
+          <BaseButton :base-button-model="addFishButton"/>
+        </a>
+      </div>
+
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
@@ -67,11 +67,15 @@ export default Vue.extend({
     BaseButton,
     BaseCard
   },
-  data(){
-    const header: BaseHeaderModel = new BaseHeaderModel('Dashboard poissons', 1)
-    const allFishesCardHeader = new BaseHeaderModel('Tous les poissons', 2)
+  data() {
+    const header: BaseHeaderModel = new BaseHeaderModel('Dashboard poissons')
+    const allFishesCardHeader = new BaseHeaderModel('Tous les poissons')
+    allFishesCardHeader.setSizeOrThrowError(2)
+
     const listOfFishes: Array<Species> = []
-    const addFishButton: BaseButtonModel = new BaseButtonModel('Ajouter un poisson', 'success', 'button')
+    const addFishButton: BaseButtonModel = new BaseButtonModel('Ajouter un poisson')
+    addFishButton.setStyleOrThrowError('success')
+    addFishButton.setTypeOrThrowError('button')
 
     return {
       header: header,
@@ -80,12 +84,12 @@ export default Vue.extend({
       listOfFishes: listOfFishes
     }
   },
-  async fetch(){
+  async fetch() {
     const jwt: string = this.$cookies.get('appquarium-jwt')
     const fishUseCase: FishUseCase = new FishUseCase()
 
     const listOfFishes: Result = await fishUseCase.getListOfFishes(jwt)
-    if(listOfFishes.isSuccessful()){
+    if (listOfFishes.isSuccessful()) {
       listOfFishes.content.forEach((item: Species) => this.listOfFishes.push(item))
     }
 

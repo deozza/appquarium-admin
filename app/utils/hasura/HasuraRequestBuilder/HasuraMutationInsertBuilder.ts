@@ -1,7 +1,7 @@
 import HasuraRequestBuilder from "~/app/utils/hasura/HasuraRequestBuilder/HasuraRequestBuilder";
 import Insert from "~/app/utils/hasura/HasuraRequestBuilder/Insert";
 
-export default class HasuraMutationInsertBuilder extends HasuraRequestBuilder{
+export default class HasuraMutationInsertBuilder extends HasuraRequestBuilder {
 
   insert: Array<Insert> = []
 
@@ -9,8 +9,8 @@ export default class HasuraMutationInsertBuilder extends HasuraRequestBuilder{
     super('mutation', name);
   }
 
-  public addInsert(name: string, value: string|number){
-    if(this.insert.find((insert: Insert) => insert.name === name) === undefined){
+  public addInsert(name: string, value: string | number) {
+    if (this.insert.find((insert: Insert) => insert.name === name) === undefined) {
       this.insert.push(new Insert(name, value))
     }
   }
@@ -36,9 +36,9 @@ export default class HasuraMutationInsertBuilder extends HasuraRequestBuilder{
   private computeInserts(): string {
     let computedInserts = '(object: {'
 
-    for(let insert in this.insert){
+    for (let insert in this.insert) {
       computedInserts += this.insert[insert].name + ': ' + this.insert[insert].value
-      if(~~insert < (this.insert.length-1)){
+      if (~~insert < (this.insert.length - 1)) {
         computedInserts += ', '
       }
     }

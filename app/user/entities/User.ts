@@ -1,16 +1,16 @@
-export default class User{
+export default class User {
   uid: string = ''
   email: string = ''
-  jwt: Promise<string>|string
-  lastSignInTime: string= ''
+  jwt: Promise<string> | string
+  lastSignInTime: string = ''
 
 
-  constructor(jwt: Promise<string>|string) {
+  constructor(jwt: Promise<string> | string) {
     this.jwt = jwt;
     this.extractUserInfoFromJwt()
   }
 
-  private extractUserInfoFromJwt(): void{
+  private extractUserInfoFromJwt(): void {
     if (typeof this.jwt !== "string") {
       return
     }

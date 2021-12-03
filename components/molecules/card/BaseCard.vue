@@ -3,10 +3,10 @@
     <div v-if="isSlotEmpty('header')" class="card-header flex-column">
       <slot name="header"></slot>
     </div>
-    <div v-if="isSlotEmpty('body')"  class="card-body">
+    <div v-if="isSlotEmpty('body')" class="card-body">
       <slot name="body"></slot>
     </div>
-    <div v-if="isSlotEmpty('footer')"  class="card-footer">
+    <div v-if="isSlotEmpty('footer')" class="card-footer">
       <slot name="footer"></slot>
     </div>
   </div>

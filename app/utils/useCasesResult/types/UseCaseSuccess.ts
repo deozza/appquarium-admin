@@ -1,6 +1,6 @@
 import type UseCaseResultTypeInterface from "./UseCaseResultTypeInterface";
 
-export default class UseCaseSuccess implements UseCaseResultTypeInterface{
+export default class UseCaseSuccess implements UseCaseResultTypeInterface {
   code: number;
   type: string;
 

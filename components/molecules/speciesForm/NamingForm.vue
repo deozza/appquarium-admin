@@ -1,10 +1,10 @@
 <template>
   <main>
     <div id="loading" v-if="$fetchState.pending">
-      <p >Récupération des infos️</p>
+      <p>Récupération des infos️</p>
     </div>
     <div id="error" v-else-if="$fetchState.error">
-      <p >Une erreur est survenue :(</p>
+      <p>Une erreur est survenue :(</p>
     </div>
 
     <form v-on:submit.prevent="submitNamingForm()" v-else>
@@ -13,18 +13,26 @@
           <li class="flex-column">
             <div class="flex-row input-row">
               <label for="speciesFamily">Famille <span class="required-field">*</span></label>
-              <input type="text" id="speciesFamily" name="speciesFamily" list="speciesFamily-list" v-model="species.species_naming.species_family.name" v-on:change="linkUuidWithSpeciesFamily(species.species_naming.species_family.name)">
+              <input type="text" id="speciesFamily" name="speciesFamily" list="speciesFamily-list"
+                     v-model="species.species_naming.species_family.name"
+                     v-on:change="linkUuidWithSpeciesFamily(species.species_naming.species_family.name)">
               <datalist id="speciesFamily-list">
-                <option v-for="(family, index) in speciesFamilies" :value="family.name" v-bind:key="index">{{family.name}}</option>
+                <option v-for="(family, index) in speciesFamilies" :value="family.name" v-bind:key="index">
+                  {{ family.name }}
+                </option>
               </datalist>
             </div>
           </li>
           <li class="flex-column">
             <div class="flex-row input-row">
               <label for="speciesGenre">Genre <span class="required-field">*</span></label>
-              <input type="text" id="speciesGenre" name="speciesGenre" list="speciesGenre-list" v-model="species.species_naming.species_genre.name" v-on:change="linkUuidWithSpeciesGenre(species.species_naming.species_genre.name)">
+              <input type="text" id="speciesGenre" name="speciesGenre" list="speciesGenre-list"
+                     v-model="species.species_naming.species_genre.name"
+                     v-on:change="linkUuidWithSpeciesGenre(species.species_naming.species_genre.name)">
               <datalist id="speciesGenre-list">
-                <option v-for="(genre, index) in speciesGenres" :value="genre.name" v-bind:key="index">{{genre.name}}</option>
+                <option v-for="(genre, index) in speciesGenres" :value="genre.name" v-bind:key="index">
+                  {{ genre.name }}
+                </option>
               </datalist>
             </div>
           </li>
@@ -35,7 +43,7 @@
             </div>
           </li>
         </ul>
-        <BaseButton :base-button-model="submitButton" />
+        <BaseButton :base-button-model="submitButton"/>
       </div>
     </form>
   </main>
@@ -71,8 +79,10 @@ export default Vue.extend({
     }
   },
   data() {
-    const submitButton : BaseButtonModel = new BaseButtonModel('Ajouter', 'success', 'submit')
-    if(this.species.species_naming.uuid !== ''){
+    const submitButton: BaseButtonModel = new BaseButtonModel('Ajouter')
+    submitButton.setStyleOrThrowError('success')
+
+    if (this.species.species_naming.uuid !== '') {
       submitButton.content = 'Modifier'
       submitButton.style = 'warning'
     }
@@ -115,15 +125,15 @@ export default Vue.extend({
     this.speciesFamilies = speciesFamilies.content
   },
   methods: {
-    async submitNamingForm () {
+    async submitNamingForm() {
       this.submitButton.isLoading = true
 
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       let result: Result
-      if(this.species.uuid !== ''){
+      if (this.species.uuid !== '') {
         result = await speciesUseCase.updateSpeciesNaming(this.jwt, this.species)
-      }else{
+      } else {
         const user: User = new User(this.jwt)
         this.species.user = user.uid
 
@@ -134,28 +144,28 @@ export default Vue.extend({
         console.log(result.errors)
       }
 
-      if(result.success?.code === 201){
+      if (result.success?.code === 201) {
         this.species.uuid = result.content
         await this.$router.push(this.species.computeLinkToSpecies())
       }
 
-      if(result.success?.code === 200){
+      if (result.success?.code === 200) {
         this.submitButton.style = 'warning'
         this.submitButton.content = 'Modifier'
       }
 
       this.submitButton.isLoading = false
     },
-    linkUuidWithSpeciesFamily(speciesFamilyName: string){
+    linkUuidWithSpeciesFamily(speciesFamilyName: string) {
       const speciesFamily = this.speciesFamilies.find((family: SpeciesFamily) => family.name === speciesFamilyName)
-      if(speciesFamily !== undefined){
+      if (speciesFamily !== undefined) {
         this.species.species_naming.species_family = speciesFamily
         return
       }
     },
-    linkUuidWithSpeciesGenre(speciesGenreName: string){
+    linkUuidWithSpeciesGenre(speciesGenreName: string) {
       const speciesGenre = this.speciesGenres.find((genre: SpeciesGenre) => genre.name === speciesGenreName)
-      if(speciesGenre !== undefined){
+      if (speciesGenre !== undefined) {
         this.species.species_naming.species_genre = speciesGenre
         return
       }
@@ -191,6 +201,7 @@ li > div.input-row > label {
     min-height: 33vh;
   }
 }
+
 @media only screen and (max-width: 1024px) {
   form {
     width: 80vw;

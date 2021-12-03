@@ -1,14 +1,14 @@
 import UseCaseInterface from "~/app/species/fish/useCases/UseCaseInterface";
 import Result from "~/app/utils/useCasesResult/Result";
 import Services from "~/app/species/fish/services/Services";
-import { default as SpeciesServices } from "~/app/species/global/services/Services" ;
+import {default as SpeciesServices} from "~/app/species/global/services/Services";
 import Error from "~/app/utils/useCasesResult/types/UseCaseError";
 import Species from "~/app/species/global/entities/Species";
 import SpeciesGenre from "~/app/species/global/entities/SpeciesGenre";
 import SpeciesFamily from "~/app/species/global/entities/SpeciesFamily";
 import User from "~/app/user/entities/User";
 
-export default class FishUseCase implements UseCaseInterface{
+export default class FishUseCase implements UseCaseInterface {
 
   async getListOfFishes(jwt: string): Promise<Result> {
     let result: Result = new Result()
@@ -16,7 +16,7 @@ export default class FishUseCase implements UseCaseInterface{
 
     const listOfFishes: Array<Species> | Error = await fishService.queryGetListOfFishes(jwt)
 
-    if(listOfFishes instanceof Error){
+    if (listOfFishes instanceof Error) {
       result.errors.push(listOfFishes)
       return result
     }
@@ -32,7 +32,7 @@ export default class FishUseCase implements UseCaseInterface{
 
     const fishGenres: Array<SpeciesGenre> | Error = await fishService.queryFishGenres(jwt)
 
-    if(fishGenres instanceof Error){
+    if (fishGenres instanceof Error) {
       result.errors.push(fishGenres)
       return result
     }
@@ -48,7 +48,7 @@ export default class FishUseCase implements UseCaseInterface{
 
     const fishFamilies: Array<SpeciesFamily> | Error = await fishService.queryFishFamilies(jwt)
 
-    if(fishFamilies instanceof Error){
+    if (fishFamilies instanceof Error) {
       result.errors.push(fishFamilies)
       return result
     }

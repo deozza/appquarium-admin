@@ -18,7 +18,7 @@ export default class UserUseCase implements UseCaseInterface {
 
     const user: User | null = await userServices.authenticateUser(credentials)
 
-    if(user === null){
+    if (user === null) {
       result.addError('User not found', 404)
       return result
     }
@@ -35,14 +35,14 @@ export default class UserUseCase implements UseCaseInterface {
     const tokenDecodablePart = token.split('.')[1]
     const decoded = JSON.parse(Buffer.from(tokenDecodablePart, 'base64').toString())
 
-    if(Date.now() < decoded.exp * 1000){
+    if (Date.now() < decoded.exp * 1000) {
       result.addSuccess('Token is valid', 200)
       return result
     }
 
-    const refreshedToken : string | null = await userServices.getRefreshedToken()
+    const refreshedToken: string | null = await userServices.getRefreshedToken()
 
-    if(refreshedToken === null){
+    if (refreshedToken === null) {
       result.addError('Invalid credentials', 401)
       return result
     }
@@ -58,7 +58,7 @@ export default class UserUseCase implements UseCaseInterface {
 
     const totalUsers: number | null = await userServices.queryTotalUsers(jwt)
 
-    if(totalUsers === null){
+    if (totalUsers === null) {
       result.addError('Query failed', 400)
       return result
     }

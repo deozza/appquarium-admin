@@ -22,19 +22,19 @@ export default class BaseBadgeModel {
     this.isOnlyIcon = null
   }
 
-  toJSON () {
-    return { ...this } // here I make a POJO's copy of the class instance
+  toJSON() {
+    return {...this} // here I make a POJO's copy of the class instance
   }
 
   public setStyleOrThrowError(style: string): void {
-    if(ExpectedCssStyle.getExpectedStyles().includes(style) === false){
+    if (ExpectedCssStyle.getExpectedStyles().includes(style) === false) {
       throw new UnexpectedStyleError(style, this.constructor.name)
     }
     this.style = style
   }
 
   public setSizeOrThrowError(size: string): void {
-    if(ExpectedCssStyle.getExpectedSizes().includes(size) === false){
+    if (ExpectedCssStyle.getExpectedSizes().includes(size) === false) {
       throw new UnexpectedSizeError(size, this.constructor.name)
     }
     this.size = size

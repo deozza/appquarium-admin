@@ -5,19 +5,20 @@
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="maleSize">Taille du male <span class="required-field">*</span></label>
-            <input type="number" id="maleSize" name="maleSize"  v-model.number="species.animal_specs.male_size">
+            <input type="number" id="maleSize" name="maleSize" v-model.number="species.animal_specs.male_size">
           </div>
           <div class="flex-row input-row">
             <label for="femaleSize">Taille de la femelle <span class="required-field">*</span></label>
-            <input type="number" id="femaleSize" name="femaleSize"  v-model.number="species.animal_specs.female_size">
+            <input type="number" id="femaleSize" name="femaleSize" v-model.number="species.animal_specs.female_size">
           </div>
           <div class="flex-row input-row">
             <label for="longevityInYears">Longévité </label>
-            <input type="number" id="longevityInYears" name="longevityInYears"  v-model="species.animal_specs.longevity_in_years">
+            <input type="number" id="longevityInYears" name="longevityInYears"
+                   v-model="species.animal_specs.longevity_in_years">
           </div>
         </li>
       </ul>
-      <BaseButton :base-button-model="submitButton" />
+      <BaseButton :base-button-model="submitButton"/>
     </div>
   </form>
 </template>
@@ -48,8 +49,10 @@ export default Vue.extend({
     }
   },
   data() {
-    const submitButton : BaseButtonModel = new BaseButtonModel('Ajouter', 'success', 'submit')
-    if(this.species.animal_specs.uuid !== ''){
+    const submitButton: BaseButtonModel = new BaseButtonModel('Ajouter')
+    submitButton.setStyleOrThrowError('success')
+
+    if (this.species.animal_specs.uuid !== '') {
       submitButton.content = 'Modifier'
       submitButton.style = 'warning'
     }
@@ -69,21 +72,21 @@ export default Vue.extend({
 
       let result: Result
 
-      if(this.species.animal_specs.uuid === ''){
+      if (this.species.animal_specs.uuid === '') {
         const user: User = new User(this.jwt)
 
         this.species.animal_specs.user = user.uid
 
         result = await speciesUseCase.addAnimalSpecs(this.jwt, this.species)
-      }else{
+      } else {
         result = await speciesUseCase.updateAnimalSpecs(this.jwt, this.species)
       }
 
-      if(result.isFailed()){
+      if (result.isFailed()) {
         console.log(result.errors)
       }
 
-      if(result.isSuccessful() && result.success?.code === 201){
+      if (result.isSuccessful() && result.success?.code === 201) {
         this.submitButton.style = 'warning'
         this.submitButton.content = 'Modifier'
       }
@@ -121,6 +124,7 @@ li > div.input-row > label {
     min-height: 33vh;
   }
 }
+
 @media only screen and (max-width: 1024px) {
   form {
     width: 80vw;

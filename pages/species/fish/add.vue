@@ -1,16 +1,16 @@
 <template>
-<main>
-  <div class="flex-column" id="add">
-    <BaseCard>
-      <template slot="header">
-        <BaseHeader :base-header-model="header" />
-      </template>
-      <template slot="body">
-        <NamingForm :jwt="jwt" :species="newFish" />
-      </template>
-    </BaseCard>
-  </div>
-</main>
+  <main>
+    <div class="flex-column" id="add">
+      <BaseCard>
+        <template slot="header">
+          <BaseHeader :base-header-model="header"/>
+        </template>
+        <template slot="body">
+          <NamingForm :jwt="jwt" :species="newFish"/>
+        </template>
+      </BaseCard>
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
@@ -33,8 +33,8 @@ export default Vue.extend({
     BaseCard,
     NamingForm
   },
-  data(){
-    const header: BaseHeaderModel = new BaseHeaderModel("Ajouter une espèce de poisson", 1)
+  data() {
+    const header: BaseHeaderModel = new BaseHeaderModel("Ajouter une espèce de poisson")
 
     const jwt: string = this.$cookies.get('appquarium-jwt')
     const user: User = new User(jwt)

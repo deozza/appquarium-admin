@@ -3,10 +3,10 @@
     <div class="flex-column" id="add">
       <BaseCard>
         <template slot="header">
-          <BaseHeader :base-header-model="header" />
+          <BaseHeader :base-header-model="header"/>
         </template>
         <template slot="body">
-          <NamingForm :jwt="jwt" :species="newInvertebrate" />
+          <NamingForm :jwt="jwt" :species="newInvertebrate"/>
         </template>
       </BaseCard>
     </div>
@@ -32,8 +32,8 @@ export default Vue.extend({
     BaseCard,
     NamingForm
   },
-  data(){
-    const header: BaseHeaderModel = new BaseHeaderModel("Ajouter une espèce d'invertébré", 1)
+  data() {
+    const header: BaseHeaderModel = new BaseHeaderModel("Ajouter une espèce d'invertébré")
 
     const jwt: string = this.$cookies.get('appquarium-jwt')
     const user: User = new User(jwt)
@@ -82,6 +82,7 @@ li > div.input-row > label {
     min-height: 33vh;
   }
 }
+
 @media only screen and (max-width: 1024px) {
   form {
     width: 80vw;

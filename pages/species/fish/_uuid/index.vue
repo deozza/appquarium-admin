@@ -1,14 +1,16 @@
 <template>
   <main>
     <div id="loading" v-if="$fetchState.pending">
-      <p >Récupération des infos️</p>
+      <p>Récupération des infos️</p>
     </div>
     <div id="error" v-else-if="$fetchState.error">
-      <p >Une erreur est survenue :(</p>
+      <p>Une erreur est survenue :(</p>
     </div>
     <div class="flex-column" id="content" v-else>
       <section id="title" class="flex-row">
-        <BaseHeader :base-header-model="header" > <BaseBadge :base-badge-model="statusBadge" /></BaseHeader>
+        <BaseHeader :base-header-model="header">
+          <BaseBadge :base-badge-model="statusBadge"/>
+        </BaseHeader>
       </section>
 
       <section id="cards" class="flex-row flex-around">
@@ -17,7 +19,7 @@
             <BaseHeader :base-header-model="generalCardHeader"/>
           </template>
           <template slot="body">
-            <GeneralInfoForm :species="fish" />
+            <GeneralInfoForm :species="fish"/>
           </template>
         </BaseCard>
 
@@ -26,7 +28,7 @@
             <BaseHeader :base-header-model="namingCardHeader"/>
           </template>
           <template slot="body">
-            <NamingForm :jwt="jwt"  :species="fish" />
+            <NamingForm :jwt="jwt" :species="fish"/>
           </template>
         </BaseCard>
 
@@ -50,8 +52,9 @@
 
         <BaseCard>
           <template slot="footer">
-            <PublicationActions  v-if="isUpdatingPublicationState === false" :publication-state="fish.publication_state"/>
-            <div v-else class="flex-row flex-around" >
+            <PublicationActions v-if="isUpdatingPublicationState === false"
+                                :publication-state="fish.publication_state"/>
+            <div v-else class="flex-row flex-around">
               <i class="fas fa-spinner fa-spin fa-5x"></i>
             </div>
           </template>
@@ -61,12 +64,12 @@
 
     <BaseModal :is-opened="deleteFishModalIsOpen">
       <template slot="header">
-        <BaseHeader :base-header-model="deleteModalHeader" />
+        <BaseHeader :base-header-model="deleteModalHeader"/>
       </template>
       <template slot="footer">
         <div class="flex-row flex-around">
-          <BaseButton :base-button-model="cancelDeleteSpeciesButton" />
-          <BaseButton :base-button-model="confirmDeleteSpeciesButton" />
+          <BaseButton :base-button-model="cancelDeleteSpeciesButton"/>
+          <BaseButton :base-button-model="confirmDeleteSpeciesButton"/>
         </div>
       </template>
     </BaseModal>
@@ -124,17 +127,32 @@ export default Vue.extend({
     this.$nuxt.$off('closeDeleteSpeciesModal')
     this.$nuxt.$off('confirmDeleteSpecies')
   },
-  data(){
-    const header: BaseHeaderModel = new BaseHeaderModel("", 1)
-    const generalCardHeader: BaseHeaderModel = new BaseHeaderModel("Infos générales", 2)
-    const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms", 2)
-    const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau", 2)
-    const animalSpecsCardHeader: BaseHeaderModel = new BaseHeaderModel("Caractéristiques animales", 2)
-    const deleteModalHeader: BaseHeaderModel = new BaseHeaderModel("Supprimer une espèce", 3)
+  data() {
+    const header: BaseHeaderModel = new BaseHeaderModel("")
 
-    const cancelDeleteSpeciesButton: BaseButtonModel = new BaseButtonModel('Non', 'secondary', 'button')
+    const generalCardHeader: BaseHeaderModel = new BaseHeaderModel("Infos générales")
+    generalCardHeader.setSizeOrThrowError(2)
+
+    const namingCardHeader: BaseHeaderModel = new BaseHeaderModel("Noms")
+    namingCardHeader.setSizeOrThrowError(2)
+
+    const waterConstraintsCardHeader: BaseHeaderModel = new BaseHeaderModel("Contraintes d'eau")
+    waterConstraintsCardHeader.setSizeOrThrowError(2)
+
+    const animalSpecsCardHeader: BaseHeaderModel = new BaseHeaderModel("Caractéristiques animales")
+    animalSpecsCardHeader.setSizeOrThrowError(2)
+
+    const deleteModalHeader: BaseHeaderModel = new BaseHeaderModel("Supprimer une espèce")
+    deleteModalHeader.setSizeOrThrowError(3)
+
+    const cancelDeleteSpeciesButton: BaseButtonModel = new BaseButtonModel('Non')
+    cancelDeleteSpeciesButton.setStyleOrThrowError('secondary')
+    cancelDeleteSpeciesButton.setTypeOrThrowError('button')
     cancelDeleteSpeciesButton.event = 'closeDeleteSpeciesModal'
-    const confirmDeleteSpeciesButton: BaseButtonModel = new BaseButtonModel('Oui', 'danger', 'button')
+
+    const confirmDeleteSpeciesButton: BaseButtonModel = new BaseButtonModel('Oui')
+    confirmDeleteSpeciesButton.setStyleOrThrowError('danger')
+    confirmDeleteSpeciesButton.setTypeOrThrowError('button')
     confirmDeleteSpeciesButton.event = 'confirmDeleteSpecies'
 
     const fish: Species = new Species([])
@@ -155,19 +173,19 @@ export default Vue.extend({
       deleteFishModalIsOpen: false
     }
   },
-  async fetch(){
+  async fetch() {
     const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
     const params = this.$route.params
 
     const fish: Result = await speciesUseCase.getSpecies(this.jwt, params.uuid)
-    if(fish.isFailed()){
-      for(const error of fish.errors) {
+    if (fish.isFailed()) {
+      for (const error of fish.errors) {
         if (error.code === 401) {
           this.$cookies.remove('appquarium-jwt')
           await this.$router.push('/login')
         }
 
-        if(error.code === 404){
+        if (error.code === 404) {
           await this.$router.push('/species/fish')
         }
       }
@@ -179,10 +197,10 @@ export default Vue.extend({
     this.header.content = this.fish.computeName()
   },
   computed: {
-    statusBadge(): BaseBadgeModel{
+    statusBadge(): BaseBadgeModel {
       const statusBadge: BaseBadgeModel = new BaseBadgeModel("")
 
-      if(this.fish === undefined || this.fish === null || this.fish.publication_state === ''){
+      if (this.fish === undefined || this.fish === null || this.fish.publication_state === '') {
         return statusBadge
       }
 
@@ -204,7 +222,7 @@ export default Vue.extend({
 
       return publicationStateStyle[fish.publication_state]
     },
-     getPublicationStateContent(fish: Species): string {
+    getPublicationStateContent(fish: Species): string {
       const publicationStateContent: object = {
         'DRAFT': 'brouillon',
         'PRE_PUBLISHED': 'pré-publié',
@@ -215,13 +233,13 @@ export default Vue.extend({
 
       return publicationStateContent[fish.publication_state]
     },
-    async prePublishFish(){
+    async prePublishFish() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'PRE_PUBLISHED')
 
-      if(fish.isFailed()) {
+      if (fish.isFailed()) {
         for (const error of fish.errors) {
 
           if (error.code === 401) {
@@ -237,13 +255,13 @@ export default Vue.extend({
       this.fish.publication_state = fish.content
       this.isUpdatingPublicationState = false
     },
-    async publishFish(){
+    async publishFish() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'PUBLISHED')
 
-      if(fish.isFailed()) {
+      if (fish.isFailed()) {
         for (const error of fish.errors) {
 
           if (error.code === 401) {
@@ -259,13 +277,13 @@ export default Vue.extend({
       this.fish.publication_state = fish.content
       this.isUpdatingPublicationState = false
     },
-    async moderateFish(){
+    async moderateFish() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'MODERATED')
 
-      if(fish.isFailed()) {
+      if (fish.isFailed()) {
         for (const error of fish.errors) {
 
           if (error.code === 401) {
@@ -282,13 +300,13 @@ export default Vue.extend({
       this.fish.publication_state = fish.content
       this.isUpdatingPublicationState = false
     },
-    async archiveFish(){
+    async archiveFish() {
       this.isUpdatingPublicationState = true
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const fish: Result = await speciesUseCase.updatePublicationState(this.jwt, this.fish, 'ARCHIVED')
 
-      if(fish.isFailed()) {
+      if (fish.isFailed()) {
         for (const error of fish.errors) {
 
           if (error.code === 401) {
@@ -304,14 +322,14 @@ export default Vue.extend({
       this.fish.publication_state = fish.content
       this.isUpdatingPublicationState = false
     },
-    async deleteFish(){
+    async deleteFish() {
       this.confirmDeleteSpeciesButton.isLoading = true
 
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
       const fish: Result = await speciesUseCase.deleteSpecies(this.jwt, this.fish)
 
-      if(fish.isFailed()) {
+      if (fish.isFailed()) {
         for (const error of fish.errors) {
 
           if (error.code === 401) {

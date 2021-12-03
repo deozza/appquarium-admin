@@ -2,7 +2,7 @@ import HasuraRequestBuilder from "~/app/utils/hasura/HasuraRequestBuilder/Hasura
 import Insert from "~/app/utils/hasura/HasuraRequestBuilder/Insert";
 import PkColumns from "~/app/utils/hasura/HasuraRequestBuilder/PkColumns";
 
-export default class HasuraMutationUpdateBuilder extends HasuraRequestBuilder{
+export default class HasuraMutationUpdateBuilder extends HasuraRequestBuilder {
   insert: Array<Insert> = []
   pkColumns: Array<PkColumns> = []
 
@@ -10,14 +10,14 @@ export default class HasuraMutationUpdateBuilder extends HasuraRequestBuilder{
     super('mutation', name);
   }
 
-  public addInsert(name: string, value: string|number){
-    if(this.insert.find((insert: Insert) => insert.name === name) === undefined){
+  public addInsert(name: string, value: string | number) {
+    if (this.insert.find((insert: Insert) => insert.name === name) === undefined) {
       this.insert.push(new Insert(name, value))
     }
   }
 
-  public addPkColumn(name: string, value: string|number){
-    if(this.pkColumns.find((pkColumn: PkColumns) => pkColumn.name === name) === undefined){
+  public addPkColumn(name: string, value: string | number) {
+    if (this.pkColumns.find((pkColumn: PkColumns) => pkColumn.name === name) === undefined) {
       this.pkColumns.push(new PkColumns(name, value))
     }
   }
@@ -51,9 +51,9 @@ export default class HasuraMutationUpdateBuilder extends HasuraRequestBuilder{
   private computePkColumns(): string {
     let computedPkColumns: string = 'pk_columns: {'
 
-    for(let pkColumn in this.pkColumns) {
+    for (let pkColumn in this.pkColumns) {
       computedPkColumns += this.pkColumns[pkColumn].name + ': ' + this.pkColumns[pkColumn].value
-      if(~~pkColumn < (this.pkColumns.length-1)){
+      if (~~pkColumn < (this.pkColumns.length - 1)) {
         computedPkColumns += ', '
       }
     }
@@ -66,9 +66,9 @@ export default class HasuraMutationUpdateBuilder extends HasuraRequestBuilder{
   private computeSetValues(): string {
     let computedSetValues: string = '_set: {'
 
-    for(let setValues in this.insert) {
+    for (let setValues in this.insert) {
       computedSetValues += this.insert[setValues].name + ': ' + this.insert[setValues].value
-      if(~~setValues < (this.insert.length-1)){
+      if (~~setValues < (this.insert.length - 1)) {
         computedSetValues += ', '
       }
     }

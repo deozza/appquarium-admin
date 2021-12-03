@@ -5,14 +5,17 @@
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="speciesOrigin">Origine <span class="required-field">*</span></label>
-            <input type="text" id="speciesOrigin" name="speciesOrigin" list="speciesOrigin-list" v-model="species.origin">
+            <input type="text" id="speciesOrigin" name="speciesOrigin" list="speciesOrigin-list"
+                   v-model="species.origin">
             <datalist id="speciesOrigin-list">
-              <option v-for="(origin, index) in speciesOrigins" :value="origin.name" v-bind:key="index">{{origin.name}}</option>
+              <option v-for="(origin, index) in speciesOrigins" :value="origin.name" v-bind:key="index">
+                {{ origin.name }}
+              </option>
             </datalist>
           </div>
         </li>
       </ul>
-      <BaseButton :base-button-model="submitButton" />
+      <BaseButton :base-button-model="submitButton"/>
     </div>
   </form>
 </template>
@@ -38,8 +41,10 @@ export default Vue.extend({
     }
   },
   data() {
-    const submitButton : BaseButtonModel = new BaseButtonModel('Ajouter', 'success', 'submit')
-    if(this.species.uuid !== ''){
+    const submitButton: BaseButtonModel = new BaseButtonModel('Ajouter')
+    submitButton.setStyleOrThrowError('success')
+
+    if (this.species.uuid !== '') {
       submitButton.content = 'Modifier'
       submitButton.style = 'warning'
     }
@@ -56,8 +61,8 @@ export default Vue.extend({
     const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
     const speciesOrigins: Result = await speciesUseCase.getSpeciesOrigins(jwt)
-    if(speciesOrigins.isFailed()){
-      for(const error of speciesOrigins.errors) {
+    if (speciesOrigins.isFailed()) {
+      for (const error of speciesOrigins.errors) {
         if (error.code === 401) {
           this.$cookies.remove('appquarium-jwt')
           await this.$router.push('/login')
@@ -105,6 +110,7 @@ li > div.input-row > label {
     min-height: 33vh;
   }
 }
+
 @media only screen and (max-width: 1024px) {
   form {
     width: 80vw;

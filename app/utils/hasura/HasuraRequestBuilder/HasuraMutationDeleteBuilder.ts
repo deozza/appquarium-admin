@@ -2,7 +2,7 @@ import HasuraRequestBuilder from "~/app/utils/hasura/HasuraRequestBuilder/Hasura
 import Insert from "~/app/utils/hasura/HasuraRequestBuilder/Insert";
 import PkColumns from "~/app/utils/hasura/HasuraRequestBuilder/PkColumns";
 
-export default class HasuraMutationDeleteBuilder extends HasuraRequestBuilder{
+export default class HasuraMutationDeleteBuilder extends HasuraRequestBuilder {
   insert: Array<Insert> = []
   pkColumns: Array<PkColumns> = []
 
@@ -10,8 +10,8 @@ export default class HasuraMutationDeleteBuilder extends HasuraRequestBuilder{
     super('mutation', name);
   }
 
-  public addPkColumn(name: string, value: string|number){
-    if(this.pkColumns.find((pkColumn: PkColumns) => pkColumn.name === name) === undefined){
+  public addPkColumn(name: string, value: string | number) {
+    if (this.pkColumns.find((pkColumn: PkColumns) => pkColumn.name === name) === undefined) {
       this.pkColumns.push(new PkColumns(name, value))
     }
   }
@@ -41,9 +41,9 @@ export default class HasuraMutationDeleteBuilder extends HasuraRequestBuilder{
   private computePkColumns(): string {
     let computedPkColumns: string = ''
 
-    for(let pkColumn in this.pkColumns) {
+    for (let pkColumn in this.pkColumns) {
       computedPkColumns += this.pkColumns[pkColumn].name + ': ' + this.pkColumns[pkColumn].value
-      if(~~pkColumn < (this.pkColumns.length-1)){
+      if (~~pkColumn < (this.pkColumns.length - 1)) {
         computedPkColumns += ', '
       }
     }

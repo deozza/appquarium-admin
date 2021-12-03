@@ -5,13 +5,15 @@
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="phMin">pH minimum <span class="required-field">*</span></label>
-            <input id="phMin" type="number" step="0.1" min="0" max="14" v-model.number="species.water_constraint.ph_min">
+            <input id="phMin" type="number" step="0.1" min="0" max="14"
+                   v-model.number="species.water_constraint.ph_min">
           </div>
         </li>
         <li class="flex-column">
           <div class="flex-row input-row">
             <label for="phMax">pH maximum <span class="required-field">*</span></label>
-            <input id="phMax" type="number" step="0.1" min="0" max="14" v-model.number="species.water_constraint.ph_max">
+            <input id="phMax" type="number" step="0.1" min="0" max="14"
+                   v-model.number="species.water_constraint.ph_max">
           </div>
         </li>
         <li class="flex-column">
@@ -39,7 +41,7 @@
           </div>
         </li>
       </ul>
-      <BaseButton :base-button-model="submitButton" />
+      <BaseButton :base-button-model="submitButton"/>
     </div>
   </form>
 
@@ -71,8 +73,10 @@ export default Vue.extend({
     }
   },
   data() {
-    const submitButton : BaseButtonModel = new BaseButtonModel('Ajouter', 'success', 'submit')
-    if(this.species.water_constraint.uuid !== ''){
+    const submitButton: BaseButtonModel = new BaseButtonModel('Ajouter')
+    submitButton.setStyleOrThrowError('success')
+
+    if (this.species.water_constraint.uuid !== '') {
       submitButton.content = 'Modifier'
       submitButton.style = 'warning'
     }
@@ -89,21 +93,21 @@ export default Vue.extend({
 
       let result: Result
 
-      if(this.species.water_constraint.uuid === ''){
+      if (this.species.water_constraint.uuid === '') {
         const user: User = new User(this.jwt)
 
         this.species.water_constraint.user = user.uid
 
         result = await speciesUseCase.addWaterConstraints(this.jwt, this.species)
-      }else{
+      } else {
         result = await speciesUseCase.updateWaterConstraints(this.jwt, this.species)
       }
 
-      if(result.isFailed()){
+      if (result.isFailed()) {
         console.log(result.errors)
       }
 
-      if(result.isSuccessful() && result.success?.code === 201){
+      if (result.isSuccessful() && result.success?.code === 201) {
         this.submitButton.style = 'warning'
         this.submitButton.content = 'Modifier'
       }
@@ -141,6 +145,7 @@ li > div.input-row > label {
     min-height: 33vh;
   }
 }
+
 @media only screen and (max-width: 1024px) {
   form {
     width: 80vw;

@@ -13,38 +13,40 @@ export default {
 
 </script>
 <template>
-  <p :class="baseParagraphModel.style">{{baseParagraphModel.content}}</p>
+  <p :class="baseParagraphModel.style">{{ baseParagraphModel.content }}</p>
 </template>
 
 
 <style scoped>
-    .light {
-        color: black;
-    }
-    .dark {
-        color: white;
-    }
-    .primary {
-        color: var(--primary_text);
-    }
+.light {
+  color: black;
+}
 
-    .secondary {
-        color: var(--secondary_text);
-    }
+.dark {
+  color: white;
+}
 
-    .success {
-        color: var(--success_text);
-    }
+.primary {
+  color: var(--primary_text);
+}
 
-    .danger {
-        color: var(--danger_text);
-    }
+.secondary {
+  color: var(--secondary_text);
+}
 
-    .warning {
-        color: var(--warning_text);
-    }
+.success {
+  color: var(--success_text);
+}
 
-    .info {
-        color: var(--info_text);
-    }
+.danger {
+  color: var(--danger_text);
+}
+
+.warning {
+  color: var(--warning_text);
+}
+
+.info {
+  color: var(--info_text);
+}
 </style>

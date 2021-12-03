@@ -15,7 +15,7 @@ export default class SpeciesFamily {
     this.category = speciesFamily.hasOwnProperty('category') ? speciesFamily['category'] : ''
   }
 
-  toJSON () {
-    return { ...this } // here I make a POJO's copy of the class instance
+  toJSON() {
+    return {...this} // here I make a POJO's copy of the class instance
   }
 }

@@ -5,10 +5,10 @@
         <slot name="header"></slot>
         <i @click="isOpened = false" class="fas fa-times"></i>
       </div>
-      <div v-if="isSlotEmpty('body')"  class="modal-body">
+      <div v-if="isSlotEmpty('body')" class="modal-body">
         <slot name="body"></slot>
       </div>
-      <div v-if="isSlotEmpty('footer')"  class="modal-footer">
+      <div v-if="isSlotEmpty('footer')" class="modal-footer">
         <slot name="footer"></slot>
       </div>
     </div>

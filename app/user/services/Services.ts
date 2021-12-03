@@ -26,7 +26,7 @@ export default class Services implements ServicesInterface {
     return await adapter.getRefreshedToken()
   }
 
-  async queryTotalUsers(jwt: string): Promise<number|null> {
+  async queryTotalUsers(jwt: string): Promise<number | null> {
     const adapter: AdapterInterface | null = new HasuraAdapter(jwt)
 
     return await adapter.queryTotalUsers()
