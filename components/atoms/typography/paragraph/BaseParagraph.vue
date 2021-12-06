@@ -13,7 +13,7 @@ export default {
 
 </script>
 <template>
-  <p :class="baseParagraphModel.style">{{ baseParagraphModel.content }}</p>
+  <p :class="baseParagraphModel.style" v-html="baseParagraphModel.content"></p>
 </template>
 
 
