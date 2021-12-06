@@ -18,8 +18,8 @@ export default class SpeciesNaming {
     this.created_at = speciesNaming.hasOwnProperty('created_at') ? speciesNaming['created_at'] : ''
     this.updated_at = speciesNaming.hasOwnProperty('updated_at') ? speciesNaming['updated_at'] : ''
     this.user = speciesNaming.hasOwnProperty('user') ? speciesNaming['user'] : ''
-    this.common_names = speciesNaming.hasOwnProperty('common_names') ? speciesNaming['common_names'] : ''
-    this.old_names = speciesNaming.hasOwnProperty('old_names') ? speciesNaming['old_names'] : ''
+    this.common_names = speciesNaming.hasOwnProperty('common_names') ? speciesNaming['common_names'] : []
+    this.old_names = speciesNaming.hasOwnProperty('old_names') ? speciesNaming['old_names'] : []
     this.name = speciesNaming.hasOwnProperty('name') ? speciesNaming['name'] : ''
     this.species_family = speciesNaming.hasOwnProperty('species_family') && speciesNaming['species_family'] !== null ? new SpeciesFamily(speciesNaming['species_family']) : new SpeciesFamily([])
     this.species_genre = speciesNaming.hasOwnProperty('species_genre') && speciesNaming['species_genre'] !== null ? new SpeciesGenre(speciesNaming['species_genre']) : new SpeciesGenre([])
