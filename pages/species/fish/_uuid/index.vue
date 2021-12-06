@@ -107,6 +107,7 @@ import BaseModal from "~/components/molecules/modal/BaseModal.vue";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import ImagesForm from "~/components/molecules/speciesForm/ImagesForm.vue";
 import Image from "~/app/species/global/entities/Image";
+import firebase from "firebase";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -212,8 +213,8 @@ export default Vue.extend({
     this.header.content = this.fish.computeName()
     const listOfFiles = await this.$fire.storage.ref('species/'+this.fish.uuid).listAll()
 
-    listOfFiles.items.forEach(file => {
-      file.getDownloadURL().then(url => this.fish.images.push(new Image(url)))
+    listOfFiles.items.forEach((file: firebase.storage.Reference) => {
+      this.fish.images.push(new Image(file))
     })
   },
   computed: {

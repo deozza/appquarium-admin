@@ -1,8 +1,15 @@
 <template>
-  <form>
+    <div class="flex-row flex-between">
+      <div v-for="(image, index) in species.images" class="flex-column">
+        <img :src="image.url" :alt="image.alt" v-bind:key="index">
+        <div class="flex-row">
+          <input type="text" v-model="image.alt">
+          <button @click="updateAlt(image)">Modifier</button>
+        </div>
+        <button @click="deleteImage(image, index)">Supprimer</button>
 
-    <img v-for="(image, index) in species.images" :src="image.url" alt="" v-bind:key="index">
-  </form>
+      </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -11,6 +18,7 @@ import Vue from 'vue'
 import Species from "~/app/species/global/entities/Species";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
+import Image from "~/app/species/global/entities/Image";
 
 export default Vue.extend({
   name: "GeneralInfoFormVue",
@@ -38,21 +46,27 @@ export default Vue.extend({
   },
   async fetch() {
     //const jwt: string = this.$cookies.get('appquarium-jwt')
-    //const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
   },
   methods: {
-    async submitGeneralInfoForm() {
-      this.submitButton.isLoading = true
-
-
-      //const updatedSpecies = await speciesUseCase.addOrUpdateOrigin(this.species.uuid, this.species.origin)
+    async updateAlt(image: Image) {
+      await this.$fire.storage.refFromURL(image.url).updateMetadata({customMetadata: {alt: image.alt, origin: image.origin}})
+    },
+    async deleteImage(image: Image, index: number) {
+      await this.$fire.storage.refFromURL(image.url).delete().then(()=>this.species.images.splice(index, 1))
     }
+
   }
 })
 
 </script>
 
 <style scoped>
+
+img {
+  max-height: 200px;
+  max-width: 100%;
+}
+
 form > div.flex-column > ul {
   width: 90%;
 }
