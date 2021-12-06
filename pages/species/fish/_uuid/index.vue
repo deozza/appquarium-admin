@@ -11,6 +11,8 @@
         <BaseHeader :base-header-model="header">
           <BaseBadge :base-badge-model="statusBadge"/>
         </BaseHeader>
+
+        <img v-if="image !== ''" :src="image" alt="">
       </section>
 
       <section id="cards" class="flex-row flex-around">
@@ -47,6 +49,15 @@
           </template>
           <template slot="body">
             <AnimalSpecsForm :species="fish" :jwt="jwt"/>
+          </template>
+        </BaseCard>
+
+        <BaseCard>
+          <template slot="header">
+            <h2>Coucou</h2>
+          </template>
+          <template slot="body">
+            <ImagesForm :species="fish" />
           </template>
         </BaseCard>
 
@@ -94,6 +105,8 @@ import BaseBadge from "~/components/atoms/badge/BaseBadge.vue";
 import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
 import BaseModal from "~/components/molecules/modal/BaseModal.vue";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
+import ImagesForm from "~/components/molecules/speciesForm/ImagesForm.vue";
+import Image from "~/app/species/global/entities/Image";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -107,7 +120,8 @@ export default Vue.extend({
     NamingForm,
     WaterConstraintsForm,
     AnimalSpecsForm,
-    PublicationActions
+    PublicationActions,
+    ImagesForm
   },
   created() {
     this.$nuxt.$on('prePublishClicked', () => this.prePublishFish())
@@ -170,7 +184,8 @@ export default Vue.extend({
       fish: fish,
       jwt: jwt,
       isUpdatingPublicationState: false,
-      deleteFishModalIsOpen: false
+      deleteFishModalIsOpen: false,
+      image: ''
     }
   },
   async fetch() {
@@ -195,6 +210,11 @@ export default Vue.extend({
 
     this.fish = fish.content
     this.header.content = this.fish.computeName()
+    const listOfFiles = await this.$fire.storage.ref('species/'+this.fish.uuid).listAll()
+
+    listOfFiles.items.forEach(file => {
+      file.getDownloadURL().then(url => this.fish.images.push(new Image(url)))
+    })
   },
   computed: {
     statusBadge(): BaseBadgeModel {

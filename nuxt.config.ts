@@ -61,7 +61,8 @@ const config: NuxtConfig = {
         },
         services: {
           auth: true,
-          firestore: true
+          firestore: true,
+          storage: true
         }
       }
     ],
