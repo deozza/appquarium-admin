@@ -42,8 +42,43 @@
               <input type="text" id="speciesName" v-model="species.species_naming.name">
             </div>
           </li>
+          <li class="flex-column">
+            <div class="flex-row input-row">
+              <label>Noms communs</label>
+              <div class="flex-column flex-left">
+                <ul>
+                  <li v-for="(name, index) in commonNames">
+                    <input  type="text" v-model="name.value" v-bind:key="index">
+                    <i class="fas fa-trash-alt" style="color: red" v-on:click="removeCommonName(index)"></i>
+                  </li>
+                  <li>
+                    <input id="commonName" type="text" v-model="commonName" v-on:focusout="addCommonName()">
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
+
+          <li class="flex-column">
+            <div class="flex-row input-row">
+              <label>Anciens noms</label>
+              <div class="flex-column flex-left">
+                <ul>
+                  <li v-for="(name, index) in oldNames">
+                    <input  type="text" v-model="name.value" v-bind:key="index">
+                    <i class="fas fa-trash-alt" style="color: red" v-on:click="removeOldName(index)"></i>
+                  </li>
+                  <li>
+                    <input id="oldName" type="text" v-model="oldName" v-on:focusout="addOldName()">
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
         </ul>
         <BaseButton :base-button-model="submitButton"/>
+        <BaseParagraph :base-paragraph-model="paragraphSuccess" v-if="queryState === 'success'" />
+        <BaseParagraph :base-paragraph-model="paragraphError" v-if="queryState === 'error'" />
       </div>
     </form>
   </main>
@@ -62,11 +97,14 @@ import FishUseCase from "~/app/species/fish/useCases/UseCase";
 import Result from "~/app/utils/useCasesResult/Result";
 import SpeciesUseCase from "~/app/species/global/useCases/UseCase";
 import User from "~/app/user/entities/User";
+import BaseParagraphModel from "~/components/atoms/typography/paragraph/BaseParagraphModel";
+import BaseParagraph from "~/components/atoms/typography/paragraph/BaseParagraph.vue";
 
 export default Vue.extend({
   name: "NamingFormVue",
   components: {
-    BaseButton
+    BaseButton,
+    BaseParagraph
   },
   props: {
     species: {
@@ -78,6 +116,22 @@ export default Vue.extend({
       required: true
     }
   },
+  computed: {
+    commonNames(): Array<object>{
+      let names: Array<object> = []
+      for(let commonName in this.species.species_naming.common_names){
+        names.push({value: this.species.species_naming.common_names[commonName]})
+      }
+      return names
+    },
+    oldNames(): Array<object>{
+      let names: Array<object> = []
+      for(let oldName in this.species.species_naming.old_names){
+        names.push({value: this.species.species_naming.old_names[oldName]})
+      }
+      return names
+    },
+  },
   data() {
     const submitButton: BaseButtonModel = new BaseButtonModel('Ajouter')
     submitButton.setStyleOrThrowError('success')
@@ -87,13 +141,24 @@ export default Vue.extend({
       submitButton.style = 'warning'
     }
 
+    const paragraphSuccess: BaseParagraphModel = new BaseParagraphModel('Modification réussie <i class="fa fa-check"></i>')
+    const paragraphError: BaseParagraphModel = new BaseParagraphModel('Une erreur est survenue, veuillez réessayer plus tard')
+    paragraphError.setStyleOrThrowError('danger')
+
+
     const speciesGenres: Array<SpeciesGenre> = []
     const speciesFamilies: Array<SpeciesFamily> = []
 
+
     return {
       submitButton: submitButton,
+      paragraphSuccess: paragraphSuccess,
+      paragraphError: paragraphError,
       speciesFamilies: speciesFamilies,
-      speciesGenres: speciesGenres
+      speciesGenres: speciesGenres,
+      commonName: '',
+      oldName: '',
+      queryState: ''
     }
   },
   async fetch() {
@@ -125,8 +190,29 @@ export default Vue.extend({
     this.speciesFamilies = speciesFamilies.content
   },
   methods: {
+    addCommonName(): void{
+      if(this.commonName === ''){
+        return
+      }
+      this.species.species_naming.common_names.push(this.commonName)
+      this.commonName = ''
+    },
+    removeCommonName(index: number): void {
+      this.species.species_naming.common_names.splice(index, 1)
+    },
+    addOldName(): void{
+      if(this.oldName === ''){
+        return
+      }
+      this.species.species_naming.old_names.push(this.oldName)
+      this.oldName = ''
+    },
+    removeOldName(index: number): void {
+      this.species.species_naming.old_names.splice(index, 1)
+    },
     async submitNamingForm() {
       this.submitButton.isLoading = true
+      this.queryState = ''
 
       const speciesUseCase: SpeciesUseCase = new SpeciesUseCase()
 
@@ -142,6 +228,8 @@ export default Vue.extend({
 
       if (result.isFailed()) {
         console.log(result.errors)
+        this.queryState = 'error'
+
       }
 
       if (result.success?.code === 201) {
@@ -152,6 +240,7 @@ export default Vue.extend({
       if (result.success?.code === 200) {
         this.submitButton.style = 'warning'
         this.submitButton.content = 'Modifier'
+        this.queryState = 'success'
       }
 
       this.submitButton.isLoading = false

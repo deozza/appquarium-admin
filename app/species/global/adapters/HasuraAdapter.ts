@@ -67,15 +67,12 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
       const data = await this.client.request(query, {
         uuid: uuid
       })
-
       return new Species(data.species_by_pk)
     } catch (e) {
       if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
 
       }
-      console.log(e.message)
-
       return new UseCaseError(e.message, 400)
     }
   }
@@ -235,12 +232,13 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
 
   async mutationCreateSpecies(species: Species): Promise<string | UseCaseError> {
 
-    const mutation: string = 'mutation ($category: species_categories_enum, $family: uuid!, $genre: uuid!, $name: String!) {insert_species_one(object: {category: $category, species_naming: {data: {family: $family, genre: $genre, name: $name}}}) {uuid}}'
+    const mutation: string = 'mutation ($category: species_categories_enum, $family: uuid!, $genre: uuid!, $name: String!) {insert_species_one(object: {category: $category, species_naming: {data: {family: $family, genre: $genre, name: $name, common_names: $common_names}}}) {uuid}}'
 
     try {
       const data = await this.client.request(mutation, {
         category: species.category,
         name: species.species_naming.name,
+        common_names: species.species_naming.common_names,
         family: species.species_naming.species_family.uuid,
         genre: species.species_naming.species_genre.uuid
       })
@@ -259,22 +257,29 @@ export default class HasuraAdapter extends HasuraClient implements AdapterInterf
     queryBuilder.addParam('$genre', 'uuid', speciesNaming.species_genre.uuid)
     queryBuilder.addParam('$family', 'uuid', speciesNaming.species_family.uuid)
     queryBuilder.addParam('$name', 'String', speciesNaming.name)
+    queryBuilder.addParam('$common_names', 'jsonb', speciesNaming.common_names)
+    queryBuilder.addParam('$old_names', 'jsonb', speciesNaming.old_names)
     queryBuilder.addPkColumn('uuid', '$uuid')
     queryBuilder.addInsert('genre', '$genre')
     queryBuilder.addInsert('family', '$family')
     queryBuilder.addInsert('name', '$name')
+    queryBuilder.addInsert('common_names', '$common_names')
+    queryBuilder.addInsert('old_names', '$old_names')
     queryBuilder.addReturn('uuid', 'updated_at', 'name', 'common_names', 'old_names', 'species_family {name}', 'species_genre {name}')
 
     const mutation: string = queryBuilder.getRequest()
+    const variables: object = {
+      uuid: speciesNaming.uuid,
+      genre: speciesNaming.species_genre.uuid,
+      family: speciesNaming.species_family.uuid,
+      name: speciesNaming.name,
+      common_names: speciesNaming.common_names,
+      old_names: speciesNaming.old_names
+    }
 
     try {
-      const data = await this.client.request(mutation, {
-        uuid: speciesNaming.uuid,
-        genre: speciesNaming.species_genre.uuid,
-        family: speciesNaming.species_family.uuid,
-        name: speciesNaming.name
-      })
-      return data.insert_species_genre_one.uuid
+      const data = await this.client.request(mutation, variables)
+      return data.update_species_naming_by_pk.uuid
     } catch (e) {
       if (e.message.includes("JWTExpired")) {
         return new UseCaseError("JWT expired", 401)
