@@ -4,6 +4,7 @@ import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 import InvalidSpeciesObjectError from "~/errors/app/species/global/entities/InvalidSpeciesObjectError";
 import UnexpectedSpeciesPublicationStateError
   from "~/errors/app/species/global/entities/UnexpectedSpeciesPublicationStateError";
+import Image from "~/app/file/entities/Image";
 
 export default class Species {
   uuid: string
@@ -16,6 +17,7 @@ export default class Species {
   origin: string
   publication_state: string
   category: string
+  images: Array<Image>
 
   constructor(species: Array<string>) {
     this.uuid = species.hasOwnProperty('uuid') ? species['uuid'] : ''
@@ -28,6 +30,7 @@ export default class Species {
     this.origin = species.hasOwnProperty('origin') ? species['origin'] : ''
     this.publication_state = species.hasOwnProperty('publication_state') ? species['publication_state'] : ''
     this.category = species.hasOwnProperty('category') ? species['category'] : ''
+    this.images = []
   }
 
   toJSON() {

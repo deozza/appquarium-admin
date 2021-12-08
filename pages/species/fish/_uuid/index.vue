@@ -51,6 +51,15 @@
         </BaseCard>
 
         <BaseCard>
+          <template slot="header">
+            <BaseHeader :base-header-model="imageCardHeader" />
+          </template>
+          <template slot="body">
+            <ImagesForm :species="fish" />
+          </template>
+        </BaseCard>
+
+        <BaseCard>
           <template slot="footer">
             <PublicationActions v-if="isUpdatingPublicationState === false"
                                 :publication-state="fish.publication_state"/>
@@ -94,6 +103,9 @@ import BaseBadge from "~/components/atoms/badge/BaseBadge.vue";
 import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
 import BaseModal from "~/components/molecules/modal/BaseModal.vue";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
+import ImagesForm from "~/components/molecules/speciesForm/ImagesForm.vue";
+import Image from "~/app/file/entities/Image";
+import firebase from "firebase";
 
 export default Vue.extend({
   middleware: 'authenticated',
@@ -107,7 +119,8 @@ export default Vue.extend({
     NamingForm,
     WaterConstraintsForm,
     AnimalSpecsForm,
-    PublicationActions
+    PublicationActions,
+    ImagesForm
   },
   created() {
     this.$nuxt.$on('prePublishClicked', () => this.prePublishFish())
@@ -145,6 +158,9 @@ export default Vue.extend({
     const deleteModalHeader: BaseHeaderModel = new BaseHeaderModel("Supprimer une espèce")
     deleteModalHeader.setSizeOrThrowError(3)
 
+    const imageCardHeader: BaseHeaderModel = new BaseHeaderModel("Photos")
+    imageCardHeader.setSizeOrThrowError(2)
+
     const cancelDeleteSpeciesButton: BaseButtonModel = new BaseButtonModel('Non')
     cancelDeleteSpeciesButton.setStyleOrThrowError('secondary')
     cancelDeleteSpeciesButton.setTypeOrThrowError('button')
@@ -164,6 +180,7 @@ export default Vue.extend({
       namingCardHeader: namingCardHeader,
       waterConstraintsCardHeader: waterConstraintsCardHeader,
       animalSpecsCardHeader: animalSpecsCardHeader,
+      imageCardHeader: imageCardHeader,
       deleteModalHeader: deleteModalHeader,
       cancelDeleteSpeciesButton: cancelDeleteSpeciesButton,
       confirmDeleteSpeciesButton: confirmDeleteSpeciesButton,
@@ -195,6 +212,13 @@ export default Vue.extend({
 
     this.fish = fish.content
     this.header.content = this.fish.computeName()
+    const listOfFiles = await this.$fire.storage.ref('species/'+this.fish.uuid).listAll()
+
+    listOfFiles.items.forEach((file: firebase.storage.Reference) => {
+      const image: Image = new Image()
+      image.setFromFirebase(file)
+      this.fish.images.push(image)
+    })
   },
   computed: {
     statusBadge(): BaseBadgeModel {
