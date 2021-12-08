@@ -11,8 +11,6 @@
         <BaseHeader :base-header-model="header">
           <BaseBadge :base-badge-model="statusBadge"/>
         </BaseHeader>
-
-        <img v-if="image !== ''" :src="image" alt="">
       </section>
 
       <section id="cards" class="flex-row flex-around">
@@ -54,7 +52,7 @@
 
         <BaseCard>
           <template slot="header">
-            <h2>Coucou</h2>
+            <BaseHeader :base-header-model="imageCardHeader" />
           </template>
           <template slot="body">
             <ImagesForm :species="fish" />
@@ -160,6 +158,9 @@ export default Vue.extend({
     const deleteModalHeader: BaseHeaderModel = new BaseHeaderModel("Supprimer une espèce")
     deleteModalHeader.setSizeOrThrowError(3)
 
+    const imageCardHeader: BaseHeaderModel = new BaseHeaderModel("Photos")
+    imageCardHeader.setSizeOrThrowError(2)
+
     const cancelDeleteSpeciesButton: BaseButtonModel = new BaseButtonModel('Non')
     cancelDeleteSpeciesButton.setStyleOrThrowError('secondary')
     cancelDeleteSpeciesButton.setTypeOrThrowError('button')
@@ -179,14 +180,14 @@ export default Vue.extend({
       namingCardHeader: namingCardHeader,
       waterConstraintsCardHeader: waterConstraintsCardHeader,
       animalSpecsCardHeader: animalSpecsCardHeader,
+      imageCardHeader: imageCardHeader,
       deleteModalHeader: deleteModalHeader,
       cancelDeleteSpeciesButton: cancelDeleteSpeciesButton,
       confirmDeleteSpeciesButton: confirmDeleteSpeciesButton,
       fish: fish,
       jwt: jwt,
       isUpdatingPublicationState: false,
-      deleteFishModalIsOpen: false,
-      image: ''
+      deleteFishModalIsOpen: false
     }
   },
   async fetch() {
@@ -214,7 +215,9 @@ export default Vue.extend({
     const listOfFiles = await this.$fire.storage.ref('species/'+this.fish.uuid).listAll()
 
     listOfFiles.items.forEach((file: firebase.storage.Reference) => {
-      this.fish.images.push(new Image(file))
+      const image: Image = new Image()
+      image.setFromFirebase(file)
+      this.fish.images.push(image)
     })
   },
   computed: {

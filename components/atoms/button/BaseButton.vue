@@ -3,6 +3,7 @@
     class="btn"
     :class="[
       { [`btn-${baseButtonModel.style}`]: baseButtonModel.style },
+      { [`btn-${baseButtonModel.size}`]: baseButtonModel.size },
       { 'btn-outline': baseButtonModel.isOutlined },
       { 'btn-icon': baseButtonModel.isOnlyIcon },
       { 'btn-round': baseButtonModel.isRound },
@@ -66,6 +67,14 @@ button.btn {
   border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
   -webkit-box-shadow 0.15s ease-in-out;
   box-shadow: 5px 5px 5px grey;
+
+}
+
+button.btn.btn-small {
+  padding: 0.25rem 0.5rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  box-shadow: none;
 
 }
 
