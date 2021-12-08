@@ -11,9 +11,14 @@ export default class UseCase implements UseCaseInterface {
     this.module = module
   }
 
-  async  uploadFile(fileName: string, fileSource: string, basePath: string, file: File): Promise<Result> {
+  async  uploadFile(fileName: string, fileSource: string, basePath: string, file: File | null): Promise<Result> {
     const result: Result = new Result()
     const fileService: Service = new Service(this.module)
+
+    if(file === null){
+      result.addError('File should not be empty', 400)
+      return result
+    }
 
     const computedFileName: string = fileService.getComputedFileName(fileName)
     const metadata: object = fileService.getMetadata(fileName, fileSource)

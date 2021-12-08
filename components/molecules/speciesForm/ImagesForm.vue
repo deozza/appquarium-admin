@@ -88,13 +88,17 @@ export default Vue.extend({
     const successfulUploadParagraph: BaseParagraphModel = new BaseParagraphModel("Upload réussie <i class='fa fa-check' style='color: green'></i>")
     const failedUploadParagraph: BaseParagraphModel = new BaseParagraphModel("Une erreur est survenue")
 
+    const newFileToUpload: null | File = null
+    const newFileTitle: string = ''
+    const newFileSource: string = ''
+
     return {
       submitButton: submitButton,
       updateButton: updateButton,
       deleteButton: deleteButton,
-      newFileToUpload: null,
-      newFileTitle: '',
-      newFileSource: '',
+      newFileToUpload: newFileToUpload,
+      newFileTitle: newFileTitle,
+      newFileSource: newFileSource,
       successfulUploadParagraph: successfulUploadParagraph,
       failedUploadParagraph: failedUploadParagraph,
       uploadState: ''
@@ -104,19 +108,14 @@ export default Vue.extend({
     //const jwt: string = this.$cookies.get('appquarium-jwt')
   },
   methods: {
-    selectFile(e){
+    selectFile(e: any){
       this.newFileToUpload = e.target.files[0]
     },
     async uploadFile(){
 
       this.submitButton.isLoading = true
       this.uploadState = ''
-      if(this.newFileToUpload === null){
-        this.submitButton.isLoading = false
-        this.uploadState = 'error'
 
-        return
-      }
       const fileUseCase: UseCase = new UseCase(this.$fire.storage)
       let result: Result
 

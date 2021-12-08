@@ -18,7 +18,7 @@ export default class Service implements ServiceInterface{
       .toLowerCase();
   }
 
-  getMetadata(fileName: string, fileSource): object {
+  getMetadata(fileName: string, fileSource: string): object {
     return {
       customMetadata: {
         alt: fileName,

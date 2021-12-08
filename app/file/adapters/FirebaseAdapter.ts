@@ -14,8 +14,8 @@ export default class FirebaseAdapter implements AdapterInterface{
     return await this.storage.ref(path).put(file, metadata)
       .then(async () => {
         const newImage: Image = new Image()
-        newImage.alt = metadata.customMetadata.alt
-        newImage.origin = metadata.customMetadata.alt
+        newImage.alt = metadata['customMetadata']['alt']
+        newImage.origin = metadata['customMetadata']['origin']
         newImage.url = await this.storage.ref(path).getDownloadURL()
        return newImage
 
