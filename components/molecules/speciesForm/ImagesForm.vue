@@ -53,9 +53,11 @@ import Vue from 'vue'
 import Species from "~/app/species/global/entities/Species";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import BaseButton from "~/components/atoms/button/BaseButton.vue";
-import Image from "~/app/species/global/entities/Image";
+import Image from "~/app/file/entities/Image";
 import BaseParagraph from "~/components/atoms/typography/paragraph/BaseParagraph.vue";
 import BaseParagraphModel from "~/components/atoms/typography/paragraph/BaseParagraphModel";
+import UseCase from "~/app/file/useCases/UseCase";
+import Result from "~/app/utils/useCasesResult/Result";
 
 export default Vue.extend({
   name: "GeneralInfoFormVue",
@@ -115,49 +117,52 @@ export default Vue.extend({
 
         return
       }
+      const fileUseCase: UseCase = new UseCase(this.$fire.storage)
+      let result: Result
 
-      const computedFileTitle: string = this.newFileTitle
-        .replaceAll(' ', '_')
-        .replaceAll("'", '_')
-        .toLowerCase()
+      result = await fileUseCase.uploadFile(this.newFileTitle, this.newFileSource, '/species/'+this.species.uuid, this.newFileToUpload)
 
-      const metadata: object = {
-        customMetadata: {
-          alt: this.newFileTitle,
-          source: this.newFileSource
-        }
+      if(result.isFailed()){
+        this.submitButton.isLoading = false
+        this.uploadState = 'error'
+        console.log(result.errors)
+
+        return
       }
 
-      const remotePath: string = '/species/'+this.species.uuid+'/'+ computedFileTitle
+      this.species.images.push(result.content)
 
-      await this.$fire.storage.ref(remotePath).put(this.newFileToUpload, metadata)
-        .then(async (file) => {
-          const newImage: Image = new Image()
-          newImage.alt = this.newFileTitle
-          newImage.origin = this.newFileSource
-          newImage.url = await this.$fire.storage.ref(remotePath).getDownloadURL()
-          this.species.images.push(newImage)
+      this.newFileToUpload = null
+      this.newFileTitle = ''
+      this.newFileSource = ''
 
-          this.newFileToUpload = null
-          this.newFileTitle = ''
-          this.newFileSource = ''
-
-          this.submitButton.isLoading = false
-          this.uploadState = 'success'
-
-        })
-        .catch((error) => {
-          this.submitButton.isLoading = false
-          this.uploadState = 'error'
-          console.log(error)
-        })
+      this.submitButton.isLoading = false
+      this.uploadState = 'success'
 
     },
     async updateAlt(image: Image, index: number) {
-      await this.$fire.storage.refFromURL(image.url).updateMetadata({customMetadata: {alt: image.alt, origin: image.origin}})
+      const fileUseCase: UseCase = new UseCase(this.$fire.storage)
+      let result: Result
+
+      result = await fileUseCase.editFileMetadata(image)
+
+      if(result.isFailed()){
+        console.log(result.errors)
+        return
+      }
     },
     async deleteImage(image: Image, index: number) {
-      await this.$fire.storage.refFromURL(image.url).delete().then(()=>this.species.images.splice(index, 1))
+      const fileUseCase: UseCase = new UseCase(this.$fire.storage)
+      let result: Result
+
+      result = await fileUseCase.deleteFile(image)
+
+      if(result.isFailed()){
+        console.log(result.errors)
+        return
+      }
+
+      this.species.images.splice(index, 1)
     }
 
   }

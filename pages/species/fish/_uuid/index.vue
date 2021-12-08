@@ -104,7 +104,7 @@ import BaseBadgeModel from "~/components/atoms/badge/BaseBadgeModel";
 import BaseModal from "~/components/molecules/modal/BaseModal.vue";
 import BaseButtonModel from "~/components/atoms/button/BaseButtonModel";
 import ImagesForm from "~/components/molecules/speciesForm/ImagesForm.vue";
-import Image from "~/app/species/global/entities/Image";
+import Image from "~/app/file/entities/Image";
 import firebase from "firebase";
 
 export default Vue.extend({

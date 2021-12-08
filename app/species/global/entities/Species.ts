@@ -4,7 +4,7 @@ import AnimalSpecs from "~/app/species/global/entities/AnimalSpecs";
 import InvalidSpeciesObjectError from "~/errors/app/species/global/entities/InvalidSpeciesObjectError";
 import UnexpectedSpeciesPublicationStateError
   from "~/errors/app/species/global/entities/UnexpectedSpeciesPublicationStateError";
-import Image from "~/app/species/global/entities/Image";
+import Image from "~/app/file/entities/Image";
 
 export default class Species {
   uuid: string
